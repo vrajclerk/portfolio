@@ -1,0 +1,13 @@
+/*
+ * payload-admin.css — Tailwind CSS v4 stylesheet for the Payload admin UI.
+ *
+ * Imported in payload.config.ts via the `admin.css` option (Phase 2).
+ * Does NOT include preflight to avoid resetting Payload's own baseline styles.
+ *
+ * Reference: DECISIONS_AND_ASSUMPTIONS.md §D5
+ * Reference: payloadcms.com/docs → admin.css
+ */
+
+/* Theme tokens and utility classes only — no preflight reset */
+@import "tailwindcss/theme.css";
+@import "tailwindcss/utilities.css";

@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for the same branch when a new push arrives.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, Type-check & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          # Must match the packageManager field in package.json.
+          version: 9.15.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Install dependencies strictly from the lockfile.
+      # --frozen-lockfile prevents accidental lockfile mutations in CI.
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type-check
+        run: pnpm typecheck
+
+      # Production build validates that the app compiles without errors.
+      # Secrets are not available in CI at this phase; the build must succeed
+      # without real DATABASE_URL / PAYLOAD_SECRET (they are commented out in
+      # src/lib/env.ts for Phase 1).
+      - name: Build
+        run: pnpm build
+        env:
+          # Provide a safe dummy value so NEXT_PUBLIC_SITE_URL is always set.
+          NEXT_PUBLIC_SITE_URL: https://example.vercel.app

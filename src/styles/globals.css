@@ -1,0 +1,96 @@
+/*
+ * globals.css — full Tailwind CSS v4 stylesheet for the (frontend) route group.
+ *
+ * Imported ONLY in src/app/(frontend)/layout.tsx.
+ * Never imported in the root layout or the Payload admin layout (see D5).
+ *
+ * The `@import "tailwindcss"` directive includes:
+ *   1. preflight (CSS reset)
+ *   2. theme tokens
+ *   3. utilities
+ */
+
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+ * Design tokens
+ * Override these custom properties to retheme the site.
+ * Phase 3 will sync colour values with CMS SiteSettings.
+ * --------------------------------------------------------------------------- */
+
+:root {
+  /* Neutral palette — light mode */
+  --background: #ffffff;
+  --foreground: #0f172a; /* slate-900 */
+  --muted: #f1f5f9; /* slate-100 */
+  --muted-foreground: #64748b; /* slate-500 */
+  --border: #e2e8f0; /* slate-200 */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --accent: #6366f1; /* indigo-500 — adjust in Phase 7 */
+  --accent-foreground: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f172a; /* slate-900 */
+    --foreground: #f8fafc; /* slate-50 */
+    --muted: #1e293b; /* slate-800 */
+    --muted-foreground: #94a3b8; /* slate-400 */
+    --border: #1e293b; /* slate-800 */
+    --card: #1e293b;
+    --card-foreground: #f8fafc;
+    --accent: #818cf8; /* indigo-400 */
+    --accent-foreground: #0f172a;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Tailwind theme extension
+ * Maps CSS custom properties into the Tailwind v4 `@theme` block so that
+ * utilities like `bg-background`, `text-muted-foreground`, etc. work.
+ * --------------------------------------------------------------------------- */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* Typography */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Code",
+    "Source Code Pro", Menlo, monospace;
+}
+
+/* ---------------------------------------------------------------------------
+ * Base styles
+ * --------------------------------------------------------------------------- */
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Visible focus ring for keyboard navigation (WCAG 2.2 AA §2.4.11) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion — respect user preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
