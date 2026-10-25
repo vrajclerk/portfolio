@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Auto-generated Payload CMS files:
+    "src/migrations/**",
+    "src/payload-types.ts",
+    "src/app/(payload)/admin/importMap.js",
   ]),
 ]);
 

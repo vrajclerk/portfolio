@@ -121,5 +121,6 @@ ASSUMPTION-6: `@tailwindcss/typography` (needed for blog rich text) is compatibl
 | 2026-10-18 | D5: Styling = Tailwind CSS v4, scoped to (frontend) route group. | Approved |
 | 2026-10-18 | D6: Contact form with mail delivery; credentials TBD before Phase 4. | Pending credentials |
 | 2026-10-18 | D7: Mail provider = **Gmail SMTP with App Password**. Credentials supplied before Phase 4. | Pending credentials |
-| 2026-10-18 | D8: Subdomain = **`*.vercel.app`** (auto-provisioned by Vercel, HTTPS included, DuckDNS not needed). | Approved |
 | 2026-10-18 | Phase 0 exit gate fully closed. **Phase 1 approved to begin.** | Phase 1 approved |
+| 2026-10-19 | Phase 1 exit gate verified (lint, typecheck, build pass). **Phase 2 approved to begin.** | Phase 1 complete |
+| 2026-10-19 | D10: Payload CMS 3.91.0 integrated via `@payloadcms/next`, `@payloadcms/db-vercel-postgres`, `@payloadcms/richtext-lexical`, and `@payloadcms/storage-vercel-blob`. Strict access control, initial migration, and type generation verified. | Phase 2 complete |

@@ -41,11 +41,14 @@ function requireEnv(name: string): string {
  * Phase 2: uncomment the mandatory checks once Payload is installed.
  */
 export const serverEnv = {
-  /** Payload CMS secret key — required in Phase 2+ */
-  // payloadSecret: requireEnv("PAYLOAD_SECRET"),
+  /** Payload CMS secret key */
+  payloadSecret: process.env.PAYLOAD_SECRET,
 
-  /** PostgreSQL connection string (Neon) — required in Phase 2+ */
-  // databaseUrl: requireEnv("DATABASE_URL"),
+  /** PostgreSQL connection string (Neon) */
+  databaseUrl: process.env.DATABASE_URL || process.env.POSTGRES_URL,
+
+  /** Vercel Blob read/write token (optional in local development) */
+  blobToken: process.env.BLOB_READ_WRITE_TOKEN,
 
   /**
    * Node.js runtime environment.

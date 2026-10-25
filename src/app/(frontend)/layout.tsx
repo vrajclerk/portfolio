@@ -59,10 +59,12 @@ export default function FrontendLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col font-sans antialiased`}
-    >
-      {children}
-    </div>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col font-sans antialiased`}
+      >
+        {children}
+      </body>
+    </html>
   );
 }

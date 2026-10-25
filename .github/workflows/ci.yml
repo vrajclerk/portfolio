@@ -44,6 +44,9 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
+      - name: Test
+        run: pnpm test
+
       # Production build validates that the app compiles without errors.
       # Secrets are not available in CI at this phase; the build must succeed
       # without real DATABASE_URL / PAYLOAD_SECRET (they are commented out in
