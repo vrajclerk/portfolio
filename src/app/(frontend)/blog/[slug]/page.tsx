@@ -1,9 +1,11 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/Badge";
 import { ProjectCard } from "@/components/ProjectCard";
+import { PreviewBanner } from "@/components/PreviewBanner";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 import { getPostBySlug, getPublishedPosts } from "@/lib/cms";
 import type { Category, Project, Tag } from "@/payload-types";
@@ -20,7 +22,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(slug, true);
 
   if (!post) {
     return {
@@ -36,10 +38,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogPostDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const { isEnabled: isDraftMode } = await draftMode();
+  const post = await getPostBySlug(slug, isDraftMode);
 
-  // Return 404 for missing slugs or drafts (enforcing access control)
-  if (!post || post._status !== "published") {
+  // Return 404 for missing slugs or unpublished drafts outside draft mode
+  if (!post || (!isDraftMode && post._status !== "published")) {
     notFound();
   }
 
@@ -71,7 +74,9 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
     : "Recently published";
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+    <>
+      {isDraftMode && <PreviewBanner exitUrl={`/blog/${slug}`} />}
+      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Back Link */}
       <div className="mb-8">
         <Link
@@ -149,5 +154,6 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
         )}
       </footer>
     </article>
+    </>
   );
 }

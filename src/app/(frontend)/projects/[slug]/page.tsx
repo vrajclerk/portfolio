@@ -1,9 +1,11 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { Badge, type BadgeVariant } from "@/components/Badge";
 import { PostCard } from "@/components/PostCard";
+import { PreviewBanner } from "@/components/PreviewBanner";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 import { getProjectBySlug, getPublishedProjects } from "@/lib/cms";
 import type { Post, Tag } from "@/payload-types";
@@ -19,7 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug, true);
 
   if (!project) {
     return {
@@ -35,10 +37,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const { isEnabled: isDraftMode } = await draftMode();
+  const project = await getProjectBySlug(slug, isDraftMode);
 
-  // Return 404 for missing slugs or drafts (enforcing access control)
-  if (!project || project._status !== "published") {
+  // Return 404 for missing slugs or unpublished content outside draft mode
+  if (!project || (!isDraftMode && project._status !== "published")) {
     notFound();
   }
 
@@ -65,7 +68,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     : [];
 
   return (
-    <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <>
+      {isDraftMode && <PreviewBanner exitUrl={`/projects/${slug}`} />}
+      <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Back Link */}
       <div className="mb-8">
         <Link
@@ -306,5 +311,6 @@ export default async function ProjectDetailPage({ params }: PageProps) {
         )}
       </div>
     </article>
+    </>
   );
 }

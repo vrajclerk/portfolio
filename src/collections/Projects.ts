@@ -1,6 +1,10 @@
 import type { CollectionConfig } from "payload";
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
+import {
+  revalidateProjectAfterChange,
+  revalidateProjectAfterDelete,
+} from "@/utilities/revalidate";
 import { formatSlug } from "@/utilities/slugify";
 
 export const Projects: CollectionConfig = {
@@ -8,6 +12,22 @@ export const Projects: CollectionConfig = {
   admin: {
     useAsTitle: "title",
     defaultColumns: ["title", "slug", "projectType", "featured", "_status"],
+    preview: (doc) => {
+      if (doc?.slug && typeof doc.slug === "string") {
+        const siteUrl =
+          process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+        const secret =
+          process.env.PAYLOAD_SECRET || process.env.PREVIEW_SECRET || "";
+        return `${siteUrl}/api/preview?url=${encodeURIComponent(
+          `/projects/${doc.slug}`
+        )}&secret=${encodeURIComponent(secret)}`;
+      }
+      return null;
+    },
+  },
+  hooks: {
+    afterChange: [revalidateProjectAfterChange],
+    afterDelete: [revalidateProjectAfterDelete],
   },
   versions: {
     drafts: true,

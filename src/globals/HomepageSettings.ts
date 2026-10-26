@@ -1,12 +1,16 @@
 import type { GlobalConfig } from "payload";
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
+import { revalidateHomepageAfterChange } from "@/utilities/revalidate";
 
 export const HomepageSettings: GlobalConfig = {
   slug: "homepage-settings",
   access: {
     read: anyone,
     update: authenticated,
+  },
+  hooks: {
+    afterChange: [revalidateHomepageAfterChange],
   },
   fields: [
     {

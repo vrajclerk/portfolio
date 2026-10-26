@@ -16,7 +16,7 @@ export const Media: CollectionConfig = {
     defaultColumns: ["filename", "alt", "mimeType", "filesize", "updatedAt"],
   },
   upload: {
-    staticDir: path.resolve(process.cwd(), "media"),
+    staticDir: path.resolve(process.cwd(), "public/media"),
     mimeTypes: [
       "image/jpeg",
       "image/png",

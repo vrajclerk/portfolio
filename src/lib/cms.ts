@@ -169,18 +169,27 @@ export async function getPublishedProjects(
   return projects;
 }
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
+export async function getProjectBySlug(
+  slug: string,
+  isDraftMode = false
+): Promise<Project | null> {
   if (!slug) return null;
 
   const payload = await getSafePayloadInstance();
   if (payload) {
     try {
+      const whereClause: Where = {
+        slug: { equals: slug },
+      };
+
+      if (!isDraftMode) {
+        whereClause._status = { equals: "published" };
+      }
+
       const result = await payload.find({
         collection: "projects",
-        where: {
-          slug: { equals: slug },
-          _status: { equals: "published" },
-        },
+        where: whereClause,
+        draft: isDraftMode,
         limit: 1,
         depth: 2,
       });
@@ -193,9 +202,9 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     }
   }
 
-  // Fallback to fixture, strictly published only
+  // Fallback to fixture
   const project = fixtureProjects.find(
-    (p) => p.slug === slug && p._status === "published"
+    (p) => p.slug === slug && (isDraftMode || p._status === "published")
   );
 
   return project ?? null;
@@ -274,18 +283,27 @@ export async function getPublishedPosts(
   return posts;
 }
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
+export async function getPostBySlug(
+  slug: string,
+  isDraftMode = false
+): Promise<Post | null> {
   if (!slug) return null;
 
   const payload = await getSafePayloadInstance();
   if (payload) {
     try {
+      const whereClause: Where = {
+        slug: { equals: slug },
+      };
+
+      if (!isDraftMode) {
+        whereClause._status = { equals: "published" };
+      }
+
       const result = await payload.find({
         collection: "posts",
-        where: {
-          slug: { equals: slug },
-          _status: { equals: "published" },
-        },
+        where: whereClause,
+        draft: isDraftMode,
         limit: 1,
         depth: 2,
       });
@@ -298,9 +316,9 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     }
   }
 
-  // Fallback to fixture, strictly published only
+  // Fallback to fixture
   const post = fixturePosts.find(
-    (p) => p.slug === slug && p._status === "published"
+    (p) => p.slug === slug && (isDraftMode || p._status === "published")
   );
 
   return post ?? null;

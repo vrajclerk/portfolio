@@ -1,12 +1,16 @@
 import type { GlobalConfig } from "payload";
 import { anyone } from "@/access/anyone";
 import { authenticated } from "@/access/authenticated";
+import { revalidateProfileAfterChange } from "@/utilities/revalidate";
 
 export const Profile: GlobalConfig = {
   slug: "profile",
   access: {
     read: anyone,
     update: authenticated,
+  },
+  hooks: {
+    afterChange: [revalidateProfileAfterChange],
   },
   fields: [
     {
