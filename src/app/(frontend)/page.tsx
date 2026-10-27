@@ -9,23 +9,66 @@ import {
   getProfile,
   getPublishedPosts,
   getPublishedProjects,
+  getSiteSettings,
 } from "@/lib/cms";
 import type { Post, Project } from "@/payload-types";
+import {
+  generatePersonSchema,
+  generateWebsiteSchema,
+} from "@/utilities/structuredData";
 
-export const metadata: Metadata = {
-  title: "Home",
-  description:
-    "Full-stack software engineer portfolio focused on backend reliability, TypeScript architectures, and evidence-based engineering.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [siteSettings, profile] = await Promise.all([
+    getSiteSettings(),
+    getProfile(),
+  ]);
+
+  const siteName = siteSettings.siteName || "Vraj Clerk | Developer Portfolio";
+  const description =
+    profile.headline ||
+    siteSettings.defaultDescription ||
+    "Full-stack software engineer portfolio focused on backend reliability, TypeScript architectures, and evidence-based engineering.";
+
+  return {
+    title: "Home",
+    description,
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title: siteName,
+      description,
+      url: "/",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: siteName,
+      description,
+    },
+  };
+}
 
 export default async function HomePage() {
-  const [homepageSettings, profile, publishedProjects, publishedPosts] =
+  const [homepageSettings, profile, siteSettings, publishedProjects, publishedPosts] =
     await Promise.all([
       getHomepageSettings(),
       getProfile(),
+      getSiteSettings(),
       getPublishedProjects({ limit: 3 }),
       getPublishedPosts({ limit: 2 }),
     ]);
+
+  const websiteSchema = generateWebsiteSchema({
+    siteName: siteSettings.siteName || "Vraj Clerk",
+    siteUrl: siteSettings.siteUrl || "http://localhost:3000",
+    description: siteSettings.defaultDescription,
+  });
+
+  const personSchema = generatePersonSchema({
+    profile,
+    siteSettings,
+  });
 
   // Featured projects from HomepageSettings relationship or top published projects
   const featuredProjects: Project[] = Array.isArray(
@@ -69,6 +112,16 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-16 py-12 md:py-20">
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+
       {/* ---------------------------------------------------------------------
        * Hero Section
        * --------------------------------------------------------------------- */}

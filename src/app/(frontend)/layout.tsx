@@ -40,21 +40,47 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const siteName = settings.siteName || "Developer Portfolio";
+  const siteUrl = settings.siteUrl || "http://localhost:3000";
   const defaultDesc =
     settings.defaultDescription ||
     "Software engineer portfolio specializing in backend systems, TypeScript architectures, and modern web applications.";
 
   return {
-    metadataBase: new URL(settings.siteUrl || "http://localhost:3000"),
+    metadataBase: new URL(siteUrl),
     title: {
       template: `%s | ${siteName}`,
       default: siteName,
     },
     description: defaultDesc,
+    alternates: {
+      canonical: "/",
+      types: {
+        "application/rss+xml": "/feed.xml",
+      },
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
     openGraph: {
       type: "website",
       locale: "en_US",
       siteName,
+      title: siteName,
+      description: defaultDesc,
+      url: siteUrl,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: siteName,
+      description: defaultDesc,
     },
   };
 }
@@ -75,11 +101,21 @@ export default async function FrontendLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-full flex-col font-sans antialiased`}
       >
+        {/* Skip to main content link for keyboard and screen reader accessibility (WCAG 2.2 AA) */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-background focus:shadow-xl focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          Skip to main content
+        </a>
+
         <div className="flex min-h-screen flex-col bg-background text-foreground">
           <Suspense fallback={<div className="h-16 w-full border-b border-border/70" />}>
             <Header siteName={siteSettings.siteName} />
           </Suspense>
-          <main className="flex-1">{children}</main>
+          <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+            {children}
+          </main>
           <Footer siteSettings={siteSettings} />
         </div>
       </body>

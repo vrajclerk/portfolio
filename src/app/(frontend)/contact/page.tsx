@@ -1,21 +1,57 @@
 import React from "react";
 import type { Metadata } from "next";
 import { getSiteSettings } from "@/lib/cms";
+import { generateBreadcrumbSchema } from "@/utilities/structuredData";
 import { ContactForm } from "./ContactForm";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description:
-    "Direct contact details, professional profiles, and inquiry channels for software engineer Vraj Clerk.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteSettings = await getSiteSettings();
+  const siteName = siteSettings.siteName || "Vraj Clerk";
+  const title = "Contact";
+  const description =
+    "Direct contact details, professional profiles, and inquiry channels for software engineer Vraj Clerk.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: "/contact",
+    },
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      url: "/contact",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${siteName}`,
+      description,
+    },
+  };
+}
 
 export default async function ContactPage() {
   const siteSettings = await getSiteSettings();
   const publicEmail = siteSettings.publicEmail || "vrajclerk.dev@gmail.com";
   const socialLinks = siteSettings.socialLinks || [];
+  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", path: "/" },
+      { name: "Contact", path: "/contact" },
+    ],
+    siteUrl
+  );
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {/* Page Header */}
       <div className="max-w-2xl mb-12">
         <span className="text-xs font-bold uppercase tracking-wider text-accent">

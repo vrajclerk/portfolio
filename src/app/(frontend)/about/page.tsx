@@ -3,12 +3,42 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 import { getProfile, getSiteSettings } from "@/lib/cms";
+import {
+  generateBreadcrumbSchema,
+  generatePersonSchema,
+} from "@/utilities/structuredData";
 
-export const metadata: Metadata = {
-  title: "About & Experience",
-  description:
-    "Professional background, engineering work experience, and verified technical skills of full-stack developer Vraj Clerk.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [profile, siteSettings] = await Promise.all([
+    getProfile(),
+    getSiteSettings(),
+  ]);
+
+  const title = "About & Experience";
+  const description =
+    profile.headline ||
+    siteSettings.defaultDescription ||
+    "Professional background, engineering work experience, and verified technical skills of full-stack developer Vraj Clerk.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: "/about",
+    },
+    openGraph: {
+      title,
+      description,
+      url: "/about",
+      type: "profile",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function AboutPage() {
   const [profile, siteSettings] = await Promise.all([
@@ -16,12 +46,31 @@ export default async function AboutPage() {
     getSiteSettings(),
   ]);
 
+  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const personSchema = generatePersonSchema({ profile, siteSettings });
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", path: "/" },
+      { name: "About", path: "/about" },
+    ],
+    siteUrl
+  );
+
   const experience = Array.isArray(profile.experience) ? profile.experience : [];
   const skills = Array.isArray(profile.skills) ? profile.skills : [];
   const socialLinks = profile.socialLinks || siteSettings.socialLinks || [];
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {/* Header */}
       <div className="mb-12 border-b border-border pb-8">
         <span className="text-xs font-bold uppercase tracking-wider text-accent">

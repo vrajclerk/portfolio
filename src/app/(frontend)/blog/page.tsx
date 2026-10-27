@@ -3,13 +3,35 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EmptyState } from "@/components/EmptyState";
 import { PostCard } from "@/components/PostCard";
-import { getAllCategories, getPublishedPosts } from "@/lib/cms";
+import { getAllCategories, getPublishedPosts, getSiteSettings } from "@/lib/cms";
+import { generateBreadcrumbSchema } from "@/utilities/structuredData";
 
-export const metadata: Metadata = {
-  title: "Blog & Technical Writing",
-  description:
-    "Engineering articles on systems architecture, backend reliability, TypeScript, and modern web application patterns.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteSettings = await getSiteSettings();
+  const siteName = siteSettings.siteName || "Vraj Clerk";
+  const title = "Blog & Technical Writing";
+  const description =
+    "Engineering articles on systems architecture, backend reliability, TypeScript, and modern web application patterns.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: "/blog",
+    },
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      url: "/blog",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${siteName}`,
+      description,
+    },
+  };
+}
 
 async function BlogList({
   searchParams,
@@ -80,13 +102,28 @@ async function BlogList({
   );
 }
 
-export default function BlogIndexPage({
+export default async function BlogIndexPage({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string; tag?: string }>;
 }) {
+  const siteSettings = await getSiteSettings();
+  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blog" },
+    ],
+    siteUrl
+  );
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {/* Page Header */}
       <div className="max-w-3xl mb-10">
         <span className="text-xs font-bold uppercase tracking-wider text-accent">

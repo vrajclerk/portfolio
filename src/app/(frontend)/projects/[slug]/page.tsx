@@ -7,8 +7,16 @@ import { Badge, type BadgeVariant } from "@/components/Badge";
 import { PostCard } from "@/components/PostCard";
 import { PreviewBanner } from "@/components/PreviewBanner";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
-import { getProjectBySlug, getPublishedProjects } from "@/lib/cms";
+import {
+  getProjectBySlug,
+  getPublishedProjects,
+  getSiteSettings,
+} from "@/lib/cms";
 import type { Post, Tag } from "@/payload-types";
+import {
+  generateBreadcrumbSchema,
+  generateProjectSchema,
+} from "@/utilities/structuredData";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -21,7 +29,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug, true);
+  const [project, siteSettings] = await Promise.all([
+    getProjectBySlug(slug, true),
+    getSiteSettings(),
+  ]);
 
   if (!project) {
     return {
@@ -29,21 +40,53 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const title = project.seo?.title || project.title;
+  const description = project.seo?.description || project.summary;
+  const siteName = siteSettings.siteName || "Vraj Clerk";
+
   return {
-    title: project.seo?.title || project.title,
-    description: project.seo?.description || project.summary,
+    title,
+    description,
+    alternates: {
+      canonical: `/projects/${slug}`,
+    },
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      url: `/projects/${slug}`,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${siteName}`,
+      description,
+    },
   };
 }
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const { isEnabled: isDraftMode } = await draftMode();
-  const project = await getProjectBySlug(slug, isDraftMode);
+  const [project, siteSettings] = await Promise.all([
+    getProjectBySlug(slug, isDraftMode),
+    getSiteSettings(),
+  ]);
 
   // Return 404 for missing slugs or unpublished content outside draft mode
   if (!project || (!isDraftMode && project._status !== "published")) {
     notFound();
   }
+
+  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const projectSchema = generateProjectSchema({ project, siteUrl });
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", path: "/" },
+      { name: "Projects", path: "/projects" },
+      { name: project.title, path: `/projects/${project.slug}` },
+    ],
+    siteUrl
+  );
 
   const badgeVariant: BadgeVariant =
     project.projectType === "professional"
@@ -69,6 +112,15 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   return (
     <>
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {isDraftMode && <PreviewBanner exitUrl={`/projects/${slug}`} />}
       <article className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Back Link */}

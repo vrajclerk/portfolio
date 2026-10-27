@@ -3,12 +3,39 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getProfile, getSiteSettings } from "@/lib/cms";
 import type { Media } from "@/payload-types";
+import { generateBreadcrumbSchema } from "@/utilities/structuredData";
 
-export const metadata: Metadata = {
-  title: "Resume & Curriculum Vitae",
-  description:
-    "Curriculum Vitae and professional software engineering experience of full-stack developer Vraj Clerk.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [profile, siteSettings] = await Promise.all([
+    getProfile(),
+    getSiteSettings(),
+  ]);
+
+  const siteName = siteSettings.siteName || "Vraj Clerk";
+  const title = "Resume & Curriculum Vitae";
+  const description =
+    profile.headline ||
+    "Curriculum Vitae and professional software engineering experience of full-stack developer Vraj Clerk.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: "/resume",
+    },
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      url: "/resume",
+      type: "profile",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${siteName}`,
+      description,
+    },
+  };
+}
 
 export default async function ResumePage() {
   const [profile, siteSettings] = await Promise.all([
@@ -26,8 +53,21 @@ export default async function ResumePage() {
   const publicEmail = siteSettings.publicEmail || "vrajclerk.dev@gmail.com";
   const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
 
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", path: "/" },
+      { name: "Resume", path: "/resume" },
+    ],
+    siteUrl
+  );
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {/* Top action bar (hidden during print) */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-6 border-b border-border print:hidden">
         <div>

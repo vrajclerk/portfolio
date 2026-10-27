@@ -7,9 +7,13 @@ import { Badge } from "@/components/Badge";
 import { ProjectCard } from "@/components/ProjectCard";
 import { PreviewBanner } from "@/components/PreviewBanner";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
-import { getPostBySlug, getPublishedPosts } from "@/lib/cms";
+import { getPostBySlug, getPublishedPosts, getSiteSettings } from "@/lib/cms";
 import type { Category, Project, Tag } from "@/payload-types";
 import { calculateReadingTime, formatReadingTime } from "@/utilities/readingTime";
+import {
+  generateArticleSchema,
+  generateBreadcrumbSchema,
+} from "@/utilities/structuredData";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,7 +26,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug, true);
+  const [post, siteSettings] = await Promise.all([
+    getPostBySlug(slug, true),
+    getSiteSettings(),
+  ]);
 
   if (!post) {
     return {
@@ -30,21 +37,54 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const title = post.seo?.title || post.title;
+  const description = post.seo?.description || post.excerpt;
+  const siteName = siteSettings.siteName || "Vraj Clerk";
+
   return {
-    title: post.seo?.title || post.title,
-    description: post.seo?.description || post.excerpt,
+    title,
+    description,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
+    openGraph: {
+      title: `${title} | ${siteName}`,
+      description,
+      url: `/blog/${slug}`,
+      type: "article",
+      publishedTime: post.publishedAt || undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${siteName}`,
+      description,
+    },
   };
 }
 
 export default async function BlogPostDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const { isEnabled: isDraftMode } = await draftMode();
-  const post = await getPostBySlug(slug, isDraftMode);
+  const [post, siteSettings] = await Promise.all([
+    getPostBySlug(slug, isDraftMode),
+    getSiteSettings(),
+  ]);
 
   // Return 404 for missing slugs or unpublished drafts outside draft mode
   if (!post || (!isDraftMode && post._status !== "published")) {
     notFound();
   }
+
+  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const articleSchema = generateArticleSchema({ post, siteUrl });
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blog" },
+      { name: post.title, path: `/blog/${post.slug}` },
+    ],
+    siteUrl
+  );
 
   const category =
     post.category && typeof post.category === "object" && "name" in post.category
@@ -75,6 +115,15 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
 
   return (
     <>
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {isDraftMode && <PreviewBanner exitUrl={`/blog/${slug}`} />}
       <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Back Link */}
