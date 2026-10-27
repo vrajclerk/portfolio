@@ -126,12 +126,12 @@ export default async function HomePage() {
        * Hero Section
        * --------------------------------------------------------------------- */}
       <section className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-3.5 py-1 text-xs font-medium text-muted-foreground mb-6">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/60 px-4 py-1.5 text-xs font-medium text-muted-foreground mb-6 backdrop-blur-xs">
+          <span className="flex h-2 w-2 rounded-full bg-emerald-500 shadow-xs" />
           <span>Available for Full-Stack & Backend Engineering Roles</span>
         </div>
 
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance">
+        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance leading-tight">
           {heroHeadline}
         </h1>
 
@@ -139,10 +139,10 @@ export default async function HomePage() {
           {heroSubheadline}
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
           <Link
             href="/projects"
-            className="inline-flex items-center rounded-lg bg-foreground px-6 py-3 text-sm font-medium text-background transition-all hover:opacity-90 hover:shadow-md"
+            className="inline-flex items-center rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-all duration-200 hover:opacity-90 hover:shadow-md hover:-translate-y-0.5"
           >
             Explore Case Studies
             <svg
@@ -158,14 +158,14 @@ export default async function HomePage() {
 
           <Link
             href="/resume"
-            className="inline-flex items-center rounded-lg border border-border bg-card px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            className="inline-flex items-center rounded-full border border-border/70 bg-card/80 px-7 py-3 text-sm font-semibold text-foreground transition-all duration-200 hover:bg-muted hover:-translate-y-0.5"
           >
             View Resume
           </Link>
 
           <Link
             href="/about"
-            className="inline-flex items-center rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center rounded-full px-5 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             About & Experience →
           </Link>
@@ -230,7 +230,7 @@ export default async function HomePage() {
             {profile.skills.map((group) => (
               <div
                 key={group.id || group.category}
-                className="rounded-xl border border-border bg-card p-6 shadow-xs"
+                className="rounded-2xl border border-border/60 bg-card/75 p-6 sm:p-7 shadow-xs backdrop-blur-xs transition-all duration-300 hover:border-foreground/20 hover:shadow-md hover:-translate-y-0.5"
               >
                 <h3 className="text-base font-bold text-foreground mb-4">
                   {group.category}
@@ -297,23 +297,23 @@ export default async function HomePage() {
        * --------------------------------------------------------------------- */}
       {showContact && (
         <section className="mx-auto max-w-4xl w-full px-4 text-center sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-border bg-card/60 p-8 sm:p-12 shadow-xs">
+          <div className="rounded-3xl border border-border/60 bg-gradient-to-b from-card/90 to-muted/40 p-10 sm:p-14 shadow-xs backdrop-blur-xs">
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Interested in collaborating or discussing a role?
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
               Always open to conversations regarding backend engineering, distributed systems, and full-stack development opportunities.
             </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
               <Link
                 href="/contact"
-                className="inline-flex items-center rounded-lg bg-foreground px-6 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90"
+                className="inline-flex items-center rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-all duration-200 hover:opacity-90 hover:shadow-md hover:-translate-y-0.5"
               >
                 Get in Touch
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center rounded-lg border border-border px-6 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                className="inline-flex items-center rounded-full border border-border/70 bg-card/80 px-7 py-3 text-sm font-semibold text-foreground transition-all duration-200 hover:bg-muted hover:-translate-y-0.5"
               >
                 Learn More About My Background
               </Link>

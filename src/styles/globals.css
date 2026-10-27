@@ -13,42 +13,43 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
- * Design tokens
- * Override these custom properties to retheme the site.
- * Phase 3 will sync colour values with CMS SiteSettings.
+ * Design tokens — Fluid Sculptural Editorial Aesthetic
+ * Light mode (Cashmere Milk & Terracotta) by default.
+ * Dark mode (Deep Space Velvet & Cyan) triggered by .dark class / data-theme="dark".
  * --------------------------------------------------------------------------- */
 
 :root {
-  /* Neutral palette — light mode */
-  --background: #ffffff;
-  --foreground: #0f172a; /* slate-900 */
-  --muted: #f1f5f9; /* slate-100 */
-  --muted-foreground: #64748b; /* slate-500 */
-  --border: #e2e8f0; /* slate-200 */
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --accent: #6366f1; /* indigo-500 — adjust in Phase 7 */
-  --accent-foreground: #ffffff;
+  /* Fluid Light Palette (Default) */
+  --background: #FAF8F5;          /* Warm cashmere milk */
+  --foreground: #191817;          /* Charcoal ink */
+  --muted: #F3ECE2;               /* Gentle ambient tonal pool */
+  --muted-foreground: #6B6661;    /* Warm shadow slate */
+  --border: rgba(25, 24, 23, 0.08); /* Subtle organic hairline */
+  --card: #FFFFFF;                /* Floating plate */
+  --card-foreground: #191817;
+  --accent: #C2410C;             /* Warm terracotta flame */
+  --accent-foreground: #FAF8F5;
+  --plate-bg: linear-gradient(145deg, #F0E8DC 0%, #E7DED0 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a; /* slate-900 */
-    --foreground: #f8fafc; /* slate-50 */
-    --muted: #1e293b; /* slate-800 */
-    --muted-foreground: #94a3b8; /* slate-400 */
-    --border: #1e293b; /* slate-800 */
-    --card: #1e293b;
-    --card-foreground: #f8fafc;
-    --accent: #818cf8; /* indigo-400 */
-    --accent-foreground: #0f172a;
-  }
+.dark,
+[data-theme="dark"] {
+  /* Fluid Dark Palette (Activated via Theme Toggler) */
+  --background: #0C0E12;          /* Deep space velvet */
+  --foreground: #F8FAFC;          /* Luminous off-white */
+  --muted: rgba(255, 255, 255, 0.06);
+  --muted-foreground: #8E98A8;    /* Nebular slate */
+  --border: rgba(255, 255, 255, 0.08);
+  --card: #14171F;                /* Dark floating plate */
+  --card-foreground: #F8FAFC;
+  --accent: #38BDF8;             /* Ethereal cyan */
+  --accent-foreground: #0C0E12;
+  --plate-bg: linear-gradient(160deg, #161A22 0%, #101319 100%);
 }
 
 /* ---------------------------------------------------------------------------
  * Tailwind theme extension
- * Maps CSS custom properties into the Tailwind v4 `@theme` block so that
- * utilities like `bg-background`, `text-muted-foreground`, etc. work.
+ * Maps CSS custom properties into the Tailwind v4 `@theme` block.
  * --------------------------------------------------------------------------- */
 
 @theme inline {
@@ -63,7 +64,8 @@
   --color-accent-foreground: var(--accent-foreground);
 
   /* Typography */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Code",
     "Source Code Pro", Menlo, monospace;
 }
@@ -75,6 +77,7 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Visible focus ring for keyboard navigation (WCAG 2.2 AA §2.4.11) */

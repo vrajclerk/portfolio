@@ -30,7 +30,7 @@ export function PostCard({ post }: PostCardProps) {
     : "Recently published";
 
   return (
-    <article className="group flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs transition-all hover:border-foreground/30 hover:shadow-md">
+    <article className="group flex flex-col justify-between rounded-2xl border border-border/60 bg-card/80 p-6 sm:p-7 shadow-xs transition-all duration-300 hover:border-foreground/25 hover:shadow-lg hover:-translate-y-0.5 backdrop-blur-xs">
       <div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
           {category && <Badge variant="outline">{category.name}</Badge>}
@@ -50,13 +50,13 @@ export function PostCard({ post }: PostCardProps) {
         </p>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between">
+      <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between">
         {tags.length > 0 ? (
           <div className="flex flex-wrap gap-1.5">
             {tags.slice(0, 3).map((tag) => (
               <span
                 key={tag.id}
-                className="inline-flex items-center rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground font-mono"
+                className="inline-flex items-center rounded-full bg-muted/70 px-2.5 py-0.5 text-xs text-muted-foreground font-mono"
               >
                 #{tag.name}
               </span>
