@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vraj Clerk — Non-Boxy Modern & Fluid Design Exploration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300&family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Geist', -apple-system, sans-serif;
+      background: #0B0D10;
+      color: #E2E8F0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Sticky Control Header */
+    #theme-controller {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: rgba(11, 13, 16, 0.94);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .controller-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: #94A3B8;
+    }
+    .controller-title strong {
+      color: #FFFFFF;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFF, #94A3B8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .pill-tabs {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .pill-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 7px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .pill-btn:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .pill-btn.active {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.18);
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Container for Previews */
+    #preview-viewport {
+      flex: 1;
+      width: 100%;
+    }
+    .theme-canvas {
+      display: none;
+      width: 100%;
+      min-height: calc(100vh - 65px);
+      position: relative;
+    }
+    .theme-canvas.is-selected {
+      display: block;
+    }
+
+    /* ==========================================================================
+       THEME A: FLUID SCULPTURAL EDITORIAL (LIGHT / ORGANIC & BORDERLESS)
+       Zero hard boxes. Generous whitespace, flowing typography, soft continuous curves.
+       ========================================================================== */
+    .fluid-light {
+      --fl-bg: #FAF8F5;            /* Soft cashmere milk */
+      --fl-text: #191817;          /* Charcoal ink */
+      --fl-muted: #6B6661;         /* Warm shadow slate */
+      --fl-accent: #C2410C;        /* Warm terracotta flame */
+      --fl-soft-tint: #F3ECE2;      /* Gentle ambient tonal pool */
+      --fl-glow: rgba(194, 65, 12, 0.06);
+
+      background-color: var(--fl-bg);
+      color: var(--fl-text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      position: relative;
+    }
+    
+    /* Ambient organic background lighting (no sharp lines) */
+    .fluid-light::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(235, 222, 206, 0.6) 0%, rgba(250, 248, 245, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .fl-wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 56px 40px 120px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Floating Pill Nav - borderless, organic */
+    .fl-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 96px;
+    }
+    .fl-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .fl-avatar-orb {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #191817 0%, #4A4641 100%);
+      color: #FAF8F5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .fl-brand-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .fl-nav-pill-menu {
+      display: flex;
+      align-items: center;
+      background: rgba(25, 24, 23, 0.04);
+      padding: 6px 8px;
+      border-radius: 999px;
+      gap: 6px;
+    }
+    .fl-nav-pill-menu a {
+      color: var(--fl-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      padding: 8px 18px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+    .fl-nav-pill-menu a:hover,
+    .fl-nav-pill-menu a.active {
+      color: var(--fl-text);
+      background: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    .fl-contact-cta {
+      background: var(--fl-text);
+      color: #FAF8F5;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 999px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .fl-contact-cta:hover {
+      background: var(--fl-accent);
+      transform: translateY(-1px);
+    }
+
+    /* Fluid Hero - No bounding container, pure typographic rhythm */
+    .fl-hero {
+      margin-bottom: 120px;
+    }
+    .fl-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--fl-muted);
+      margin-bottom: 32px;
+    }
+    .fl-pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #16A34A;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15);
+    }
+    .fl-hero-title {
+      font-size: clamp(40px, 5.5vw, 68px);
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      color: var(--fl-text);
+      margin-bottom: 32px;
+      max-width: 900px;
+    }
+    .fl-hero-title span.editorial-italic {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--fl-accent);
+      letter-spacing: -0.02em;
+    }
+    .fl-hero-bio {
+      font-size: 20px;
+      line-height: 1.6;
+      color: var(--fl-muted);
+      max-width: 680px;
+      font-weight: 400;
+    }
+
+    /* Borderless Case Study Spread */
+    .fl-section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--fl-accent);
+      margin-bottom: 48px;
+    }
+
+    .fl-case-spread {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      padding: 56px 0;
+      border-top: 1px solid rgba(25, 24, 23, 0.08);
+      margin-bottom: 64px;
+    }
+    .fl-case-meta {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--fl-muted);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .fl-case-title {
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .fl-case-p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--fl-muted);
+      margin-bottom: 32px;
+    }
+
+    /* Free-floating organic metrics - No square boxes */
+    .fl-metrics-flow {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 36px;
+    }
+    .fl-metric-item .number {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--fl-text);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .fl-metric-item .label {
+      font-size: 12px;
+      color: var(--fl-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .fl-link-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--fl-accent);
+      text-decoration: none;
+      transition: gap 0.2s ease;
+    }
+    .fl-link-pill:hover {
+      gap: 14px;
+    }
+
+    /* Visual Canvas Presentation (Soft Curvature, zero boxy card feel) */
+    .fl-visual-plate {
+      background: linear-gradient(145deg, #F0E8DC 0%, #E7DED0 100%);
+      border-radius: 32px;
+      padding: 40px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+    .fl-diagram-flow {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      color: #38332E;
+      line-height: 1.8;
+    }
+    .fl-tag-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .fl-pill-tag {
+      background: rgba(255, 255, 255, 0.7);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--fl-text);
+    }
+
+    /* Skills: Floating typographic layers instead of 3 rectangular cards */
+    .fl-skills-flow {
+      padding: 64px 0;
+      border-top: 1px solid rgba(25, 24, 23, 0.08);
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 48px;
+    }
+    .fl-skills-heading {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .fl-layer-list {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .fl-layer-row {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+    }
+    .fl-layer-name {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--fl-accent);
+      min-width: 140px;
+    }
+    .fl-layer-tech {
+      font-size: 16px;
+      color: var(--fl-muted);
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       THEME B: SPATIAL NOIR & LUMINOUS CURVATURE (DARK / FLUID & SCULPTURAL)
+       Velvety obsidian, expansive breathing room, pill interactions, soft ambient fields.
+       ========================================================================== */
+    .fluid-dark {
+      --fd-bg: #0C0E12;            /* Deep Space Velvet */
+      --fd-text: #F8FAFC;          /* Luminous Off-White */
+      --fd-muted: #8E98A8;         /* Cool Nebular Slate */
+      --fd-accent: #38BDF8;        /* Ethereal Cyan */
+      --fd-accent-warm: #F59E0B;   /* Radiant Amber */
+      --fd-glow: rgba(56, 189, 248, 0.12);
+
+      background-color: var(--fd-bg);
+      color: var(--fd-text);
+      font-family: 'Geist', sans-serif;
+      position: relative;
+    }
+
+    /* Soft ambient radial aura (no boxy borders) */
+    .fluid-dark::before {
+      content: "";
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 500px;
+      background: radial-gradient(ellipse at center, rgba(30, 41, 59, 0.6) 0%, rgba(12, 14, 18, 0) 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .fd-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 40px 120px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Fluid Spatial Nav */
+    .fd-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 104px;
+    }
+    .fd-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .fd-brand-glow {
+      width: 10px;
+      height: 10px;
+      background: var(--fd-accent);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--fd-accent);
+    }
+    .fd-nav-links {
+      display: flex;
+      gap: 32px;
+    }
+    .fd-nav-links a {
+      color: var(--fd-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    .fd-nav-links a:hover {
+      color: #FFFFFF;
+    }
+    .fd-cta-pill {
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      font-size: 13.5px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.2s ease;
+    }
+    .fd-cta-pill:hover {
+      background: #FFFFFF;
+      color: #0C0E12;
+      border-color: #FFFFFF;
+    }
+
+    /* Spatial Hero */
+    .fd-hero {
+      margin-bottom: 128px;
+    }
+    .fd-telemetry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--fd-accent);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 6px 16px;
+      border-radius: 999px;
+      margin-bottom: 36px;
+    }
+    .fd-hero-h1 {
+      font-size: clamp(42px, 5.8vw, 72px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin-bottom: 32px;
+      max-width: 950px;
+    }
+    .fd-hero-h1 em {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--fd-accent);
+    }
+    .fd-hero-p {
+      font-size: 20px;
+      line-height: 1.65;
+      color: var(--fd-muted);
+      max-width: 660px;
+    }
+
+    /* Spatial Project Showcase (Asymmetrical, continuous 28px curvature, no harsh box border) */
+    .fd-showcase-row {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 72px;
+      align-items: center;
+      margin-bottom: 112px;
+    }
+    .fd-case-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--fd-accent-warm);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+    }
+    .fd-case-h2 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 22px;
+    }
+    .fd-case-desc {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--fd-muted);
+      margin-bottom: 32px;
+    }
+    .fd-stats-strip {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 36px;
+    }
+    .fd-stat .val {
+      font-size: 30px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .fd-stat .lbl {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--fd-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Curved Spatial Canvas (Continuous squircle contour with ambient backlight) */
+    .fd-spatial-plate {
+      background: linear-gradient(160deg, #161A22 0%, #101319 100%);
+      border-radius: 36px;
+      padding: 44px;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+    }
+    .fd-spatial-plate::after {
+      content: "";
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+    }
+    .fd-pipeline-code {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.8;
+      color: #CBD5E1;
+    }
+    .fd-pipeline-code .kw { color: var(--fd-accent); }
+    .fd-pipeline-code .op { color: var(--fd-accent-warm); }
+    .fd-tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .fd-tech-pill {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: #E2E8F0;
+    }
+
+    /* Open Layered Capabilities List (No boxes!) */
+    .fd-capabilities-flow {
+      padding-top: 64px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .fd-cap-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 48px;
+    }
+    .fd-cap-title {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .fd-cap-sub {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--fd-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .fd-cap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 48px;
+    }
+    .fd-cap-col h4 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .fd-cap-col h4 span {
+      color: var(--fd-accent);
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+    }
+    .fd-cap-col p {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--fd-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Mode Bar -->
+  <header id="theme-controller">
+    <div class="controller-title">
+      <strong>Fluid & Non-Boxy Design Explorations</strong>
+      <span>Vraj Clerk Portfolio</span>
+    </div>
+
+    <!-- Toggle between the 2 Non-Boxy Explorations -->
+    <div class="pill-tabs">
+      <button class="pill-btn active" onclick="switchTheme('fluid-light')">
+        <span class="dot" style="background: #C2410C;"></span>
+        09. Fluid Sculptural Editorial (Warm Light)
+      </button>
+      <button class="pill-btn" onclick="switchTheme('fluid-dark')">
+        <span class="dot" style="background: #38BDF8;"></span>
+        10. Spatial Noir & Luminous Flow (Deep Dark)
+      </button>
+    </div>
+  </header>
+
+  <main id="preview-viewport">
+
+    <!-- ====================================================================
+         THEME 09: FLUID SCULPTURAL EDITORIAL (WARM LIGHT, ZERO BOXES)
+         ==================================================================== -->
+    <section class="theme-canvas fluid-light is-selected" id="view-fluid-light">
+      <div class="fl-wrap">
+        
+        <!-- Fluid Pill Navigation -->
+        <nav class="fl-nav">
+          <div class="fl-brand">
+            <div class="fl-avatar-orb">VC</div>
+            <span class="fl-brand-name">Vraj Clerk</span>
+          </div>
+          <div class="fl-nav-pill-menu">
+            <a href="#" class="active">Engineering</a>
+            <a href="#">Case Studies</a>
+            <a href="#">Thoughts</a>
+            <a href="#">About</a>
+          </div>
+          <a href="#contact" class="fl-contact-cta">Get in Touch</a>
+        </nav>
+
+        <!-- Fluid Hero (No containers, breathing room) -->
+        <header class="fl-hero">
+          <div class="fl-status-badge">
+            <span class="fl-pulse-dot"></span>
+            <span>Based in Surat, IN • Available for Full-Stack & Systems Roles</span>
+          </div>
+          <h1 class="fl-hero-title">
+            Engineering resilient backend architectures and <span class="editorial-italic">fluid web experiences</span> with disciplined precision.
+          </h1>
+          <p class="fl-hero-bio">
+            Specialized in TypeScript, Next.js App Router, and PostgreSQL. Focused on crafting zero-cost deployment pipelines, schema migrations, and clean system design that stands the test of time.
+          </p>
+        </header>
+
+        <!-- Borderless Asymmetric Case Study Spread -->
+        <div class="fl-section-label">Selected Production Systems</div>
+
+        <article class="fl-case-spread">
+          <div class="fl-case-text">
+            <div class="fl-case-meta">01 / Infrastructure & Systems • Production</div>
+            <h2 class="fl-case-title">Zero-Cost CMS & Application Deployment Pipeline</h2>
+            <p class="fl-case-p">
+              Engineered an autonomous Next.js App Router and Payload CMS platform backed by PostgreSQL on constrained Always Free cloud compute. Designed for complete persistence, automatic SSL renewal, and sub-50ms dynamic TTFB without subscription overhead.
+            </p>
+
+            <!-- Floating Metrics without Box Borders -->
+            <div class="fl-metrics-flow">
+              <div class="fl-metric-item">
+                <div class="number">$0.00</div>
+                <div class="label">Operating Cost</div>
+              </div>
+              <div class="fl-metric-item">
+                <div class="number">&lt; 45ms</div>
+                <div class="label">Edge TTFB</div>
+              </div>
+              <div class="fl-metric-item">
+                <div class="number">99.9%</div>
+                <div class="label">Availability</div>
+              </div>
+            </div>
+
+            <a href="#" class="fl-link-pill">
+              <span>Read Architecture Spec & Post-Mortem</span>
+              <span>→</span>
+            </a>
+          </div>
+
+          <!-- Organic Sculptural Plate (Soft 32px curves, no 1px boxy borders) -->
+          <div class="fl-visual-plate">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fl-accent); margin-bottom: 16px;">
+              System Topology Diagram
+            </div>
+            <div class="fl-diagram-flow">
+              Client Request (HTTPS)<br>
+              &nbsp;&nbsp;↳ <strong>Caddy Proxy</strong> (Automatic TLS & HSTS)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;↳ <strong>Next.js App Router</strong> (Node.js Process)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↳ <strong>Local Postgres Pool</strong> (Isolated Socket)
+            </div>
+            <div class="fl-tag-group">
+              <span class="fl-pill-tag">TypeScript</span>
+              <span class="fl-pill-tag">Next.js App Router</span>
+              <span class="fl-pill-tag">Payload CMS</span>
+              <span class="fl-pill-tag">PostgreSQL</span>
+              <span class="fl-pill-tag">Linux Systemd</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Open Layered Capabilities List (No Cards!) -->
+        <section class="fl-skills-flow">
+          <div class="fl-skills-heading">
+            System Capabilities & Stack
+          </div>
+          <div class="fl-layer-list">
+            <div class="fl-layer-row">
+              <div class="fl-layer-name">Runtime & App</div>
+              <div class="fl-layer-tech">TypeScript, Next.js App Router, React 19, Node.js, tRPC, REST APIs</div>
+            </div>
+            <div class="fl-layer-row">
+              <div class="fl-layer-name">Persistence</div>
+              <div class="fl-layer-tech">PostgreSQL, Payload CMS, Prisma ORM, Schema Migrations, RBAC, Connection Pooling</div>
+            </div>
+            <div class="fl-layer-row">
+              <div class="fl-layer-name">Operations</div>
+              <div class="fl-layer-tech">Linux Systemd, Caddy Reverse Proxy, Docker, GitHub Actions CI/CD, Zero-Cost Optimization</div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         THEME 10: SPATIAL NOIR & LUMINOUS FLOW (DEEP DARK, ZERO BOXES)
+         ==================================================================== -->
+    <section class="theme-canvas fluid-dark" id="view-fluid-dark">
+      <div class="fd-wrap">
+
+        <!-- Spatial Nav -->
+        <nav class="fd-nav">
+          <div class="fd-brand">
+            <span class="fd-brand-glow"></span>
+            <span>Vraj Clerk</span>
+          </div>
+          <div class="fd-nav-links">
+            <a href="#">Systems</a>
+            <a href="#">Case Studies</a>
+            <a href="#">Writing</a>
+            <a href="#">About</a>
+          </div>
+          <a href="#contact" class="fd-cta-pill">Initiate Contact</a>
+        </nav>
+
+        <!-- Spatial Hero -->
+        <header class="fd-hero">
+          <div class="fd-telemetry-badge">
+            <span>● 2026 ARCHITECTURE</span> • <span>NODE RUNTIME</span> • <span>LATENCY: 24ms</span>
+          </div>
+          <h1 class="fd-hero-h1">
+            Building reliable full-stack systems with <em>organic fluidity</em> and backend rigor.
+          </h1>
+          <p class="fd-hero-p">
+            Bridging robust PostgreSQL database design with modern reactive frontends. No bloated templates, no artificial complexity—just disciplined, high-performance web engineering.
+          </p>
+        </header>
+
+        <!-- Asymmetrical Project Showcase (Continuous 36px Squircle Contour) -->
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--fd-accent); margin-bottom: 48px;">
+          // 01_PRODUCTION_SYSTEM_SPEC
+        </div>
+
+        <article class="fd-showcase-row">
+          <div>
+            <div class="fd-case-tag">Infrastructure & Cloud Engineering</div>
+            <h2 class="fd-case-h2">Zero-Cost CMS & Application Deployment Pipeline</h2>
+            <p class="fd-case-desc">
+              Engineered an autonomous Next.js App Router and Payload CMS platform backed by PostgreSQL on constrained Always Free cloud compute. Designed for complete persistence, automatic SSL renewal, and sub-50ms dynamic TTFB.
+            </p>
+
+            <div class="fd-stats-strip">
+              <div class="fd-stat">
+                <div class="val">$0.00</div>
+                <div class="lbl">Cloud Spend</div>
+              </div>
+              <div class="fd-stat">
+                <div class="val">&lt; 45ms</div>
+                <div class="lbl">Edge TTFB</div>
+              </div>
+              <div class="fd-stat">
+                <div class="val">99.9%</div>
+                <div class="lbl">SLA Uptime</div>
+              </div>
+            </div>
+
+            <a href="#" style="color: var(--fd-accent); text-decoration: none; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+              Inspect Architecture Blueprint & Trade-offs →
+            </a>
+          </div>
+
+          <!-- Curved Ambient Plate (No harsh 1px borders) -->
+          <div class="fd-spatial-plate">
+            <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--fd-muted); text-transform: uppercase; margin-bottom: 20px;">
+              Data Pipeline & Network Boundary
+            </div>
+            <div class="fd-pipeline-code">
+              <span class="kw">ingress</span>: <span class="op">https://vrajclerk.dev</span><br>
+              &nbsp;&nbsp;→ <span class="kw">caddy</span>: reverse_proxy localhost:3000<br>
+              &nbsp;&nbsp;→ <span class="kw">nextjs</span>: server_components + payload_core<br>
+              &nbsp;&nbsp;→ <span class="kw">postgres</span>: unix_socket connection_pool
+            </div>
+            <div class="fd-tech-pills">
+              <span class="fd-tech-pill">TypeScript</span>
+              <span class="fd-tech-pill">Next.js App Router</span>
+              <span class="fd-tech-pill">Payload CMS</span>
+              <span class="fd-tech-pill">PostgreSQL</span>
+              <span class="fd-tech-pill">Caddy Proxy</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Open Layered Capabilities List -->
+        <section class="fd-capabilities-flow">
+          <div class="fd-cap-header">
+            <h3 class="fd-cap-title">Technical System Architecture</h3>
+            <span class="fd-cap-sub">By System Layer</span>
+          </div>
+          <div class="fd-cap-grid">
+            <div class="fd-cap-col">
+              <h4><span>01</span> Application Layer</h4>
+              <p>TypeScript, Next.js App Router, React 19, Node.js runtime, tRPC, and modern responsive design systems.</p>
+            </div>
+            <div class="fd-cap-col">
+              <h4><span>02</span> Persistence & Data</h4>
+              <p>PostgreSQL, Payload CMS collections, Prisma ORM, idempotent schema migrations, RBAC security, and pooling.</p>
+            </div>
+            <div class="fd-cap-col">
+              <h4><span>03</span> Infrastructure & Ops</h4>
+              <p>Linux Systemd services, Caddy automated TLS reverse proxy, Docker containers, and GitHub Actions CI/CD.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function switchTheme(themeId) {
+      document.querySelectorAll('.pill-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(themeId));
+      });
+      document.querySelectorAll('.theme-canvas').forEach(canvas => {
+        canvas.classList.toggle('is-selected', canvas.id === 'view-' + themeId);
+      });
+    }
+  </script>
+</body>
+</html>

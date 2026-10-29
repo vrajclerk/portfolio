@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EmptyState } from "@/components/EmptyState";
+import { HeroSection } from "@/components/HeroSection";
 import { PostCard } from "@/components/PostCard";
 import { ProjectCard } from "@/components/ProjectCard";
 import {
@@ -110,6 +111,13 @@ export default async function HomePage() {
   const showContact =
     homepageSettings.sectionsVisibility?.showContact !== false;
 
+  const avatarUrl =
+    profile.profileImage &&
+    typeof profile.profileImage === "object" &&
+    "url" in profile.profileImage
+      ? (profile.profileImage.url as string | null)
+      : null;
+
   return (
     <div className="flex flex-col gap-16 py-12 md:py-20">
       {/* Schema.org Structured Data */}
@@ -123,54 +131,13 @@ export default async function HomePage() {
       />
 
       {/* ---------------------------------------------------------------------
-       * Hero Section
+       * Hero Section (Asymmetric Split & Overlapping Proof Badge)
        * --------------------------------------------------------------------- */}
-      <section className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-muted/60 px-4 py-1.5 text-xs font-medium text-muted-foreground mb-6 backdrop-blur-xs">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500 shadow-xs" />
-          <span>Available for Full-Stack & Backend Engineering Roles</span>
-        </div>
-
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance leading-tight">
-          {heroHeadline}
-        </h1>
-
-        <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground text-balance">
-          {heroSubheadline}
-        </p>
-
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-          <Link
-            href="/projects"
-            className="inline-flex items-center rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-all duration-200 hover:opacity-90 hover:shadow-md hover:-translate-y-0.5"
-          >
-            Explore Case Studies
-            <svg
-              className="ml-2 h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </Link>
-
-          <Link
-            href="/resume"
-            className="inline-flex items-center rounded-full border border-border/70 bg-card/80 px-7 py-3 text-sm font-semibold text-foreground transition-all duration-200 hover:bg-muted hover:-translate-y-0.5"
-          >
-            View Resume
-          </Link>
-
-          <Link
-            href="/about"
-            className="inline-flex items-center rounded-full px-5 py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            About & Experience →
-          </Link>
-        </div>
-      </section>
+      <HeroSection
+        headline={heroHeadline}
+        subheadline={heroSubheadline}
+        avatarUrl={avatarUrl}
+      />
 
       {/* ---------------------------------------------------------------------
        * Featured Projects Section
