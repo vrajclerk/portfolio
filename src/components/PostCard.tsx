@@ -30,7 +30,7 @@ export function PostCard({ post }: PostCardProps) {
     : "Recently published";
 
   return (
-    <article className="group flex flex-col justify-between rounded-2xl border border-border/60 bg-card/80 p-6 sm:p-7 shadow-xs transition-all duration-300 hover:border-foreground/25 hover:shadow-lg hover:-translate-y-0.5 backdrop-blur-xs">
+    <article className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all duration-300 hover:border-accent hover:shadow-lg hover:-translate-y-0.5">
       <div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
           {category && <Badge variant="outline">{category.name}</Badge>}

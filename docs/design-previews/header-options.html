@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vraj Clerk — Modern Header Design Explorations</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Geist+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Theme Tokens (Nordic Ice Light by default, Matte Carbon Dark when .dark-mode) */
+    :root {
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --muted: #F1F5F9;
+      --muted-fg: #475569;
+      --border: #CBD5E1;
+      --card: #FFFFFF;
+      --accent: #1D4ED8;
+      --accent-fg: #FFFFFF;
+      --badge-bg: #0F172A;
+      --badge-fg: #F8FAFC;
+      --badge-accent: #38BDF8;
+    }
+
+    body.dark-mode {
+      --bg: #0E1013;
+      --fg: #FFFFFF;
+      --muted: #161A22;
+      --muted-fg: #9BA3AF;
+      --border: #2D333F;
+      --card: #161A22;
+      --accent: #FF6B00;
+      --accent-fg: #0E1013;
+      --badge-bg: #161A22;
+      --badge-fg: #FFFFFF;
+      --badge-accent: #FF6B00;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    /* Fixed Top Control Bar */
+    #controller-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10000;
+      background: rgba(14, 16, 19, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #F8FAFC;
+    }
+
+    .controller-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #94A3B8;
+    }
+    .controller-title strong { color: #FFFFFF; }
+
+    .header-tabs {
+      display: flex;
+      align-items: center;
+      background: #161A22;
+      border: 1px solid #2D333F;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover {
+      color: #FFFFFF;
+      background: #232B3B;
+    }
+    .tab-btn.active {
+      color: #FFFFFF;
+      background: #2563EB;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.4);
+    }
+    body.dark-mode .tab-btn.active {
+      background: #FF6B00;
+      color: #000;
+      box-shadow: 0 2px 10px rgba(255, 107, 0, 0.4);
+    }
+
+    .control-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .theme-toggle-btn {
+      background: #232B3B;
+      border: 1px solid #38455B;
+      color: #F8FAFC;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 999px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .theme-toggle-btn:hover {
+      background: #313D53;
+    }
+
+    /* Container for Header Demos */
+    .demo-stage {
+      width: 100%;
+      min-height: calc(100vh - 65px);
+      position: relative;
+    }
+
+    .header-preview-section {
+      display: none;
+      width: 100%;
+      position: relative;
+    }
+    .header-preview-section.is-active {
+      display: block;
+    }
+
+    .view-mode-scroll .header-preview-section {
+      display: block !important;
+      margin-bottom: 80px;
+      border-bottom: 2px dashed var(--border);
+      padding-bottom: 60px;
+    }
+
+    /* Option Header Spec Banner */
+    .option-banner {
+      background: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+    }
+
+    /* Sample Hero Preview Canvas below headers */
+    .sample-hero-canvas {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 24px 80px 24px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(29, 78, 216, 0.08);
+      border: 1px solid rgba(29, 78, 216, 0.25);
+      color: var(--accent);
+      font-family: 'Geist Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    body.dark-mode .hero-eyebrow {
+      background: rgba(255, 107, 0, 0.1);
+      border-color: rgba(255, 107, 0, 0.3);
+    }
+    .hero-title {
+      font-size: clamp(38px, 4.5vw, 56px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin-bottom: 20px;
+      color: var(--fg);
+    }
+    .hero-title .serif-accent {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-color: rgba(29, 78, 216, 0.3);
+      text-underline-offset: 8px;
+    }
+    body.dark-mode .hero-title .serif-accent {
+      text-decoration-color: rgba(255, 107, 0, 0.3);
+    }
+    .hero-p {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--muted-fg);
+      margin-bottom: 30px;
+      max-width: 540px;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-cta {
+      padding: 12px 26px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      transition: all 0.2s ease;
+    }
+    .btn-cta:hover { transform: translateY(-2px); }
+
+    /* =========================================================================
+       HEADER OPTION 01: FLOATING DYNAMIC ISLAND DOCK (Flagship Animated Capsule)
+       Detached capsule dock floating over hero with aurora glow, conic border beam,
+       multi-ring radar beacon, segmented fluid nav & tactile micro-interactions
+       ========================================================================= */
+    .header-opt-1-wrap {
+      position: sticky;
+      top: 20px;
+      z-index: 100;
+      padding: 0 24px;
+      width: 100%;
+      pointer-events: none;
+      animation: dockEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes dockEntrance {
+      from {
+        opacity: 0;
+        transform: translateY(-24px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes dockHoverFloat {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    @keyframes auroraAura {
+      0%, 100% {
+        transform: scale(0.96) translateY(0px);
+        opacity: 0.25;
+      }
+      50% {
+        transform: scale(1.05) translateY(-3px);
+        opacity: 0.45;
+      }
+    }
+
+    @keyframes borderBeamSweep {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes shimmerSweepFast {
+      0% { transform: translateX(-160%) skewX(-20deg); }
+      40%, 100% { transform: translateX(260%) skewX(-20deg); }
+    }
+
+    /* Ambient Pulsing Aurora Halo directly behind the dock */
+    .h1-aurora-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 90%;
+      height: 120%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at center, rgba(29, 78, 216, 0.28) 0%, rgba(56, 189, 248, 0.15) 45%, transparent 75%);
+      filter: blur(28px);
+      border-radius: 999px;
+      pointer-events: none;
+      z-index: -1;
+      animation: auroraAura 6s ease-in-out infinite;
+      transition: all 0.4s ease;
+    }
+    body.dark-mode .h1-aurora-glow {
+      background: radial-gradient(ellipse at center, rgba(255, 107, 0, 0.35) 0%, rgba(255, 170, 0, 0.18) 45%, transparent 75%);
+      filter: blur(32px);
+    }
+
+    .header-opt-1-wrap:hover .h1-aurora-glow {
+      opacity: 0.65;
+      filter: blur(34px);
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    /* Outer Capsule Dock Container */
+    .header-opt-1 {
+      pointer-events: auto;
+      max-width: 1020px;
+      margin: 0 auto;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--border);
+      box-shadow: 
+        0 12px 36px rgba(15, 23, 42, 0.08),
+        0 2px 6px rgba(15, 23, 42, 0.04),
+        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: dockHoverFloat 6s ease-in-out infinite;
+    }
+
+    body.dark-mode .header-opt-1 {
+      background: rgba(18, 22, 29, 0.9);
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.65),
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    }
+
+    /* Rotating Conic Border Beam for vivid futuristic glow */
+    .header-opt-1.has-beam::before {
+      content: '';
+      position: absolute;
+      top: -150%;
+      left: -50%;
+      width: 200%;
+      height: 400%;
+      background: conic-gradient(
+        transparent 0deg,
+        transparent 280deg,
+        rgba(29, 78, 216, 0.8) 320deg,
+        rgba(56, 189, 248, 1) 345deg,
+        transparent 360deg
+      );
+      animation: borderBeamSweep 5s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body.dark-mode .header-opt-1.has-beam::before {
+      background: conic-gradient(
+        transparent 0deg,
+        transparent 280deg,
+        rgba(255, 107, 0, 0.85) 320deg,
+        rgba(255, 215, 0, 1) 345deg,
+        transparent 360deg
+      );
+    }
+
+    /* Inner pill mask to keep content crisp above the rotating beam */
+    .header-opt-1.has-beam::after {
+      content: '';
+      position: absolute;
+      inset: 1.5px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-radius: 999px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    body.dark-mode .header-opt-1.has-beam::after {
+      background: rgba(18, 22, 29, 0.94);
+    }
+
+    /* Dock Content Layered above masks */
+    .header-opt-1 > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    .header-opt-1:hover {
+      box-shadow: 
+        0 24px 55px rgba(15, 23, 42, 0.14),
+        0 0 25px rgba(29, 78, 216, 0.18),
+        0 0 0 1px rgba(29, 78, 216, 0.4);
+      transform: translateY(-2px);
+    }
+    body.dark-mode .header-opt-1:hover {
+      box-shadow: 
+        0 28px 75px rgba(0, 0, 0, 0.75),
+        0 0 35px rgba(255, 107, 0, 0.28),
+        0 0 0 1px rgba(255, 107, 0, 0.5);
+    }
+
+    /* Left Brand Area */
+    .h1-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--fg);
+      padding: 4px 12px 4px 4px;
+      border-radius: 999px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .h1-brand:hover {
+      background: rgba(0, 0, 0, 0.04);
+      transform: translateX(2px);
+    }
+    body.dark-mode .h1-brand:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Tactile Monogram Avatar with 3D Spring & Bevel */
+    .h1-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent) 0%, #2563EB 60%, #38BDF8 100%);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      box-shadow: 
+        0 4px 12px rgba(29, 78, 216, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    body.dark-mode .h1-avatar {
+      background: linear-gradient(135deg, #FF6B00 0%, #EA580C 60%, #FBBF24 100%);
+      color: #0E1013;
+      box-shadow: 
+        0 4px 14px rgba(255, 107, 0, 0.45),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+    }
+
+    .h1-avatar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: translateX(-150%) skewX(-20deg);
+      transition: transform 0.5s ease;
+    }
+    .h1-brand:hover .h1-avatar {
+      transform: scale(1.15) rotate(-6deg);
+      box-shadow: 0 6px 18px rgba(29, 78, 216, 0.5);
+    }
+    .h1-brand:hover .h1-avatar::after {
+      transform: translateX(150%) skewX(-20deg);
+    }
+
+    .h1-brand-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .h1-name {
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    /* Live Radar Beacon Indicator */
+    .h1-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #059669;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 1.5px 7px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+    body.dark-mode .h1-status-pill {
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .h1-radar-box {
+      position: relative;
+      width: 8px;
+      height: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .h1-radar-core {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 6px #10B981;
+    }
+    .h1-radar-wave {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1.5px solid #10B981;
+      animation: radarRipple 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    }
+    .h1-radar-wave.second {
+      animation-delay: 1.1s;
+    }
+
+    @keyframes radarRipple {
+      0% {
+        transform: scale(0.6);
+        opacity: 0.9;
+      }
+      100% {
+        transform: scale(2.6);
+        opacity: 0;
+      }
+    }
+
+    /* Center Segmented Fluid Navigation */
+    .h1-nav {
+      display: flex;
+      align-items: center;
+      background: var(--muted);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 2px;
+      border: 1px solid var(--border);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+      position: relative;
+    }
+    body.dark-mode .h1-nav {
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .h1-nav a {
+      color: var(--muted-fg);
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      white-space: nowrap;
+    }
+    .h1-nav a:hover {
+      color: var(--fg);
+      background: rgba(255, 255, 255, 0.7);
+      transform: translateY(-1.5px);
+    }
+    body.dark-mode .h1-nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .h1-nav a.active {
+      color: var(--fg);
+      background: var(--card);
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(0, 0, 0, 0.04);
+      font-weight: 700;
+    }
+    body.dark-mode .h1-nav a.active {
+      box-shadow: 
+        0 3px 12px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .h1-nav a.active::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      display: inline-block;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    /* Right Action Elements */
+    .h1-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Tactical CTA Pill with Shimmer & Gliding Arrow */
+    .h1-hire-pill {
+      background: var(--accent);
+      color: var(--accent-fg);
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 7px 18px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 
+        0 4px 14px rgba(29, 78, 216, 0.28),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    body.dark-mode .h1-hire-pill {
+      box-shadow: 
+        0 4px 16px rgba(255, 107, 0, 0.35),
+        0 0 0 1px rgba(0, 0, 0, 0.2) inset;
+    }
+
+    .h1-hire-pill::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: translateX(-160%) skewX(-20deg);
+      animation: shimmerSweepFast 4.5s infinite;
+    }
+
+    .h1-hire-pill:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 
+        0 8px 24px rgba(29, 78, 216, 0.42),
+        0 0 15px rgba(29, 78, 216, 0.3);
+      filter: brightness(1.08);
+    }
+    body.dark-mode .h1-hire-pill:hover {
+      box-shadow: 
+        0 8px 26px rgba(255, 107, 0, 0.5),
+        0 0 18px rgba(255, 107, 0, 0.35);
+    }
+
+    .h1-hire-pill svg {
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .h1-hire-pill:hover svg {
+      transform: translateX(4px) translateY(-1px);
+    }
+
+    /* Spring-Spinning Theme Orb */
+    .icon-btn-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .icon-btn-circle:hover {
+      background: var(--card);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: rotate(180deg) scale(1.12);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), 0 0 12px var(--accent);
+    }
+
+    /* =========================================================================
+       SUB-STYLES & ANIMATION CONTROLS FOR OPTION 1
+       ========================================================================= */
+    .opt1-studio-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 20px;
+      margin: 16px auto 12px auto;
+      max-width: 1020px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      font-size: 12px;
+    }
+    .opt1-sub-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .opt1-sub-btn {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--muted);
+      color: var(--muted-fg);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 11.5px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .opt1-sub-btn:hover {
+      color: var(--fg);
+      border-color: var(--accent);
+    }
+    .opt1-sub-btn.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+    }
+    .opt1-toggles {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      flex-wrap: wrap;
+    }
+    .opt1-chip-btn {
+      padding: 4px 12px;
+      border-radius: 8px;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      color: var(--fg);
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+    .opt1-chip-btn.active {
+      background: var(--badge-bg);
+      color: var(--badge-accent);
+      border-color: var(--badge-accent);
+    }
+
+    /* Style 1B: Cyber Glass & Telemetry HUD modifier */
+    .header-opt-1.style-cyber {
+      border-radius: 16px;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+    .header-opt-1.style-cyber::before {
+      border-radius: 16px;
+    }
+    .header-opt-1.style-cyber::after {
+      border-radius: 15px;
+    }
+    .style-cyber .h1-avatar {
+      border-radius: 10px;
+    }
+    .style-cyber .h1-nav {
+      border-radius: 10px;
+    }
+    .style-cyber .h1-nav a {
+      border-radius: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11.5px;
+    }
+    .style-cyber .h1-hire-pill {
+      border-radius: 10px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    /* Style 1C: Liquid Prismatic Glass Minimalist */
+    .header-opt-1.style-prismatic {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(40px) saturate(220%);
+      -webkit-backdrop-filter: blur(40px) saturate(220%);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 
+        0 24px 60px rgba(15, 23, 42, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+    }
+    body.dark-mode .header-opt-1.style-prismatic {
+      background: rgba(18, 22, 29, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 
+        0 28px 70px rgba(0, 0, 0, 0.65),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Speed modifiers */
+    .speed-hyper .header-opt-1.has-beam::before {
+      animation-duration: 2.2s !important;
+    }
+    .speed-hyper .h1-aurora-glow {
+      animation-duration: 2.8s !important;
+    }
+    .speed-hyper .h1-hire-pill::after {
+      animation-duration: 2s !important;
+    }
+    .speed-hyper .header-opt-1 {
+      animation-duration: 3s !important;
+    }
+
+    .float-paused .header-opt-1 {
+      animation: none !important;
+    }
+
+    /* =========================================================================
+       HEADER OPTION 02: TECHNICAL HUD TELEMETRY & COMMAND PALETTE (Linear/Raycast Style)
+       Edge-to-edge bar with active coordinate chips, TTFB indicator, & [⌘K] trigger
+       ========================================================================= */
+    .header-opt-2 {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      background: rgba(248, 250, 252, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+    body.dark-mode .header-opt-2 {
+      background: rgba(14, 16, 19, 0.92);
+    }
+    .h2-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      height: 62px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .h2-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--fg);
+      font-family: 'Geist Mono', monospace;
+    }
+    .h2-prompt {
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .h2-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 14px;
+      background: var(--accent);
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .h2-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      color: var(--muted-fg);
+      font-weight: 600;
+    }
+
+    .h2-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+    }
+    .h2-nav a {
+      color: var(--muted-fg);
+      text-decoration: none;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .h2-nav a span.num {
+      color: var(--accent);
+      font-size: 10px;
+      opacity: 0.8;
+    }
+    .h2-nav a:hover, .h2-nav a.active {
+      color: var(--fg);
+      background: var(--muted);
+    }
+    .h2-nav a.active {
+      font-weight: 700;
+      border: 1px solid var(--border);
+    }
+
+    .h2-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Geist Mono', monospace;
+    }
+    .h2-telemetry-chip {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted-fg);
+    }
+    .h2-telemetry-chip span.val {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .h2-cmd-btn {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      color: var(--muted-fg);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .h2-cmd-btn:hover {
+      border-color: var(--accent);
+      color: var(--fg);
+    }
+
+    /* =========================================================================
+       HEADER OPTION 03: SWISS ARCHITECTURAL SPLIT BAR (Editorial Precision)
+       Three clean column partitions with hairline dividers and prominent typography
+       ========================================================================= */
+    .header-opt-3 {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .h3-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr auto;
+      height: 66px;
+      align-items: center;
+    }
+    .h3-col-1 {
+      padding: 0 24px;
+      border-right: 1px solid var(--border);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .h3-brand-title {
+      font-weight: 800;
+      font-size: 14.5px;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      text-decoration: none;
+    }
+    .h3-brand-sub {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted-fg);
+      margin-top: 1px;
+    }
+
+    .h3-col-2 {
+      padding: 0 28px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .h3-col-2 a {
+      color: var(--muted-fg);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      position: relative;
+      padding: 6px 0;
+      transition: color 0.2s ease;
+    }
+    .h3-col-2 a:hover, .h3-col-2 a.active {
+      color: var(--fg);
+    }
+    .h3-col-2 a.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .h3-col-3 {
+      padding: 0 24px;
+      border-left: 1px solid var(--border);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .h3-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-fg);
+    }
+    .h3-status span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    /* =========================================================================
+       HEADER OPTION 04: SPATIAL GLASS DOCK WITH INTEGRATED QUICK-CONTACT TRAY
+       Floating bar with integrated 1-click email copy & live time stamp
+       ========================================================================= */
+    .header-opt-4-wrap {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      padding: 0 24px;
+      width: 100%;
+      pointer-events: none;
+    }
+    .header-opt-4 {
+      pointer-events: auto;
+      max-width: 1080px;
+      margin: 0 auto;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+    }
+    body.dark-mode .header-opt-4 {
+      background: rgba(18, 22, 29, 0.88);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .h4-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--fg);
+    }
+    .h4-monogram {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .h4-time-box {
+      display: flex;
+      flex-direction: column;
+    }
+    .h4-time-box .location {
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+    .h4-time-box .time {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10.5px;
+      color: var(--muted-fg);
+    }
+
+    .h4-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .h4-nav a {
+      color: var(--muted-fg);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    .h4-nav a:hover {
+      color: var(--fg);
+      background: var(--muted);
+    }
+    .h4-nav a.active {
+      color: var(--accent);
+      background: var(--muted);
+      font-weight: 700;
+    }
+
+    .h4-tray {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .h4-copy-chip {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--fg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .h4-copy-chip:hover {
+      border-color: var(--accent);
+      background: var(--card);
+    }
+    .h4-cta {
+      background: var(--accent);
+      color: var(--accent-fg);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 7px 15px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    .h4-cta:hover { transform: translateY(-1px); }
+
+    /* Right column visual plate */
+    .sample-media-frame {
+      aspect-ratio: 4/5;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.06);
+      position: relative;
+    }
+    .sample-hud-badge {
+      position: absolute;
+      bottom: -20px;
+      left: -20px;
+      background: var(--badge-bg);
+      color: var(--badge-fg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 22px;
+      font-family: 'Geist Mono', monospace;
+      width: 200px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       TOP CONTROLLER / NAVIGATION BAR
+       ========================================================================= -->
+  <header id="controller-bar">
+    <div class="controller-title">
+      <strong>Header Suite:</strong> 4 Distinct Concepts
+    </div>
+
+    <!-- Header Option Tabs -->
+    <div class="header-tabs">
+      <button class="tab-btn active" onclick="switchHeader('opt1')">
+        1. Floating Dynamic Island Dock (★ Recommended)
+      </button>
+      <button class="tab-btn" onclick="switchHeader('opt2')">
+        2. Technical HUD Telemetry (Vercel / Linear)
+      </button>
+      <button class="tab-btn" onclick="switchHeader('opt3')">
+        3. Swiss Architectural Split Bar
+      </button>
+      <button class="tab-btn" onclick="switchHeader('opt4')">
+        4. Spatial Glass Dock + Quick Contact Tray
+      </button>
+      <button class="tab-btn" onclick="switchHeader('all')">
+        Compare All (Scroll View)
+      </button>
+    </div>
+
+    <!-- Theme & View Controls -->
+    <div class="control-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()">
+        <span id="theme-icon">☀</span>
+        <span id="theme-label">Switch to Dark (Carbon)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       DEMO STAGE FOR HEADERS
+       ========================================================================= -->
+  <main class="demo-stage" id="stage">
+
+    <!-- -----------------------------------------------------------------------
+         CONCEPT 01: FLOATING DYNAMIC ISLAND DOCK (Recommended)
+         ----------------------------------------------------------------------- -->
+    <section class="header-preview-section is-active" id="sec-opt1">
+      <div class="option-banner">
+        <span>Concept 01: Floating Dynamic Island Dock (Non-Boxy, Detached Capsule)</span>
+        <span>★ Selected Winner • Ultra-Styled & High Animation Studio</span>
+      </div>
+
+      <!-- INTERACTIVE ANIMATION & STYLE STUDIO -->
+      <div class="opt1-studio-bar">
+        <div class="opt1-sub-tabs">
+          <strong style="color: var(--fg); margin-right: 4px;">Style Flavor:</strong>
+          <button class="opt1-sub-btn active" onclick="setOpt1Style('aurora', this)">
+            <span>✨</span> 1A. Aurora Glow & Conic Beam (Flagship)
+          </button>
+          <button class="opt1-sub-btn" onclick="setOpt1Style('cyber', this)">
+            <span>⚡</span> 1B. Cyber Glass & Telemetry HUD
+          </button>
+          <button class="opt1-sub-btn" onclick="setOpt1Style('prismatic', this)">
+            <span>💎</span> 1C. Liquid Prismatic Glass Minimalist
+          </button>
+        </div>
+
+        <div class="opt1-toggles">
+          <button class="opt1-chip-btn active" id="btn-toggle-beam" onclick="toggleOption1Beam()">
+            Beam: ON
+          </button>
+          <button class="opt1-chip-btn active" id="btn-toggle-aura" onclick="toggleOption1Aura()">
+            Aura: ON
+          </button>
+          <button class="opt1-chip-btn active" id="btn-toggle-float" onclick="toggleOption1Float()">
+            Float: ON
+          </button>
+          <button class="opt1-chip-btn" id="btn-toggle-speed" onclick="toggleOption1Speed()">
+            Speed: Normal (1x)
+          </button>
+        </div>
+      </div>
+
+      <!-- THE HEADER COMPONENT -->
+      <div class="header-opt-1-wrap" id="h1-wrap">
+        <!-- Pulsing Ambient Aurora Backlight -->
+        <div class="h1-aurora-glow" id="h1-aura"></div>
+
+        <header class="header-opt-1 has-beam" id="h1-capsule">
+          <!-- Left: Brand with Concept 2 Logo -->
+          <a href="#" class="h1-brand">
+            <div class="h1-avatar" style="overflow: hidden; padding: 0;">
+              <img src="../../public/images/logos/logo-concept-2.jpg" alt="VC Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block;">
+            </div>
+            <div class="h1-brand-meta">
+              <span class="h1-name">Vraj Clerk</span>
+            </div>
+          </a>
+
+          <!-- Center: Segmented Navigation with Tactile Glow -->
+          <nav class="h1-nav" id="h1-nav-list">
+            <a href="#" class="active" onclick="setActiveNav(event, this)">Projects</a>
+            <a href="#" onclick="setActiveNav(event, this)">Blog</a>
+            <a href="#" onclick="setActiveNav(event, this)">About</a>
+            <a href="#" onclick="setActiveNav(event, this)">Contact</a>
+            <a href="#" onclick="setActiveNav(event, this)">Resume</a>
+          </nav>
+
+          <!-- Right: Quick CTA & Spring-Spinning Theme Orb -->
+          <div class="h1-actions">
+            <!-- Telemetry Chip (Shown in 1B Cyber mode) -->
+            <div id="h1-extra-telemetry" style="display: none; align-items: center; gap: 6px; font-family: 'Geist Mono', monospace; font-size: 11px; padding: 4px 10px; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 999px; color: var(--fg);">
+              <span style="color: #10B981;">●</span> 18ms TTFB
+            </div>
+
+            <a href="#" class="h1-hire-pill">
+              <span>Let's Talk</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+
+            <button class="icon-btn-circle" onclick="toggleTheme()" title="Toggle Theme (Carbon / Nordic)">
+              <span class="theme-glyph">☀</span>
+            </button>
+          </div>
+        </header>
+      </div>
+
+      <!-- Sample Context Canvas -->
+      <div class="sample-hero-canvas">
+        <div>
+          <div class="hero-eyebrow">● FULL-STACK & BACKEND ARCHITECT / SURAT, IN</div>
+          <h1 class="hero-title">Systems built to <span class="serif-accent">scale.</span></h1>
+          <p class="hero-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn-cta">Explore Case Studies →</a>
+          </div>
+        </div>
+        <div>
+          <div class="sample-media-frame">
+            <div style="font-size: 13px; font-weight: 700;">Vraj Clerk — Full-Stack Engineer</div>
+            <div style="font-size: 12px; color: var(--muted-fg);">TypeScript • Next.js • PostgreSQL</div>
+            <div class="sample-hud-badge">
+              <div style="font-size: 24px; font-weight: 800; color: var(--badge-accent);">&lt; 45ms</div>
+              <div style="font-size: 10px; color: var(--muted-fg);">Dynamic Edge TTFB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         CONCEPT 02: TECHNICAL HUD TELEMETRY & COMMAND PALETTE (Linear/Raycast Style)
+         ----------------------------------------------------------------------- -->
+    <section class="header-preview-section" id="sec-opt2">
+      <div class="option-banner">
+        <span>Concept 02: Technical HUD Telemetry & Command Palette (Vercel / Linear Style)</span>
+        <span>Best for: Systems Architect Credibility • Monospace Precision • Keyboard Jumpers</span>
+      </div>
+
+      <!-- THE HEADER COMPONENT -->
+      <header class="header-opt-2">
+        <div class="h2-inner">
+          <!-- Left: CLI Prompt -->
+          <a href="#" class="h2-brand">
+            <div class="h2-prompt">
+              <span style="color: var(--accent);">~</span>/vraj-clerk
+              <span class="h2-cursor"></span>
+            </div>
+            <span class="h2-tag">v2.4</span>
+          </a>
+
+          <!-- Center: Monospace Jumpers -->
+          <nav class="h2-nav">
+            <a href="#" class="active"><span class="num">01</span> Projects</a>
+            <a href="#"><span class="num">02</span> Architecture</a>
+            <a href="#"><span class="num">03</span> Writing</a>
+            <a href="#"><span class="num">04</span> About</a>
+            <a href="#"><span class="num">05</span> Resume</a>
+          </nav>
+
+          <!-- Right: Telemetry & [⌘K] Trigger -->
+          <div class="h2-right">
+            <div class="h2-telemetry-chip">
+              <span>SLA</span>
+              <span class="val">99.9%</span>
+            </div>
+            <button class="h2-cmd-btn">
+              <span>⌘K</span>
+              <span>Find</span>
+            </button>
+            <button class="icon-btn-circle" onclick="toggleTheme()" title="Toggle Theme">
+              <span class="theme-glyph">☀</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Sample Context Canvas -->
+      <div class="sample-hero-canvas">
+        <div>
+          <div class="hero-eyebrow">● FULL-STACK & BACKEND ARCHITECT / SURAT, IN</div>
+          <h1 class="hero-title">Systems built to <span class="serif-accent">scale.</span></h1>
+          <p class="hero-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn-cta">Explore Case Studies →</a>
+          </div>
+        </div>
+        <div>
+          <div class="sample-media-frame">
+            <div style="font-size: 13px; font-weight: 700;">Vraj Clerk — Full-Stack Engineer</div>
+            <div style="font-size: 12px; color: var(--muted-fg);">TypeScript • Next.js • PostgreSQL</div>
+            <div class="sample-hud-badge">
+              <div style="font-size: 24px; font-weight: 800; color: var(--badge-accent);">&lt; 45ms</div>
+              <div style="font-size: 10px; color: var(--muted-fg);">Dynamic Edge TTFB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         CONCEPT 03: SWISS ARCHITECTURAL SPLIT BAR (Editorial Precision)
+         ----------------------------------------------------------------------- -->
+    <section class="header-preview-section" id="sec-opt3">
+      <div class="option-banner">
+        <span>Concept 03: Swiss Architectural Split Bar (Editorial 3-Column Grid)</span>
+        <span>Best for: Bauhaus Cleanliness • Graphic Line Discipline • Prestige Studio Feel</span>
+      </div>
+
+      <!-- THE HEADER COMPONENT -->
+      <header class="header-opt-3">
+        <div class="h3-inner">
+          <!-- Col 1: Identity -->
+          <div class="h3-col-1">
+            <a href="#" class="h3-brand-title">VRAJ CLERK</a>
+            <div class="h3-brand-sub">FULL-STACK ARCHITECT</div>
+          </div>
+
+          <!-- Col 2: Navigation Links -->
+          <nav class="h3-col-2">
+            <a href="#" class="active">Selected Work</a>
+            <a href="#">Technical Articles</a>
+            <a href="#">Engineering Log</a>
+            <a href="#">Resume / Dossier</a>
+          </nav>
+
+          <!-- Col 3: Status & Controls -->
+          <div class="h3-col-3">
+            <div class="h3-status">
+              <span class="dot"></span>
+              <span>AVAILABLE NOW</span>
+            </div>
+            <button class="icon-btn-circle" onclick="toggleTheme()" title="Toggle Theme">
+              <span class="theme-glyph">☀</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Sample Context Canvas -->
+      <div class="sample-hero-canvas">
+        <div>
+          <div class="hero-eyebrow">● FULL-STACK & BACKEND ARCHITECT / SURAT, IN</div>
+          <h1 class="hero-title">Systems built to <span class="serif-accent">scale.</span></h1>
+          <p class="hero-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn-cta">Explore Case Studies →</a>
+          </div>
+        </div>
+        <div>
+          <div class="sample-media-frame">
+            <div style="font-size: 13px; font-weight: 700;">Vraj Clerk — Full-Stack Engineer</div>
+            <div style="font-size: 12px; color: var(--muted-fg);">TypeScript • Next.js • PostgreSQL</div>
+            <div class="sample-hud-badge">
+              <div style="font-size: 24px; font-weight: 800; color: var(--badge-accent);">&lt; 45ms</div>
+              <div style="font-size: 10px; color: var(--muted-fg);">Dynamic Edge TTFB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         CONCEPT 04: SPATIAL GLASS DOCK WITH INTEGRATED QUICK-CONTACT TRAY
+         ----------------------------------------------------------------------- -->
+    <section class="header-preview-section" id="sec-opt4">
+      <div class="option-banner">
+        <span>Concept 04: Spatial Glass Dock + Quick-Contact Tray (Recruiter Power-Header)</span>
+        <span>Best for: Local Time Stamp • Direct 1-Click Email Copy in Header • Instant Conversion</span>
+      </div>
+
+      <!-- THE HEADER COMPONENT -->
+      <div class="header-opt-4-wrap">
+        <header class="header-opt-4">
+          <!-- Left: Monogram & Local Time -->
+          <a href="#" class="h4-brand">
+            <div class="h4-monogram">VC</div>
+            <div class="h4-time-box">
+              <div class="location">Vraj Clerk</div>
+              <div class="time" id="live-time">16:32 IST • Online</div>
+            </div>
+          </a>
+
+          <!-- Center: Nav Links -->
+          <nav class="h4-nav">
+            <a href="#" class="active">Projects</a>
+            <a href="#">Articles</a>
+            <a href="#">Capabilities</a>
+            <a href="#">Resume</a>
+          </nav>
+
+          <!-- Right: Instant Email Copy & Contact CTA -->
+          <div class="h4-tray">
+            <button class="h4-copy-chip" onclick="copyEmailDemo(this)">
+              <span>📋</span>
+              <span class="email-str">vrajclerk.dev@gmail.com</span>
+            </button>
+            <a href="#" class="h4-cta">Get in Touch</a>
+            <button class="icon-btn-circle" onclick="toggleTheme()" title="Toggle Theme">
+              <span class="theme-glyph">☀</span>
+            </button>
+          </div>
+        </header>
+      </div>
+
+      <!-- Sample Context Canvas -->
+      <div class="sample-hero-canvas">
+        <div>
+          <div class="hero-eyebrow">● FULL-STACK & BACKEND ARCHITECT / SURAT, IN</div>
+          <h1 class="hero-title">Systems built to <span class="serif-accent">scale.</span></h1>
+          <p class="hero-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn-cta">Explore Case Studies →</a>
+          </div>
+        </div>
+        <div>
+          <div class="sample-media-frame">
+            <div style="font-size: 13px; font-weight: 700;">Vraj Clerk — Full-Stack Engineer</div>
+            <div style="font-size: 12px; color: var(--muted-fg);">TypeScript • Next.js • PostgreSQL</div>
+            <div class="sample-hud-badge">
+              <div style="font-size: 24px; font-weight: 800; color: var(--badge-accent);">&lt; 45ms</div>
+              <div style="font-size: 10px; color: var(--muted-fg);">Dynamic Edge TTFB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       INTERACTIVE CONTROLLER SCRIPT
+       ========================================================================= -->
+  <script>
+    function switchHeader(optId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(optId));
+      });
+
+      const stage = document.getElementById('stage');
+      if (optId === 'all') {
+        stage.classList.add('view-mode-scroll');
+        document.querySelectorAll('.header-preview-section').forEach(sec => sec.classList.add('is-active'));
+      } else {
+        stage.classList.remove('view-mode-scroll');
+        document.querySelectorAll('.header-preview-section').forEach(sec => {
+          sec.classList.toggle('is-active', sec.id === 'sec-' + optId);
+        });
+      }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('theme-icon').textContent = isDark ? '☾' : '☀';
+      document.getElementById('theme-label').textContent = isDark ? 'Switch to Light (Nordic)' : 'Switch to Dark (Carbon)';
+      document.querySelectorAll('.theme-glyph').forEach(glyph => {
+        glyph.textContent = isDark ? '☾' : '☀';
+      });
+    }
+
+    function copyEmailDemo(btn) {
+      const emailStr = btn.querySelector('.email-str');
+      const orig = emailStr.textContent;
+      emailStr.textContent = 'Copied to Clipboard! ✓';
+      btn.style.borderColor = '#10B981';
+      setTimeout(() => {
+        emailStr.textContent = orig;
+        btn.style.borderColor = '';
+      }, 2000);
+    }
+
+    /* Option 1 Interactive Studio Handlers */
+    function setOpt1Style(style, btn) {
+      document.querySelectorAll('.opt1-sub-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const capsule = document.getElementById('h1-capsule');
+      const telemetry = document.getElementById('h1-extra-telemetry');
+      capsule.classList.remove('style-cyber', 'style-prismatic');
+
+      const statusText = document.getElementById('h1-status-text');
+      if (style === 'cyber') {
+        capsule.classList.add('style-cyber');
+        telemetry.style.display = 'inline-flex';
+        if (statusText) statusText.textContent = 'READY // FULL-STACK';
+      } else if (style === 'prismatic') {
+        capsule.classList.add('style-prismatic');
+        telemetry.style.display = 'none';
+        if (statusText) statusText.textContent = 'Open for Projects';
+      } else {
+        telemetry.style.display = 'none';
+        if (statusText) statusText.textContent = 'Available ● Live';
+      }
+    }
+
+    function toggleOption1Beam() {
+      const capsule = document.getElementById('h1-capsule');
+      const btn = document.getElementById('btn-toggle-beam');
+      capsule.classList.toggle('has-beam');
+      const active = capsule.classList.contains('has-beam');
+      btn.classList.toggle('active', active);
+      btn.textContent = 'Beam: ' + (active ? 'ON' : 'OFF');
+    }
+
+    function toggleOption1Aura() {
+      const aura = document.getElementById('h1-aura');
+      const btn = document.getElementById('btn-toggle-aura');
+      const isVisible = aura.style.display !== 'none';
+      aura.style.display = isVisible ? 'none' : 'block';
+      btn.classList.toggle('active', !isVisible);
+      btn.textContent = 'Aura: ' + (!isVisible ? 'ON' : 'OFF');
+    }
+
+    function toggleOption1Float() {
+      const wrap = document.getElementById('h1-wrap');
+      const btn = document.getElementById('btn-toggle-float');
+      wrap.classList.toggle('float-paused');
+      const isFloating = !wrap.classList.contains('float-paused');
+      btn.classList.toggle('active', isFloating);
+      btn.textContent = 'Float: ' + (isFloating ? 'ON' : 'OFF');
+    }
+
+    let currentSpeed = 'normal';
+    function toggleOption1Speed() {
+      const wrap = document.getElementById('h1-wrap');
+      const btn = document.getElementById('btn-toggle-speed');
+      if (currentSpeed === 'normal') {
+        currentSpeed = 'hyper';
+        wrap.classList.add('speed-hyper');
+        btn.textContent = 'Speed: Hyper (2x) ⚡';
+        btn.classList.add('active');
+      } else {
+        currentSpeed = 'normal';
+        wrap.classList.remove('speed-hyper');
+        btn.textContent = 'Speed: Normal (1x)';
+        btn.classList.remove('active');
+      }
+    }
+
+    function setActiveNav(e, link) {
+      e.preventDefault();
+      document.querySelectorAll('#h1-nav-list a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+    }
+  </script>
+</body>
+</html>

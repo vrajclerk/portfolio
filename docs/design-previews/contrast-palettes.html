@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vraj Clerk — High Contrast Palette Visualizer (Extended Suite)</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Geist+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: #090B0E;
+      color: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Sticky Switcher Bar */
+    #palette-selector {
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      background: rgba(9, 11, 14, 0.96);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .selector-heading {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94A3B8;
+    }
+    .selector-heading strong {
+      color: #FFFFFF;
+    }
+
+    .palette-tabs {
+      display: flex;
+      align-items: center;
+      background: #141822;
+      border: 1px solid #232B3B;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #94A3B8;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: #FFFFFF;
+      background: #1E2638;
+    }
+    .tab-btn.active {
+      color: #FFFFFF;
+      background: #2563EB;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+    }
+    .tab-btn.featured {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* Comparison / View Mode */
+    .mode-toggle {
+      display: flex;
+      gap: 6px;
+    }
+    .mode-btn {
+      background: #141822;
+      border: 1px solid #232B3B;
+      color: #94A3B8;
+      padding: 6px 12px;
+      font-size: 11.5px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .mode-btn.active {
+      background: #E2E8F0;
+      color: #0F172A;
+      border-color: #E2E8F0;
+    }
+
+    /* Preview Canvas Area */
+    #preview-container {
+      flex: 1;
+      width: 100%;
+    }
+    .container-layout.single-mode .palette-preview {
+      display: none;
+      width: 100%;
+      min-height: calc(100vh - 65px);
+    }
+    .container-layout.single-mode .palette-preview.is-selected {
+      display: block;
+    }
+
+    .container-layout.grid-mode {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
+      gap: 28px;
+      padding: 24px;
+      background: #050709;
+    }
+    .container-layout.grid-mode .palette-preview {
+      display: block !important;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    }
+
+    /* Common Preview Elements */
+    .banner-spec {
+      padding: 10px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: 'Geist Mono', monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preview-body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 56px 40px 100px 40px;
+    }
+
+    .swatches-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+    }
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .swatch-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+
+    /* Layout structure */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-bottom: 72px;
+    }
+    .kicker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+    }
+    .radar-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+    }
+    .display-h1 {
+      font-size: clamp(42px, 5.2vw, 64px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin-bottom: 22px;
+    }
+    .display-h1 span.serif-italic {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+    }
+    .body-p {
+      font-size: 17px;
+      line-height: 1.65;
+      margin-bottom: 34px;
+      max-width: 580px;
+    }
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-main {
+      padding: 12px 26px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-main:hover {
+      transform: translateY(-2px);
+    }
+    .btn-sub {
+      padding: 12px 24px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    .btn-sub:hover {
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      font-size: 12.5px;
+      font-family: 'Geist Mono', monospace;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px dashed;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Right column: Frame + Overlapping Badge */
+    .hero-media-wrap {
+      position: relative;
+    }
+    .portrait-frame {
+      aspect-ratio: 4/5;
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 32px;
+    }
+    .frame-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .frame-center {
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .frame-avatar-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'Geist Mono', monospace;
+      margin-bottom: 8px;
+    }
+    .frame-bottom {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Overlapping Floating Badge */
+    .floating-metric-badge {
+      position: absolute;
+      bottom: -24px;
+      left: -28px;
+      width: 220px;
+      padding: 22px 24px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+      z-index: 20;
+    }
+    .metric-row {
+      margin-bottom: 14px;
+    }
+    .metric-row:last-child {
+      margin-bottom: 0;
+    }
+    .metric-val {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .metric-lbl {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .metric-div {
+      height: 1px;
+      margin: 14px 0;
+    }
+
+    /* Sample Cards */
+    .preview-cards-section {
+      margin-top: 48px;
+      padding-top: 48px;
+      border-top: 1px solid;
+    }
+    .section-title {
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 24px;
+    }
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .sample-card {
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card-kicker {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .card-p {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    .card-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .card-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* =========================================================================
+       PALETTES 1 - 4 (THE ORIGINAL SUITE)
+       ========================================================================= */
+    .palette-1 {
+      --bg: #FFFFFF; --fg: #09090B; --muted: #4B5563; --border: #E4E4E7; --surface: #F4F4F5; --accent: #2563EB;
+      --badge-bg: #09090B; --badge-fg: #FFFFFF; --badge-muted: #A1A1AA; --badge-accent: #60A5FA;
+      background: var(--bg); color: var(--fg);
+    }
+    .palette-2 {
+      --bg: #F7F5F0; --fg: #181512; --muted: #57514B; --border: #DFD9CF; --surface: #EFECE4; --accent: #C2410C;
+      --badge-bg: #FFFFFF; --badge-fg: #181512; --badge-muted: #6B645D; --badge-accent: #C2410C;
+      background: var(--bg); color: var(--fg);
+    }
+    .palette-3 {
+      --bg: #090B0F; --fg: #F8FAFC; --muted: #94A3B8; --border: #1E293B; --surface: #11151F; --accent: #38BDF8;
+      --badge-bg: #161D2B; --badge-fg: #F8FAFC; --badge-muted: #94A3B8; --badge-accent: #F59E0B;
+      background: var(--bg); color: var(--fg);
+    }
+    .palette-4 {
+      --bg: #0D1117; --fg: #FFFFFF; --muted: #8B949E; --border: #30363D; --surface: #161B22; --accent: #A3E635;
+      --badge-bg: #1C2128; --badge-fg: #FFFFFF; --badge-muted: #8B949E; --badge-accent: #A3E635;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 5 (NEW): SWISS INTERNATIONAL RED (Ultra High Contrast Light)
+       Stark white, jet black, international signal red (#DC2626).
+       Uncompromising editorial punch, iconic typography clarity.
+       ========================================================================= */
+    .palette-5 {
+      --bg: #FFFFFF;
+      --fg: #050505;              /* Pure Jet Black */
+      --muted: #404040;           /* Solid Neutral Grey */
+      --border: #D4D4D8;          /* Crisp Hairline */
+      --surface: #F4F4F6;
+      --accent: #DC2626;          /* Vivid International Signal Red */
+      --badge-bg: #050505;
+      --badge-fg: #FFFFFF;
+      --badge-muted: #A3A3A3;
+      --badge-accent: #F87171;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 6 (NEW): NORDIC COLD CHROME & DEEP COBALT (High-Contrast Cool Light)
+       Crisp cool ice background (#F8FAFC), obsidian navy (#0F172A), cobalt (#1D4ED8).
+       Clean, tech-forward, zero muddy beige undertones.
+       ========================================================================= */
+    .palette-6 {
+      --bg: #F8FAFC;
+      --fg: #0F172A;              /* Deepest Navy Obsidian */
+      --muted: #475569;           /* Slate 600 */
+      --border: #CBD5E1;          /* Slate 300 - clear high definition */
+      --surface: #FFFFFF;         /* Lifted Pure White */
+      --accent: #1D4ED8;          /* Copenhagen Deep Cobalt */
+      --badge-bg: #0F172A;
+      --badge-fg: #F8FAFC;
+      --badge-muted: #94A3B8;
+      --badge-accent: #38BDF8;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 7 (NEW): MATTE CARBON & HYPER-ORANGE (High-Contrast Industrial Dark)
+       Deep matte carbon (#0E1013), stark white text, safety blaze orange (#FF6B00).
+       Inspired by industrial telemetry, Teenage Engineering, and Vercel/Linear CLI.
+       ========================================================================= */
+    .palette-7 {
+      --bg: #0E1013;
+      --fg: #FFFFFF;              /* 100% White */
+      --muted: #9BA3AF;           /* Silver Grey */
+      --border: #2D333F;          /* Defined Graphite Stroke */
+      --surface: #161A22;         /* Solid Plate */
+      --accent: #FF6B00;          /* High-Voltage Blaze Orange */
+      --badge-bg: #161A22;
+      --badge-fg: #FFFFFF;
+      --badge-muted: #9BA3AF;
+      --badge-accent: #FF6B00;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 8 (NEW): EMERALD HORIZON & OBSIDIAN (High-Contrast Bioluminescent Dark)
+       True black / obsidian (#080A0D), vivid mint emerald (#10B981).
+       Sharp, modern, high-energy engineering console.
+       ========================================================================= */
+    .palette-8 {
+      --bg: #080A0D;
+      --fg: #F0FDF4;              /* Luminous White with faint mint tint */
+      --muted: #86A797;           /* Cool Seafoam Slate */
+      --border: #1B2B23;          /* Deep Emerald-tinted Slate */
+      --surface: #0E1513;         /* Lifted Obsidian Plate */
+      --accent: #10B981;          /* Vivid Mint Emerald */
+      --badge-bg: #0E1513;
+      --badge-fg: #F0FDF4;
+      --badge-muted: #86A797;
+      --badge-accent: #34D399;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 9 (NEW): KYOTO INKSTONE & MATCHA (Architectural Zen High Contrast Light)
+       Pure pristine white, deep sumi charcoal (#0C120F), vibrant matcha emerald (#059669).
+       ========================================================================= */
+    .palette-9 {
+      --bg: #FFFFFF;
+      --fg: #0C120F;              /* Deep Sumi Charcoal (19.5:1) */
+      --muted: #415248;           /* Slate Moss */
+      --border: #CFD9D3;          /* Celadon Hairline */
+      --surface: #F2F6F4;         /* Lifted Pale Celadon Stone */
+      --accent: #059669;          /* Deep Vivid Matcha Emerald */
+      --badge-bg: #0C120F;
+      --badge-fg: #FFFFFF;
+      --badge-muted: #9BB0A4;
+      --badge-accent: #34D399;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 10 (NEW): EDITORIAL MONOLITH & ROYAL VIOLET (Stripe Press / Academic Modern Light)
+       Pure studio white, deep obsidian plum (#090714), high-voltage electric indigo (#6366F1).
+       ========================================================================= */
+    .palette-10 {
+      --bg: #FFFFFF;
+      --fg: #090714;              /* Deepest Obsidian Plum (20:1) */
+      --muted: #4B465E;           /* Slate Mauve */
+      --border: #D8D3E8;          /* Crisp Lavender Hairline */
+      --surface: #F5F3FA;         /* Soft Editorial Surface */
+      --accent: #6366F1;          /* High-Voltage Electric Indigo */
+      --badge-bg: #090714;
+      --badge-fg: #FFFFFF;
+      --badge-muted: #A59FC2;
+      --badge-accent: #818CF8;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 11 (NEW): PURE MONO HIGH-KEY & TECHNICAL GOLD (Graphic Precision Light)
+       Pure stark white, absolute pitch black (#000000 - 21:1), technical solar amber (#D97706).
+       ========================================================================= */
+    .palette-11 {
+      --bg: #FFFFFF;
+      --fg: #000000;              /* Absolute Jet Black 21:1 */
+      --muted: #374151;           /* Charcoal Grey */
+      --border: #D1D5DB;          /* High Definition Zinc Border */
+      --surface: #F9FAFB;         /* Pure Zinc Surface */
+      --accent: #D97706;          /* Technical Solar Amber */
+      --badge-bg: #000000;
+      --badge-fg: #FFFFFF;
+      --badge-muted: #9CA3AF;
+      --badge-accent: #FBBF24;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 12 (NEW): TOKYO CYBERPUNK & NEON ULTRAVIOLET (OLED High Contrast Dark)
+       True pitch OLED black (#050508), pure white, vivid electric ultraviolet (#A855F7).
+       ========================================================================= */
+    .palette-12 {
+      --bg: #050508;              /* OLED Pitch Black */
+      --fg: #FFFFFF;              /* Pure 100% White (21:1) */
+      --muted: #9D9DAF;           /* Cool Silver Dusk */
+      --border: #28253D;          /* Graphite Violet Border */
+      --surface: #100E1D;         /* Lifted Slate Plate */
+      --accent: #A855F7;          /* High-Voltage Neon Ultraviolet */
+      --badge-bg: #100E1D;
+      --badge-fg: #FFFFFF;
+      --badge-muted: #9D9DAF;
+      --badge-accent: #C084FC;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 13 (NEW): DEEP SEA ABYSS & AQUAMARINE (Oceanographic Subsea Dark)
+       Deep abyssal oceanic navy (#04090F), Antarctic ice (#F0F9FF), electric aquamarine (#06B6D4).
+       ========================================================================= */
+    .palette-13 {
+      --bg: #04090F;              /* Deep Ocean Abyssal */
+      --fg: #F0F9FF;              /* Luminous Antarctic Ice (19:1) */
+      --muted: #647E99;           /* Marine Slate */
+      --border: #172A40;          /* Deep Subsea Ridge Border */
+      --surface: #0A1624;         /* Subsea Instrument Panel */
+      --accent: #06B6D4;          /* Electric Cyan / Aquamarine */
+      --badge-bg: #0A1624;
+      --badge-fg: #F0F9FF;
+      --badge-muted: #647E99;
+      --badge-accent: #38BDF8;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* =========================================================================
+       PALETTE 14 (NEW): VOLCANIC BASALT & SIGNAL CRIMSON (Redshift Mission Dark)
+       Pitch basalt charcoal (#0A0909), pure white text, razor-sharp signal ruby (#EF4444).
+       ========================================================================= */
+    .palette-14 {
+      --bg: #0A0909;              /* Basalt Pitch Black */
+      --fg: #FFFFFF;              /* Pure Crisp White (20.5:1) */
+      --muted: #A39E9E;           /* Basalt Ash */
+      --border: #332B2B;          /* Defined Volcanic Rim */
+      --surface: #161313;         /* Lifted Basalt Plate */
+      --accent: #EF4444;          /* High-Voltage Signal Crimson */
+      --badge-bg: #161313;
+      --badge-fg: #FFFFFF;
+      --badge-muted: #A39E9E;
+      --badge-accent: #F87171;
+      background: var(--bg); color: var(--fg);
+    }
+
+    /* Universal class binder for theme variables */
+    .palette-preview .banner-spec {
+      background: var(--surface);
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+    }
+    .palette-preview .swatches-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg);
+    }
+    .palette-preview .kicker-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+    .palette-preview .display-h1 {
+      color: var(--fg);
+    }
+    .palette-preview .display-h1 span.serif-italic {
+      color: var(--accent);
+    }
+    .palette-preview .body-p {
+      color: var(--muted);
+    }
+    .palette-preview .btn-main {
+      background: var(--fg);
+      color: var(--bg);
+    }
+    .palette-4 .btn-main, .palette-7 .btn-main, .palette-8 .btn-main, .palette-12 .btn-main, .palette-13 .btn-main, .palette-14 .btn-main {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .palette-preview .btn-sub {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg);
+    }
+    .palette-preview .btn-ghost {
+      border-color: var(--border);
+      color: var(--muted);
+    }
+    .palette-preview .portrait-frame {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    }
+    .palette-preview .frame-avatar-circle {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .palette-preview .floating-metric-badge {
+      background: var(--badge-bg);
+      color: var(--badge-fg);
+      border: 1px solid var(--border);
+    }
+    .palette-preview .floating-metric-badge .metric-lbl {
+      color: var(--badge-muted);
+    }
+    .palette-preview .floating-metric-badge .metric-div {
+      background: var(--border);
+    }
+    .palette-preview .floating-metric-badge .metric-accent {
+      color: var(--badge-accent);
+    }
+    .palette-preview .preview-cards-section {
+      border-color: var(--border);
+    }
+    .palette-preview .section-title {
+      color: var(--accent);
+    }
+    .palette-preview .sample-card {
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    .palette-preview .card-kicker {
+      color: var(--accent);
+    }
+    .palette-preview .card-p {
+      color: var(--muted);
+    }
+    .palette-preview .card-pill {
+      background: var(--bg);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Controller Bar -->
+  <header id="palette-selector">
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 8px;">
+      <div class="selector-heading">
+        <strong>Contrast Suite:</strong> 14 High-Contrast Palettes (7 Light / 7 Dark)
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-single" onclick="setMode('single')">Single Fullscreen</button>
+        <button class="mode-btn" id="btn-grid" onclick="setMode('grid')">Compare All Side-by-Side</button>
+      </div>
+    </div>
+
+    <!-- Palette Tabs: Row 1 Light -->
+    <div style="display: flex; align-items: center; gap: 8px; width: 100%; flex-wrap: wrap; margin-bottom: 6px;">
+      <span class="tab-group-label" style="color: #E2E8F0; background: #1E293B; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">☀ Light Themes (7):</span>
+      <div class="palette-tabs" style="flex: 1;">
+        <button class="tab-btn active" onclick="selectPalette('p1')">
+          <span class="dot" style="background: #2563EB;"></span>
+          1. Studio White & Royal Blue
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p5')">
+          <span class="dot" style="background: #DC2626;"></span>
+          5. Swiss Red & Ink ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p6')">
+          <span class="dot" style="background: #1D4ED8;"></span>
+          6. Nordic Ice & Cobalt ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p9')">
+          <span class="dot" style="background: #059669;"></span>
+          9. Kyoto Matcha & Inkstone ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p10')">
+          <span class="dot" style="background: #6366F1;"></span>
+          10. Editorial Violet & Monolith ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p11')">
+          <span class="dot" style="background: #D97706;"></span>
+          11. Pure Mono & Technical Gold ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p2')">
+          <span class="dot" style="background: #C2410C;"></span>
+          2. Warm Porcelain & Amber
+        </button>
+      </div>
+    </div>
+
+    <!-- Palette Tabs: Row 2 Dark -->
+    <div style="display: flex; align-items: center; gap: 8px; width: 100%; flex-wrap: wrap;">
+      <span class="tab-group-label" style="color: #94A3B8; background: #141822; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">☾ Dark Themes (7):</span>
+      <div class="palette-tabs" style="flex: 1;">
+        <button class="tab-btn" onclick="selectPalette('p3')">
+          <span class="dot" style="background: #38BDF8;"></span>
+          3. Obsidian & Electric Cyan
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p7')">
+          <span class="dot" style="background: #FF6B00;"></span>
+          7. Carbon & Hyper Orange ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p8')">
+          <span class="dot" style="background: #10B981;"></span>
+          8. Emerald Horizon & Ink ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p12')">
+          <span class="dot" style="background: #A855F7;"></span>
+          12. Tokyo Cyber & Ultraviolet ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p13')">
+          <span class="dot" style="background: #06B6D4;"></span>
+          13. Deep Sea Abyss & Aquamarine ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p14')">
+          <span class="dot" style="background: #EF4444;"></span>
+          14. Volcanic Basalt & Crimson ★
+        </button>
+        <button class="tab-btn" onclick="selectPalette('p4')">
+          <span class="dot" style="background: #A3E635;"></span>
+          4. Carbon & Acid Lime
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Previews Viewport -->
+  <main id="preview-container">
+    <div class="container-layout single-mode" id="container">
+
+      <!-- PALETTE 1: Studio White & Royal Blue -->
+      <section class="palette-preview palette-1 is-selected" id="preview-p1">
+        <div class="banner-spec">
+          <span>Palette 01: Pure Studio White & Royal Blue (Light)</span>
+          <span>Background: #FFFFFF • Text: #09090B • Accent: #2563EB</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Background: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #09090B;"></span> Text: #09090B</div>
+            <div class="swatch"><span class="swatch-color" style="background: #4B5563;"></span> Muted: #4B5563</div>
+            <div class="swatch"><span class="swatch-color" style="background: #E4E4E7;"></span> Border: #E4E4E7</div>
+            <div class="swatch"><span class="swatch-color" style="background: #2563EB;"></span> Accent: #2563EB</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 5 (NEW): Swiss Red & Ink -->
+      <section class="palette-preview palette-5" id="preview-p5">
+        <div class="banner-spec">
+          <span>Palette 05: Swiss International Red & Pure Ink (Light ★)</span>
+          <span>Background: #FFFFFF • Text: #050505 • Accent: #DC2626 (Signal Red)</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Background: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #050505;"></span> Text: #050505</div>
+            <div class="swatch"><span class="swatch-color" style="background: #404040;"></span> Muted: #404040</div>
+            <div class="swatch"><span class="swatch-color" style="background: #D4D4D8;"></span> Border: #D4D4D8</div>
+            <div class="swatch"><span class="swatch-color" style="background: #DC2626;"></span> Accent: #DC2626</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #DC2626;"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 6 (NEW): Nordic Ice & Cobalt -->
+      <section class="palette-preview palette-6" id="preview-p6">
+        <div class="banner-spec">
+          <span>Palette 06: Nordic Ice & Deep Cobalt (Cool Light ★)</span>
+          <span>Background: #F8FAFC • Text: #0F172A • Accent: #1D4ED8 (Deep Cobalt)</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #F8FAFC;"></span> Background: #F8FAFC</div>
+            <div class="swatch"><span class="swatch-color" style="background: #0F172A;"></span> Text: #0F172A</div>
+            <div class="swatch"><span class="swatch-color" style="background: #475569;"></span> Muted: #475569</div>
+            <div class="swatch"><span class="swatch-color" style="background: #CBD5E1;"></span> Border: #CBD5E1</div>
+            <div class="swatch"><span class="swatch-color" style="background: #1D4ED8;"></span> Accent: #1D4ED8</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #1D4ED8;"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 2: Warm Porcelain & Burnt Amber -->
+      <section class="palette-preview palette-2" id="preview-p2">
+        <div class="banner-spec">
+          <span>Palette 02: Warm Porcelain & Burnt Amber (Warm Light)</span>
+          <span>Background: #F7F5F0 • Text: #181512 • Accent: #C2410C</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #F7F5F0;"></span> Background: #F7F5F0</div>
+            <div class="swatch"><span class="swatch-color" style="background: #181512;"></span> Text: #181512</div>
+            <div class="swatch"><span class="swatch-color" style="background: #57514B;"></span> Muted: #57514B</div>
+            <div class="swatch"><span class="swatch-color" style="background: #DFD9CF;"></span> Border: #DFD9CF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #C2410C;"></span> Accent: #C2410C</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 3: Obsidian & Electric Cyan -->
+      <section class="palette-preview palette-3" id="preview-p3">
+        <div class="banner-spec">
+          <span>Palette 03: Obsidian Midnight & Electric Cyan (Dark)</span>
+          <span>Background: #090B0F • Text: #F8FAFC • Accent: #38BDF8</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #090B0F;"></span> Background: #090B0F</div>
+            <div class="swatch"><span class="swatch-color" style="background: #F8FAFC;"></span> Text: #F8FAFC</div>
+            <div class="swatch"><span class="swatch-color" style="background: #94A3B8;"></span> Muted: #94A3B8</div>
+            <div class="swatch"><span class="swatch-color" style="background: #1E293B;"></span> Border: #1E293B</div>
+            <div class="swatch"><span class="swatch-color" style="background: #38BDF8;"></span> Accent: #38BDF8</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 7 (NEW): Carbon & Hyper Orange -->
+      <section class="palette-preview palette-7" id="preview-p7">
+        <div class="banner-spec">
+          <span>Palette 07: Matte Carbon & Hyper Orange (Industrial Dark ★)</span>
+          <span>Background: #0E1013 • Text: #FFFFFF • Accent: #FF6B00 (High-Voltage Orange)</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #0E1013;"></span> Background: #0E1013</div>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Text: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #9BA3AF;"></span> Muted: #9BA3AF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #2D333F;"></span> Border: #2D333F</div>
+            <div class="swatch"><span class="swatch-color" style="background: #FF6B00;"></span> Accent: #FF6B00</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #FF6B00; box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 8 (NEW): Emerald Horizon & Ink -->
+      <section class="palette-preview palette-8" id="preview-p8">
+        <div class="banner-spec">
+          <span>Palette 08: Emerald Horizon & Obsidian (Bio-Technical Dark ★)</span>
+          <span>Background: #080A0D • Text: #F0FDF4 • Accent: #10B981 (Mint Emerald)</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #080A0D;"></span> Background: #080A0D</div>
+            <div class="swatch"><span class="swatch-color" style="background: #F0FDF4;"></span> Text: #F0FDF4</div>
+            <div class="swatch"><span class="swatch-color" style="background: #86A797;"></span> Muted: #86A797</div>
+            <div class="swatch"><span class="swatch-color" style="background: #1B2B23;"></span> Border: #1B2B23</div>
+            <div class="swatch"><span class="swatch-color" style="background: #10B981;"></span> Accent: #10B981</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #10B981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 4: Carbon & Acid Lime -->
+      <section class="palette-preview palette-4" id="preview-p4">
+        <div class="banner-spec">
+          <span>Palette 04: Carbon Titanium & Acid Lime (Technical Dark)</span>
+          <span>Background: #0D1117 • Text: #FFFFFF • Accent: #A3E635</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #0D1117;"></span> Background: #0D1117</div>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Text: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #8B949E;"></span> Muted: #8B949E</div>
+            <div class="swatch"><span class="swatch-color" style="background: #30363D;"></span> Border: #30363D</div>
+            <div class="swatch"><span class="swatch-color" style="background: #A3E635;"></span> Accent: #A3E635</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #A3E635;"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 9 (NEW): Kyoto Inkstone & Matcha -->
+      <section class="palette-preview palette-9" id="preview-p9">
+        <div class="banner-spec">
+          <span>Palette 09: Kyoto Inkstone & Matcha (Architectural Zen Light ★)</span>
+          <span>Background: #FFFFFF • Text: #0C120F • Accent: #059669 (Matcha Emerald) • Contrast: 19.5:1</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Background: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #0C120F;"></span> Text: #0C120F</div>
+            <div class="swatch"><span class="swatch-color" style="background: #415248;"></span> Muted: #415248</div>
+            <div class="swatch"><span class="swatch-color" style="background: #CFD9D3;"></span> Border: #CFD9D3</div>
+            <div class="swatch"><span class="swatch-color" style="background: #059669;"></span> Accent: #059669</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #059669; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 10 (NEW): Editorial Monolith & Royal Violet -->
+      <section class="palette-preview palette-10" id="preview-p10">
+        <div class="banner-spec">
+          <span>Palette 10: Editorial Monolith & Royal Violet (Modern Academic Light ★)</span>
+          <span>Background: #FFFFFF • Text: #090714 • Accent: #6366F1 (Electric Indigo) • Contrast: 20:1</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Background: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #090714;"></span> Text: #090714</div>
+            <div class="swatch"><span class="swatch-color" style="background: #4B465E;"></span> Muted: #4B465E</div>
+            <div class="swatch"><span class="swatch-color" style="background: #D8D3E8;"></span> Border: #D8D3E8</div>
+            <div class="swatch"><span class="swatch-color" style="background: #6366F1;"></span> Accent: #6366F1</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #6366F1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 11 (NEW): Pure Mono High-Key & Technical Gold -->
+      <section class="palette-preview palette-11" id="preview-p11">
+        <div class="banner-spec">
+          <span>Palette 11: Pure Mono High-Key & Technical Gold (Graphic Precision Light ★)</span>
+          <span>Background: #FFFFFF • Text: #000000 (Absolute Ink) • Accent: #D97706 (Amber Gold) • Contrast: 21:1</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Background: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #000000;"></span> Text: #000000</div>
+            <div class="swatch"><span class="swatch-color" style="background: #374151;"></span> Muted: #374151</div>
+            <div class="swatch"><span class="swatch-color" style="background: #D1D5DB;"></span> Border: #D1D5DB</div>
+            <div class="swatch"><span class="swatch-color" style="background: #D97706;"></span> Accent: #D97706</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #D97706; box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle" style="background: #000000; color: #FFFFFF;">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 12 (NEW): Tokyo Cyberpunk & Neon Ultraviolet -->
+      <section class="palette-preview palette-12" id="preview-p12">
+        <div class="banner-spec">
+          <span>Palette 12: Tokyo Cyberpunk & Neon Ultraviolet (OLED Dark ★)</span>
+          <span>Background: #050508 • Text: #FFFFFF • Accent: #A855F7 (Electric Ultraviolet) • Contrast: 21:1</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #050508;"></span> Background: #050508</div>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Text: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #9D9DAF;"></span> Muted: #9D9DAF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #28253D;"></span> Border: #28253D</div>
+            <div class="swatch"><span class="swatch-color" style="background: #A855F7;"></span> Accent: #A855F7</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #A855F7; box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 13 (NEW): Deep Sea Abyss & Aquamarine -->
+      <section class="palette-preview palette-13" id="preview-p13">
+        <div class="banner-spec">
+          <span>Palette 13: Deep Sea Abyss & Aquamarine (Subsea Console Dark ★)</span>
+          <span>Background: #04090F • Text: #F0F9FF • Accent: #06B6D4 (Electric Aquamarine) • Contrast: 19:1</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #04090F;"></span> Background: #04090F</div>
+            <div class="swatch"><span class="swatch-color" style="background: #F0F9FF;"></span> Text: #F0F9FF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #647E99;"></span> Muted: #647E99</div>
+            <div class="swatch"><span class="swatch-color" style="background: #172A40;"></span> Border: #172A40</div>
+            <div class="swatch"><span class="swatch-color" style="background: #06B6D4;"></span> Accent: #06B6D4</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #06B6D4; box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PALETTE 14 (NEW): Volcanic Basalt & Signal Crimson -->
+      <section class="palette-preview palette-14" id="preview-p14">
+        <div class="banner-spec">
+          <span>Palette 14: Volcanic Basalt & Signal Crimson (Redshift Mission Dark ★)</span>
+          <span>Background: #0A0909 • Text: #FFFFFF • Accent: #EF4444 (Signal Ruby) • Contrast: 20.5:1</span>
+        </div>
+        <div class="preview-body">
+          <div class="swatches-bar">
+            <strong>Tokens:</strong>
+            <div class="swatch"><span class="swatch-color" style="background: #0A0909;"></span> Background: #0A0909</div>
+            <div class="swatch"><span class="swatch-color" style="background: #FFFFFF;"></span> Text: #FFFFFF</div>
+            <div class="swatch"><span class="swatch-color" style="background: #A39E9E;"></span> Muted: #A39E9E</div>
+            <div class="swatch"><span class="swatch-color" style="background: #332B2B;"></span> Border: #332B2B</div>
+            <div class="swatch"><span class="swatch-color" style="background: #EF4444;"></span> Accent: #EF4444</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <div class="kicker-pill"><span class="radar-dot" style="background: #EF4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);"></span><span>FULL-STACK & BACKEND ARCHITECT / SURAT, IN</span></div>
+              <h1 class="display-h1">Systems built to <span class="serif-italic">scale.</span></h1>
+              <p class="body-p">I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.</p>
+              <div class="cta-row"><a href="#" class="btn-main">Explore Case Studies →</a><a href="#" class="btn-sub">View Resume</a><a href="#" class="btn-ghost">vrajclerk.dev@gmail.com</a></div>
+            </div>
+            <div class="hero-media-wrap">
+              <div class="portrait-frame">
+                <div class="frame-top"><span>Vraj Clerk</span><span style="font-family: monospace; font-size: 11px;">SYS.ONLINE</span></div>
+                <div class="frame-center"><div class="frame-avatar-circle">VC</div><div style="font-weight: 700; font-size: 15px;">Full-Stack Engineer</div><div style="font-size: 13px; color: var(--muted);">TypeScript • Next.js • PostgreSQL</div></div>
+                <div class="frame-bottom"><span>STATUS: AVAILABLE</span><span style="color: var(--accent);">● LIVE</span></div>
+              </div>
+              <div class="floating-metric-badge">
+                <div class="metric-row"><div class="metric-val">99.9%</div><div class="metric-lbl">SLA Availability</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val">&lt; 45ms</div><div class="metric-lbl">Dynamic Edge TTFB</div></div>
+                <div class="metric-div"></div>
+                <div class="metric-row"><div class="metric-val metric-accent">$0.00</div><div class="metric-lbl">Monthly Cloud Cost</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-cards-section">
+            <div class="section-title">// Selected Engineering Case Studies</div>
+            <div class="cards-row">
+              <div class="sample-card"><div><div class="card-kicker">INFRASTRUCTURE • 2026</div><div class="card-title">Zero-Cost CMS Deployment Pipeline</div><div class="card-p">Autonomous Next.js App Router and Payload CMS backed by PostgreSQL on compute-constrained free cloud resources.</div></div><div class="card-pills"><span class="card-pill">Next.js</span><span class="card-pill">PostgreSQL</span><span class="card-pill">Caddy</span></div></div>
+              <div class="sample-card"><div><div class="card-kicker">APPLICATION • 2026</div><div class="card-title">Multi-Tenant Identity Architecture</div><div class="card-p">RBAC permission layers with JWT auth cookies and session pooling across isolated tenant databases.</div></div><div class="card-pills"><span class="card-pill">TypeScript</span><span class="card-pill">Node.js</span><span class="card-pill">PostgreSQL</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    function selectPalette(id) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(id));
+      });
+      document.querySelectorAll('.palette-preview').forEach(preview => {
+        preview.classList.toggle('is-selected', preview.id === 'preview-' + id);
+      });
+
+      const container = document.getElementById('container');
+      if (container.classList.contains('grid-mode')) {
+        setMode('single');
+      }
+    }
+
+    function setMode(mode) {
+      const container = document.getElementById('container');
+      const btnSingle = document.getElementById('btn-single');
+      const btnGrid = document.getElementById('btn-grid');
+
+      if (mode === 'grid') {
+        container.classList.remove('single-mode');
+        container.classList.add('grid-mode');
+        btnGrid.classList.add('active');
+        btnSingle.classList.remove('active');
+      } else {
+        container.classList.remove('grid-mode');
+        container.classList.add('single-mode');
+        btnSingle.classList.add('active');
+        btnGrid.classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vraj Clerk — Logo Concepts & Generator Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --card: #FFFFFF;
+      --border: #CBD5E1;
+      --muted: #F1F5F9;
+      --muted-fg: #64748B;
+      --accent: #1D4ED8;
+      --accent-orange: #FF6B00;
+    }
+    body.dark-mode {
+      --bg: #0E1013;
+      --fg: #FFFFFF;
+      --card: #161A22;
+      --border: #2D333F;
+      --muted: #1F2430;
+      --muted-fg: #94A3B8;
+      --accent: #38BDF8;
+      --accent-orange: #FF6B00;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      padding: 32px 20px 80px 20px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header.page-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted-fg);
+      margin-top: 4px;
+    }
+    .theme-btn {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--fg);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+    }
+    .card.recommended {
+      border: 2px solid var(--accent-orange);
+      position: relative;
+    }
+    .badge-star {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--accent-orange);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+      z-index: 2;
+    }
+    .img-wrap {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+    }
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .img-wrap img {
+      transform: scale(1.04);
+    }
+    .card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+    .card-num {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--muted-fg);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-apply {
+      flex: 1;
+      padding: 8px 14px;
+      background: var(--accent-orange);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-apply:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+    .btn-copy-prompt {
+      padding: 8px 12px;
+      background: var(--muted);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-copy-prompt:hover {
+      background: var(--border);
+    }
+
+    /* Live Header Simulation */
+    .sim-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 48px;
+    }
+    .sim-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .sim-p {
+      font-size: 13px;
+      color: var(--muted-fg);
+      margin-bottom: 24px;
+    }
+    .sim-dock {
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.08);
+    }
+    body.dark-mode .sim-dock {
+      background: rgba(18, 22, 29, 0.95);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+    .sim-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--fg);
+    }
+    .sim-logo-preview {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .sim-logo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sim-nav {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted-fg);
+    }
+    .sim-nav span.active {
+      color: var(--fg);
+      font-weight: 700;
+    }
+    .sim-cta {
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: var(--accent-orange);
+      color: #000;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* Prompts Showcase Section */
+    .prompts-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+    }
+    .prompt-item {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-top: 14px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      position: relative;
+      color: var(--fg);
+    }
+    .prompt-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .prompt-tag {
+      font-weight: 700;
+      color: var(--accent-orange);
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <div>
+        <h1>Vraj Clerk — Logo Visualizer & Concepts</h1>
+        <p class="subtitle">4 high-contrast logo explorations generated for your personal developer brand</p>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()">
+        <span id="theme-icon">☾</span>
+        <span>Toggle Dark / Light</span>
+      </button>
+    </header>
+
+    <!-- 4 Logo Cards Grid -->
+    <div class="grid">
+      <!-- Concept 01 -->
+      <div class="card">
+        <div class="img-wrap">
+          <img src="../../public/images/logos/logo-concept-1.jpg" alt="VC Logo Concept 1">
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-num">Concept 01</div>
+            <div class="card-title">Cyber Circuit Monogram</div>
+            <p class="card-desc">Letter V and C crafted with precision circuit paths and micro-electronics geometry. High tech & systems engineering identity.</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-apply" onclick="previewInDock('../../public/images/logos/logo-concept-1.jpg')">Test in Header</button>
+            <button class="btn-copy-prompt" onclick="copyPrompt(1)">Copy Prompt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Concept 02 (Recommended Winner) -->
+      <div class="card recommended">
+        <div class="badge-star">★ Recommended</div>
+        <div class="img-wrap">
+          <img src="../../public/images/logos/logo-concept-2.jpg" alt="VC Logo Concept 2">
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-num">Concept 02</div>
+            <div class="card-title">Interlocking Vector Ribbon</div>
+            <p class="card-desc">Abstract continuous ribbon forming V and C in one fluid stroke. Nordic Cobalt & Blaze Orange gradient. Silicon Valley aesthetic (Linear/Raycast).</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-apply" onclick="previewInDock('../../public/images/logos/logo-concept-2.jpg')">Test in Header</button>
+            <button class="btn-copy-prompt" onclick="copyPrompt(2)">Copy Prompt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Concept 03 -->
+      <div class="card">
+        <div class="img-wrap">
+          <img src="../../public/images/logos/logo-concept-3.jpg" alt="VC Logo Concept 3">
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-num">Concept 03</div>
+            <div class="card-title">Isometric Code Hexagon</div>
+            <p class="card-desc">Symmetrical 3D cube fusing developer code brackets &lt; / &gt; with isometric VC typography. Bold architectural insignia.</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-apply" onclick="previewInDock('../../public/images/logos/logo-concept-3.jpg')">Test in Header</button>
+            <button class="btn-copy-prompt" onclick="copyPrompt(3)">Copy Prompt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Concept 04 -->
+      <div class="card">
+        <div class="img-wrap" style="background: #FFF;">
+          <img src="../../public/images/logos/logo-concept-4.jpg" alt="VC Logo Concept 4">
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-num">Concept 04</div>
+            <div class="card-title">Swiss Architectural Monogram</div>
+            <p class="card-desc">High-contrast dual-line interlocking vector on clean canvas. Timeless Swiss modernism, ultra legible at 16x16px favicon scale.</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-apply" onclick="previewInDock('../../public/images/logos/logo-concept-4.jpg')">Test in Header</button>
+            <button class="btn-copy-prompt" onclick="copyPrompt(4)">Copy Prompt</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Header Simulation Dock -->
+    <section class="sim-section">
+      <div class="sim-title">Live Header Placement Preview</div>
+      <p class="sim-p">Click "Test in Header" on any logo above to see how it looks mounted directly inside your Floating Dynamic Island Header:</p>
+
+      <div class="sim-dock">
+        <div class="sim-brand">
+          <div class="sim-logo-preview">
+            <img id="dock-logo-img" src="../../public/images/logos/logo-concept-2.jpg" alt="Current Logo Preview">
+          </div>
+          <strong style="font-size: 14px;">Vraj Clerk</strong>
+        </div>
+
+        <div class="sim-nav">
+          <span class="active">Projects</span>
+          <span>Blog</span>
+          <span>About</span>
+          <span>Contact</span>
+          <span>Resume</span>
+        </div>
+
+        <div class="sim-cta">Let's Talk →</div>
+      </div>
+    </section>
+
+    <!-- Prompts for Gemini Section -->
+    <section class="prompts-box">
+      <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Prompts to Generate More Logos in Gemini</h2>
+      <p style="font-size: 13px; color: var(--muted-fg); margin-bottom: 20px;">You can paste any of these directly into Gemini or Google Imagen 3 to generate further variations:</p>
+
+      <div class="prompt-item">
+        <div class="prompt-head">
+          <span class="prompt-tag">Prompt 1: Interlocking Ribbon (Concept 02 Style)</span>
+          <button class="btn-copy-prompt" onclick="copyPrompt(2)">Copy</button>
+        </div>
+        <p id="p-text-2">Minimalist modern tech monogram logo for full-stack software engineer initials "VC". An abstract interlocking ribbon that seamlessly forms the letters V and C in a single continuous geometrical line. Clean Swiss modernism, Raycast and Linear app icon aesthetic, bold sharp silhouette, dual-tone electric cobalt blue and blaze orange gradient on a deep matte carbon dark background. Pure vector graphic, flat icon, centered, no text, award-winning tech brand identity, 8k resolution, ultra-clean edges.</p>
+      </div>
+
+      <div class="prompt-item">
+        <div class="prompt-head">
+          <span class="prompt-tag">Prompt 2: Cyber Circuit Tech (Concept 01 Style)</span>
+          <button class="btn-copy-prompt" onclick="copyPrompt(1)">Copy</button>
+        </div>
+        <p id="p-text-1">Minimalist modern tech logo monogram for software engineer initials VC. Sleek geometric vector emblem, interlocking letter V and letter C crafted from clean architectural lines and precision circuit geometry. Deep matte carbon black background with vibrant electric cobalt blue and subtle blaze orange edge glow. Precision branding mark, flat vector style, Swiss tech design aesthetic, suitable for high-end developer portfolio favicon, 8k render, ultra sharp.</p>
+      </div>
+
+      <div class="prompt-item">
+        <div class="prompt-head">
+          <span class="prompt-tag">Prompt 3: Isometric Code Cube (Concept 03 Style)</span>
+          <button class="btn-copy-prompt" onclick="copyPrompt(3)">Copy</button>
+        </div>
+        <p id="p-text-3">Modern developer brand logo glyph for Vraj Clerk. Minimalist tech insignia fusing code chevron brackets and the monogram letters V and C into an isometric cube or modern hexagonal glyph. Hyper-clean vector style, matte dark carbon background, neon electric blue and hyper orange accents, perfectly symmetrical, Stripe and Supabase branding style, high resolution.</p>
+      </div>
+
+      <div class="prompt-item">
+        <div class="prompt-head">
+          <span class="prompt-tag">Prompt 4: Swiss Minimalist (Concept 04 Style)</span>
+          <button class="btn-copy-prompt" onclick="copyPrompt(4)">Copy</button>
+        </div>
+        <p id="p-text-4">Minimalist modern logo design for initials VC. Clean geometric typography mark, architectural intersecting lines forming letters V and C in bold modern style. Deep cobalt blue and hyper orange gradient on pure minimalist white canvas, Raycast and Linear brand identity aesthetic, vector icon, high resolution, centered, flat.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('theme-icon').textContent = isDark ? '☀' : '☾';
+    }
+
+    function previewInDock(imgSrc) {
+      document.getElementById('dock-logo-img').src = imgSrc;
+    }
+
+    function copyPrompt(num) {
+      const text = document.getElementById('p-text-' + num).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Prompt ' + num + ' copied to clipboard! Paste it into Gemini.');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -113,6 +113,7 @@ export default async function FrontendLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} flex min-h-full flex-col font-sans antialiased`}
       >
         {/* Skip to main content link for keyboard and screen reader accessibility (WCAG 2.2 AA) */}

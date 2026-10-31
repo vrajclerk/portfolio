@@ -24,7 +24,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
     : [];
 
   return (
-    <article className="group flex flex-col justify-between rounded-2xl border border-border/60 bg-card/80 p-6 sm:p-7 shadow-xs transition-all duration-300 hover:border-foreground/25 hover:shadow-lg hover:-translate-y-0.5 backdrop-blur-xs">
+    <article className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-6 sm:p-7 shadow-xs transition-all duration-300 hover:border-accent hover:shadow-lg hover:-translate-y-0.5">
       <div>
         <div className="flex items-center justify-between gap-3 mb-3.5">
           <Badge variant={badgeVariant}>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <!-- Nordic Cobalt to Cyan gradient for V -->
+    <linearGradient id="v-ribbon" x1="15" y1="20" x2="55" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="50%" stop-color="#1D4ED8"/>
+      <stop offset="100%" stop-color="#FF6B00"/>
+    </linearGradient>
+
+    <!-- Blaze Orange to Tangerine gradient for C -->
+    <linearGradient id="c-ribbon" x1="45" y1="25" x2="85" y2="75" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="40%" stop-color="#2563EB"/>
+      <stop offset="75%" stop-color="#FF6B00"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+
+    <!-- Shadow for tactile 3D layering -->
+    <filter id="ribbon-shadow" x="-10%" y="-10%" width="130%" height="130%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#ribbon-shadow)">
+    <!-- Outer V Arm (Left) -->
+    <path d="M16 26 L29 26 L44 58 L54 36 L43 36 L37 26 L65 26 C68 26 71 28.5 71 32 L71 36 L57 36 L44 64 C42 68 36 68 34 64 L16 26 Z" 
+          fill="url(#v-ribbon)"/>
+
+    <!-- Interlocking C Arm (Right) -->
+    <path d="M52 26 L79 26 C82.5 26 85 28.5 85 32 L85 37 C85 40 82.5 42 79 42 L67 42 C65 46 65 52 67 56 L79 56 C82.5 56 85 58 85 61 L85 66 C85 69.5 82.5 72 79 72 L52 72 C48.5 72 46 69.5 46 66 L46 60 C46 56.5 48.5 54 52 54 L62 54 C60 50 60 48 62 44 L52 44 C48.5 44 46 41.5 46 38 L46 32 C46 28.5 48.5 26 52 26 Z" 
+          fill="url(#c-ribbon)"/>
+  </g>
+</svg>

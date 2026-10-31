@@ -137,6 +137,7 @@ export default async function HomePage() {
         headline={heroHeadline}
         subheadline={heroSubheadline}
         avatarUrl={avatarUrl}
+        email={siteSettings.publicEmail}
       />
 
       {/* ---------------------------------------------------------------------
@@ -274,13 +275,13 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
               <Link
                 href="/contact"
-                className="inline-flex items-center rounded-full bg-foreground px-7 py-3 text-sm font-semibold text-background transition-all duration-200 hover:opacity-90 hover:shadow-md hover:-translate-y-0.5"
+                className="inline-flex items-center rounded-full bg-accent px-7 py-3.5 text-sm font-bold text-accent-foreground shadow-md transition-all duration-200 hover:brightness-110 hover:shadow-lg hover:shadow-accent/25 hover:-translate-y-0.5"
               >
-                Get in Touch
+                Get in Touch →
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center rounded-full border border-border/70 bg-card/80 px-7 py-3 text-sm font-semibold text-foreground transition-all duration-200 hover:bg-muted hover:-translate-y-0.5"
+                className="inline-flex items-center rounded-full border border-accent/30 bg-card px-7 py-3.5 text-sm font-semibold text-foreground transition-all duration-200 hover:border-accent hover:text-accent hover:bg-accent/8 hover:-translate-y-0.5"
               >
                 Learn More About My Background
               </Link>
