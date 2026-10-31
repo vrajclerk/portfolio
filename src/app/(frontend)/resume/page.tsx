@@ -113,7 +113,7 @@ export default async function ResumePage() {
       </div>
 
       {/* Printable Resume Document */}
-      <div className="rounded-2xl border border-border bg-card p-8 sm:p-12 shadow-xs print:border-none print:shadow-none print:p-0">
+      <div className="rounded-2xl border border-border bg-card p-5 sm:p-8 md:p-12 shadow-xs print:border-none print:shadow-none print:p-0">
         {/* Document Header */}
         <header className="border-b border-border pb-6 mb-8">
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
@@ -123,7 +123,7 @@ export default async function ResumePage() {
             {profile.headline || "Full-Stack Software Engineer"}
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono text-muted-foreground">
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2 text-xs font-mono text-muted-foreground">
             <a href={`mailto:${publicEmail}`} className="hover:underline text-foreground">
               {publicEmail}
             </a>

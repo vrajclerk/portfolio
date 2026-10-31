@@ -42,28 +42,28 @@ export function Header({
           {/* Continuous Rotating Border Beam */}
           <div
             aria-hidden="true"
-            className="absolute -top-[150%] -left-[50%] w-[200%] h-[400%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_280deg,var(--accent)_320deg,#38BDF8_345deg,transparent_360deg)] animate-border-beam pointer-events-none -z-1 opacity-60 dark:opacity-75"
+            className="absolute -top-[150%] -left-[50%] w-[200%] h-[400%] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_280deg,var(--accent)_320deg,#38BDF8_345deg,transparent_360deg)] animate-border-beam pointer-events-none -z-10 opacity-60 dark:opacity-75"
           />
           {/* Inner Crisp Surface Mask */}
           <div
             aria-hidden="true"
-            className="absolute inset-[1.5px] rounded-full bg-card/95 dark:bg-[#12161D]/95 backdrop-blur-2xl pointer-events-none -z-1"
+            className="absolute inset-[1.5px] rounded-full bg-card/95 dark:bg-[#12161D]/95 backdrop-blur-2xl pointer-events-none -z-10"
           />
 
           {/* Left: Brand with Monogram & Live Status Indicator */}
           <Link
             href="/"
-            className="group flex items-center gap-2.5 sm:gap-3 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-accent"
+            className="group flex items-center gap-2 sm:gap-3 rounded-full py-1 pl-1 pr-2 sm:pr-3 transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-accent min-w-0"
             aria-label="Home"
           >
             {/* Tactile Logo Brand Icon with 3D spring tilt */}
-            <span className="relative flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
-              <Logo size={36} />
+            <span className="relative flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
+              <Logo size={34} />
             </span>
 
-            <div className="flex flex-col">
-              <span className="font-bold text-sm tracking-tight text-foreground transition-colors group-hover:text-accent">
-                {siteName}
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-sm tracking-tight text-foreground transition-colors group-hover:text-accent truncate max-w-[120px] xs:max-w-[160px] sm:max-w-none">
+                {siteName.split("|")[0].trim() || siteName}
               </span>
             </div>
           </Link>

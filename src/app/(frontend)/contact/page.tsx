@@ -149,36 +149,36 @@ export default async function ContactPage() {
               </div>
 
               <div className="space-y-3 font-mono text-xs">
-                <div className="flex items-start justify-between py-2 border-b border-border/60">
-                  <span className="text-muted-foreground">Target Roles</span>
+                <div className="flex items-start justify-between gap-3 py-2 border-b border-border/60">
+                  <span className="text-muted-foreground shrink-0">Target Roles</span>
                   <span className="font-semibold text-foreground text-right">
                     Full-Stack / Backend Engineer
                   </span>
                 </div>
 
-                <div className="flex items-start justify-between py-2 border-b border-border/60">
-                  <span className="text-muted-foreground">Availability</span>
+                <div className="flex items-start justify-between gap-3 py-2 border-b border-border/60">
+                  <span className="text-muted-foreground shrink-0">Availability</span>
                   <span className="font-semibold text-emerald-600 dark:text-emerald-400 text-right">
                     Immediate / Ready to Join
                   </span>
                 </div>
 
-                <div className="flex items-start justify-between py-2 border-b border-border/60">
-                  <span className="text-muted-foreground">Work Location</span>
+                <div className="flex items-start justify-between gap-3 py-2 border-b border-border/60">
+                  <span className="text-muted-foreground shrink-0">Work Location</span>
                   <span className="font-semibold text-foreground text-right">
                     Remote / Hybrid / Relocation
                   </span>
                 </div>
 
-                <div className="flex items-start justify-between py-2 border-b border-border/60">
-                  <span className="text-muted-foreground">Current Base</span>
+                <div className="flex items-start justify-between gap-3 py-2 border-b border-border/60">
+                  <span className="text-muted-foreground shrink-0">Current Base</span>
                   <span className="font-semibold text-foreground text-right">
                     Surat, Gujarat, India
                   </span>
                 </div>
 
-                <div className="flex items-start justify-between pt-2">
-                  <span className="text-muted-foreground">Response SLA</span>
+                <div className="flex items-start justify-between gap-3 pt-2">
+                  <span className="text-muted-foreground shrink-0">Response SLA</span>
                   <span className="font-semibold text-accent text-right">
                     &lt; 24h (Business Days)
                   </span>
@@ -200,15 +200,15 @@ export default async function ContactPage() {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card/60 p-3.5 text-xs font-mono transition-all duration-200 hover:border-accent hover:bg-card hover:-translate-y-0.5"
+                    className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card/60 p-3.5 text-xs font-mono transition-all duration-200 hover:border-accent hover:bg-card hover:-translate-y-0.5"
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 shrink-0">
                       <span className="text-accent font-bold">●</span>
                       <span className="font-semibold text-foreground">{link.label}</span>
                     </div>
-                    <span className="text-muted-foreground text-[11px] group-hover:text-accent transition-colors flex items-center gap-1">
-                      <span>{link.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                      <span>↗</span>
+                    <span className="text-muted-foreground text-[11px] group-hover:text-accent transition-colors flex items-center gap-1 min-w-0">
+                      <span className="truncate max-w-[130px] xs:max-w-[170px] sm:max-w-none">{link.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                      <span className="shrink-0">↗</span>
                     </span>
                   </a>
                 ))}

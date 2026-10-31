@@ -53,7 +53,7 @@ export function CopyEmailButton({
         )}
       </span>
 
-      <span className="font-semibold tracking-tight">{email}</span>
+      <span className="font-semibold tracking-tight truncate max-w-[150px] xs:max-w-[180px] sm:max-w-none">{email}</span>
 
       {showShortcut && (
         <span

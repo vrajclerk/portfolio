@@ -17,7 +17,7 @@ export function CtaSection({
   return (
     <section className="relative mx-auto max-w-5xl w-full px-4 sm:px-6 lg:px-8 my-16 sm:my-24">
       {/* Outer Card with Conic Rotating Border Beam & Multi-Layer Depth */}
-      <div className="relative rounded-[32px] sm:rounded-[36px] overflow-hidden p-8 sm:p-14 lg:p-16 border border-border/80 dark:border-white/10 shadow-2xl backdrop-blur-2xl transition-all duration-300">
+      <div className="relative rounded-[28px] sm:rounded-[36px] overflow-hidden p-6 sm:p-12 lg:p-16 border border-border/80 dark:border-white/10 shadow-2xl backdrop-blur-2xl transition-all duration-300">
         {/* Background Layer 1: Technical Grid Mesh */}
         <div
           aria-hidden="true"
@@ -75,7 +75,7 @@ export function CtaSection({
             {/* Primary Action: Discuss an Open Role */}
             <Link
               href="/contact"
-              className="group relative inline-flex items-center gap-2 rounded-full bg-accent px-8 py-3.5 text-sm font-bold text-accent-foreground shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-accent/30 active:scale-[0.98] overflow-hidden"
+              className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-8 py-3.5 text-sm font-bold text-accent-foreground shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-accent/30 active:scale-[0.98] overflow-hidden text-center"
             >
               <span
                 aria-hidden="true"
@@ -93,7 +93,7 @@ export function CtaSection({
             {/* Secondary Action: View Resume & Background */}
             <Link
               href="/resume"
-              className="inline-flex items-center gap-2 rounded-full border border-border/80 dark:border-white/15 bg-card/80 dark:bg-card/40 px-7 py-3.5 text-sm font-semibold text-foreground shadow-xs transition-all duration-200 hover:border-accent hover:text-accent hover:bg-accent/5 hover:-translate-y-0.5"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-border/80 dark:border-white/15 bg-card/80 dark:bg-card/40 px-5 sm:px-7 py-3.5 text-sm font-semibold text-foreground shadow-xs transition-all duration-200 hover:border-accent hover:text-accent hover:bg-accent/5 hover:-translate-y-0.5 text-center"
             >
               <span>View Full Resume</span>
               <span className="text-muted-foreground text-xs">↗</span>
@@ -106,7 +106,7 @@ export function CtaSection({
           </div>
 
           {/* Bottom Trust & Telemetry Matrix */}
-          <div className="mt-10 pt-6 border-t border-border/60 dark:border-white/10 flex flex-wrap items-center justify-center gap-6 font-mono text-[11px] text-muted-foreground">
+          <div className="mt-10 pt-6 border-t border-border/60 dark:border-white/10 flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-mono text-[11px] text-muted-foreground text-center">
             <div className="inline-flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               <span>

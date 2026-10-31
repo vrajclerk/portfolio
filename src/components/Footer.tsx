@@ -18,6 +18,7 @@ export function Footer({
 }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const siteName = siteSettings?.siteName || "Vraj Clerk";
+  const shortSiteName = siteName.split("|")[0].trim() || siteName;
   const publicEmail = siteSettings?.publicEmail || "vrajclerk04@gmail.com";
 
   // Dynamic real-time IST clock (UTC+5:30) for engineering presence
@@ -113,14 +114,14 @@ export function Footer({
             <Link
               href="/"
               className="group inline-flex items-center gap-3 transition-transform duration-300 hover:scale-[1.02]"
-              aria-label={`${siteName} Home`}
+              aria-label={`${shortSiteName} Home`}
             >
               <span className="flex h-10 w-10 items-center justify-center transition-transform duration-300 group-hover:-rotate-6">
                 <Logo size={40} />
               </span>
               <div className="flex flex-col">
                 <span className="text-base font-extrabold tracking-tight text-foreground transition-colors group-hover:text-accent">
-                  {siteName}
+                  {shortSiteName}
                 </span>
                 <span className="text-xs font-medium text-muted-foreground">
                   Python &amp; Backend Systems Engineer
@@ -195,8 +196,8 @@ export function Footer({
                     </svg>
                   )}
                 </span>
-                <span className="font-medium">{publicEmail}</span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider pl-1">
+                <span className="font-medium truncate max-w-[150px] xs:max-w-[180px] sm:max-w-none">{publicEmail}</span>
+                <span className="text-[10px] text-muted-foreground uppercase tracking-wider pl-1 shrink-0">
                   {copied ? "Copied!" : "Copy"}
                 </span>
               </button>
@@ -311,7 +312,7 @@ export function Footer({
          * ===================================================================== */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-            <span>© {currentYear} {siteName}. All rights reserved.</span>
+            <span>© {currentYear} {shortSiteName}. All rights reserved.</span>
             <span className="hidden sm:inline text-border dark:text-white/20">•</span>
             <span>Crafted for high performance &amp; zero recurring cloud cost.</span>
           </div>

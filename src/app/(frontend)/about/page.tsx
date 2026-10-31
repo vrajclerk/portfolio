@@ -311,40 +311,40 @@ export default async function AboutPage() {
                 )}
               </div>
 
-              {/* Overlapping Floating Proof HUD Badge */}
-              <div className="animate-float-slow absolute -bottom-6 -left-4 sm:-bottom-8 sm:-left-8 z-20 w-[210px] sm:w-[230px] rounded-2xl border border-border bg-[var(--badge-bg)] text-[var(--badge-fg)] p-5 shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                <div className="space-y-3.5 text-left font-mono">
-                  <div>
-                    <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-sans text-[var(--badge-fg)]">
+              {/* Engineering Telemetry & Production Metrics */}
+              <div className="mt-5 rounded-2xl border border-border/80 bg-card/90 dark:bg-card/75 p-4 sm:p-5 shadow-xs backdrop-blur-md">
+                <div className="grid grid-cols-3 divide-x divide-border/60 text-center font-mono">
+                  <div className="px-2">
+                    <div className="text-xl sm:text-2xl font-extrabold tracking-tight font-sans text-foreground">
                       1.5+
                     </div>
-                    <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--badge-muted)]">
-                      Years Production Exp
+                    <div className="mt-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Prod Exp
                     </div>
                   </div>
-                  <div className="h-px w-full bg-[var(--border)] opacity-60" />
-                  <div>
-                    <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-sans text-[var(--badge-fg)]">
+
+                  <div className="px-2">
+                    <div className="text-xl sm:text-2xl font-extrabold tracking-tight font-sans text-foreground">
                       &lt; 45ms
                     </div>
-                    <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--badge-muted)]">
-                      Dynamic Edge TTFB
+                    <div className="mt-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Edge TTFB
                     </div>
                   </div>
-                  <div className="h-px w-full bg-[var(--border)] opacity-60" />
-                  <div>
-                    <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-sans text-[var(--badge-accent)]">
+
+                  <div className="px-2">
+                    <div className="text-xl sm:text-2xl font-extrabold tracking-tight font-sans text-accent">
                       $0.00
                     </div>
-                    <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--badge-muted)]">
-                      Monthly Cloud Cost
+                    <div className="mt-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Cloud Cost
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Verified External Profile Channels */}
-              <div className="mt-14 pt-4 flex flex-col gap-2">
+              <div className="mt-6 flex flex-col gap-2">
                 <span className="font-mono text-[11px] uppercase tracking-wider font-bold text-muted-foreground">
                   Verified Identity & Channels
                 </span>
@@ -418,7 +418,7 @@ export default async function AboutPage() {
                     <span className="absolute -left-[31px] sm:-left-[47px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-card ring-4 ring-background border-2 border-accent transition-transform duration-300 group-hover:scale-125 group-hover:bg-accent" />
 
                     {/* Timeline Entry Card */}
-                    <div className="rounded-2xl border border-border/80 bg-card/90 dark:bg-card/60 p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
+                    <div className="rounded-2xl border border-border/80 bg-card/90 dark:bg-card/60 p-5 sm:p-7 shadow-xs backdrop-blur-sm transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
                       <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-1">
                         <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="text-lg font-bold text-foreground">

@@ -23,7 +23,7 @@ export function HeroCopyButton({ email }: HeroCopyButtonProps) {
     <button
       type="button"
       onClick={handleCopyEmail}
-      className={`group relative inline-flex items-center gap-3 rounded-full border bg-card/90 px-4 py-2.5 text-xs font-mono transition-all duration-300 hover:border-accent hover:shadow-xl hover:shadow-accent/15 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden ${
+      className={`group relative inline-flex items-center gap-2.5 sm:gap-3 rounded-full border bg-card/90 px-3.5 sm:px-4 py-2.5 text-xs font-mono max-w-full transition-all duration-300 hover:border-accent hover:shadow-xl hover:shadow-accent/15 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden ${
         copied
           ? "border-emerald-500/60 ring-2 ring-emerald-500/20"
           : "border-border hover:border-accent"
@@ -39,7 +39,7 @@ export function HeroCopyButton({ email }: HeroCopyButtonProps) {
 
       {/* Left Animated Icon Circle */}
       <span
-        className={`flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300 ${
+        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
           copied
             ? "bg-emerald-500 text-white scale-110"
             : "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground group-hover:scale-105"
@@ -75,7 +75,7 @@ export function HeroCopyButton({ email }: HeroCopyButtonProps) {
       </span>
 
       {/* Email Address */}
-      <span className="font-semibold text-foreground tracking-tight transition-colors group-hover:text-accent">
+      <span className="font-semibold text-foreground tracking-tight transition-colors group-hover:text-accent truncate max-w-[150px] xs:max-w-[180px] sm:max-w-none">
         {email}
       </span>
 
