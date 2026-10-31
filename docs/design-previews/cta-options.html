@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vraj Clerk — Creative Animated CTA Section Explorations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Geist+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --card: #FFFFFF;
+      --border: #CBD5E1;
+      --muted: #F1F5F9;
+      --muted-fg: #64748B;
+      --accent: #1D4ED8;
+      --accent-fg: #FFFFFF;
+      --accent-orange: #FF6B00;
+      --grid-color: rgba(15, 23, 42, 0.05);
+    }
+    body.dark-mode {
+      --bg: #0E1013;
+      --fg: #FFFFFF;
+      --card: #161A22;
+      --border: #2D333F;
+      --muted: #1F2430;
+      --muted-fg: #94A3B8;
+      --accent: #FF6B00;
+      --accent-fg: #0E1013;
+      --accent-orange: #FF6B00;
+      --grid-color: rgba(255, 255, 255, 0.05);
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      padding: 32px 20px 80px 20px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .top-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .theme-toggle-btn {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--fg);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    /* Option Banner */
+    .concept-title {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .concept-headline {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    /* =========================================================================
+       CONCEPT 01: THE AURORA WARP & CONIC GLASS CAPSULE (Flagship Creative)
+       Dynamic rotating border beam, floating tech badges, animated aurora core,
+       interactive quick email copy chip & live SLA indicator
+       ========================================================================= */
+    .cta-stage {
+      position: relative;
+      border-radius: 36px;
+      overflow: hidden;
+      padding: 80px 32px;
+      margin-bottom: 60px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+      isolation: isolate;
+    }
+    body.dark-mode .cta-stage {
+      background: #12161D;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Background 1: Animated Interactive Grid */
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+      z-index: -3;
+    }
+
+    /* Background 2: Animated Dual Aurora Orbs */
+    .aurora-orb-1 {
+      position: absolute;
+      top: -20%;
+      left: 15%;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(29, 78, 216, 0.3) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 70%);
+      filter: blur(60px);
+      z-index: -2;
+      animation: floatOrb1 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+    body.dark-mode .aurora-orb-1 {
+      background: radial-gradient(circle, rgba(255, 107, 0, 0.35) 0%, rgba(234, 88, 12, 0.15) 50%, transparent 70%);
+    }
+
+    .aurora-orb-2 {
+      position: absolute;
+      bottom: -20%;
+      right: 15%;
+      width: 450px;
+      height: 450px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(29, 78, 216, 0.1) 50%, transparent 70%);
+      filter: blur(60px);
+      z-index: -2;
+      animation: floatOrb2 12s ease-in-out infinite reverse;
+      pointer-events: none;
+    }
+    body.dark-mode .aurora-orb-2 {
+      background: radial-gradient(circle, rgba(255, 170, 0, 0.25) 0%, rgba(255, 107, 0, 0.1) 50%, transparent 70%);
+    }
+
+    @keyframes floatOrb1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, 30px) scale(1.15); }
+    }
+    @keyframes floatOrb2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-50px, -25px) scale(1.18); }
+    }
+
+    /* Rotating Conic Border Beam surrounding the card */
+    .conic-border-beam {
+      position: absolute;
+      top: -150%;
+      left: -50%;
+      width: 200%;
+      height: 400%;
+      background: conic-gradient(
+        transparent 0deg,
+        transparent 280deg,
+        rgba(29, 78, 216, 0.7) 320deg,
+        rgba(56, 189, 248, 1) 345deg,
+        transparent 360deg
+      );
+      animation: beamRotate 6s linear infinite;
+      z-index: -1;
+      pointer-events: none;
+    }
+    body.dark-mode .conic-border-beam {
+      background: conic-gradient(
+        transparent 0deg,
+        transparent 280deg,
+        rgba(255, 107, 0, 0.8) 320deg,
+        rgba(255, 215, 0, 1) 345deg,
+        transparent 360deg
+      );
+    }
+    @keyframes beamRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Inner Glass Surface */
+    .cta-inner-mask {
+      position: absolute;
+      inset: 1.5px;
+      border-radius: 35px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      z-index: -1;
+      pointer-events: none;
+    }
+    body.dark-mode .cta-inner-mask {
+      background: rgba(14, 16, 19, 0.92);
+    }
+
+    /* Floating Satellite Telemetry Chips */
+    .sat-chip {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--fg);
+      backdrop-filter: blur(14px);
+      z-index: 2;
+    }
+    body.dark-mode .sat-chip {
+      background: rgba(22, 26, 34, 0.9);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.6);
+    }
+    .sat-chip.left {
+      top: 40px;
+      left: 36px;
+      animation: floatSlow1 7s ease-in-out infinite;
+    }
+    .sat-chip.right {
+      bottom: 40px;
+      right: 36px;
+      animation: floatSlow2 8s ease-in-out infinite;
+    }
+    @keyframes floatSlow1 {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(-1deg); }
+    }
+    @keyframes floatSlow2 {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(8px) rotate(1deg); }
+    }
+    @media (max-width: 900px) {
+      .sat-chip { display: none; }
+    }
+
+    /* Content Layout */
+    .cta-content {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    /* Eyebrow Status Pill */
+    .cta-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(29, 78, 216, 0.08);
+      border: 1px solid rgba(29, 78, 216, 0.25);
+      color: var(--accent);
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 24px;
+    }
+    body.dark-mode .cta-eyebrow {
+      background: rgba(255, 107, 0, 0.1);
+      border-color: rgba(255, 107, 0, 0.3);
+    }
+    .radar-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: radarPulse 2s infinite;
+    }
+    @keyframes radarPulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .cta-headline {
+      font-size: clamp(32px, 4.5vw, 48px);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+      color: var(--fg);
+    }
+    .cta-headline .serif-accent {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-color: rgba(29, 78, 216, 0.35);
+      text-underline-offset: 8px;
+    }
+    body.dark-mode .cta-headline .serif-accent {
+      text-decoration-color: rgba(255, 107, 0, 0.4);
+    }
+
+    .cta-subtext {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--muted-fg);
+      margin-bottom: 36px;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-subtext strong {
+      color: var(--fg);
+    }
+
+    /* Actions & Interactive Elements */
+    .cta-action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+
+    .btn-primary-shimmer {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(29, 78, 216, 0.35);
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.dark-mode .btn-primary-shimmer {
+      box-shadow: 0 8px 26px rgba(255, 107, 0, 0.45);
+    }
+    .btn-primary-shimmer::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transform: translateX(-160%) skewX(-20deg);
+      animation: sweepShimmer 4s infinite;
+    }
+    @keyframes sweepShimmer {
+      0% { transform: translateX(-160%) skewX(-20deg); }
+      40%, 100% { transform: translateX(260%) skewX(-20deg); }
+    }
+    .btn-primary-shimmer:hover {
+      transform: translateY(-2px) scale(1.02);
+      filter: brightness(1.08);
+      box-shadow: 0 12px 32px rgba(29, 78, 216, 0.5);
+    }
+    .btn-primary-shimmer svg {
+      transition: transform 0.25s ease;
+    }
+    .btn-primary-shimmer:hover svg {
+      transform: translateX(4px);
+    }
+
+    .btn-secondary-glass {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .btn-secondary-glass:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    /* Embedded Quick Email Copy Pill */
+    .quick-copy-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .quick-copy-bar:hover {
+      border-color: var(--accent);
+      background: var(--card);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+    .shortcut-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      color: var(--muted-fg);
+    }
+    body.dark-mode .shortcut-badge {
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Bottom Trust Matrix */
+    .trust-matrix {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(100, 116, 139, 0.2);
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .trust-item strong {
+      color: var(--fg);
+    }
+    .dot-accent {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-controls">
+      <div>
+        <h1>CTA Section Transformation</h1>
+        <p style="color: var(--muted-fg); font-size: 13px; margin-top: 4px;">Dynamic background mesh, continuous border beam, aurora lighting, and interactive conversion tools</p>
+      </div>
+      <button class="theme-toggle-btn" onclick="toggleTheme()">
+        <span id="theme-icon">☾</span>
+        <span id="theme-label">Switch to Dark (Carbon)</span>
+      </button>
+    </div>
+
+    <!-- =======================================================================
+         CONCEPT 01: AURORA WARP & CONIC GLASS CAPSULE
+         ======================================================================= -->
+    <div class="concept-title">Flagship Concept: Aurora Warp & Conic Glass Capsule</div>
+    <div class="concept-headline">High-Contrast Systems Design with Live Satellite Telemetry</div>
+
+    <section class="cta-stage">
+      <!-- Background Layers: Interactive Grid + Aurora Orbs + Rotating Beam -->
+      <div class="bg-grid"></div>
+      <div class="aurora-orb-1"></div>
+      <div class="aurora-orb-2"></div>
+      <div class="conic-border-beam"></div>
+      <div class="cta-inner-mask"></div>
+
+      <!-- Satellite Telemetry Badge Left -->
+      <div class="sat-chip left">
+        <span style="color: #10B981;">●</span>
+        <span>STATUS: OPEN FOR NEW ROLES</span>
+      </div>
+
+      <!-- Satellite Telemetry Badge Right -->
+      <div class="sat-chip right">
+        <span>⚡</span>
+        <span>&lt; 24H RESPONSE TIME</span>
+      </div>
+
+      <!-- Main Content Container -->
+      <div class="cta-content">
+        <!-- Eyebrow Pill -->
+        <div class="cta-eyebrow">
+          <span class="radar-pulse-dot"></span>
+          <span>Full-Stack & Systems Architecture / Available Now</span>
+        </div>
+
+        <!-- Headline with Serif Punchline -->
+        <h2 class="cta-headline">
+          Ready to build something <span class="serif-accent">extraordinary?</span>
+        </h2>
+
+        <!-- Context Narrative -->
+        <p class="cta-subtext">
+          Always open to high-impact conversations regarding <strong>backend engineering</strong>, resilient <strong>distributed architectures</strong>, and modern <strong>full-stack product development</strong>.
+        </p>
+
+        <!-- Primary Action Row -->
+        <div class="cta-action-row">
+          <a href="#" class="btn-primary-shimmer">
+            <span>Start a Conversation</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+
+          <a href="#" class="btn-secondary-glass">
+            <span>Explore Engineering Story ↗</span>
+          </a>
+        </div>
+
+        <!-- Interactive Quick-Copy Email Bar -->
+        <div>
+          <button class="quick-copy-bar" onclick="copyEmailDemo(this)">
+            <span>📋</span>
+            <span class="email-str">vrajclerk04@gmail.com</span>
+            <span class="shortcut-badge">⌘C Copy</span>
+          </button>
+        </div>
+
+        <!-- Trust & Telemetry Matrix -->
+        <div class="trust-matrix">
+          <div class="trust-item">
+            <span class="dot-accent"></span>
+            <span>Availability: <strong>Full-Time & Contract</strong></span>
+          </div>
+          <div class="trust-item">
+            <span class="dot-accent"></span>
+            <span>Location: <strong>Surat, IN (UTC +5:30) • Remote Global</strong></span>
+          </div>
+          <div class="trust-item">
+            <span class="dot-accent"></span>
+            <span>Focus: <strong>TypeScript • PostgreSQL • Next.js</strong></span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      document.getElementById('theme-icon').textContent = isDark ? '☀' : '☾';
+      document.getElementById('theme-label').textContent = isDark ? 'Switch to Light (Nordic)' : 'Switch to Dark (Carbon)';
+    }
+
+    function copyEmailDemo(btn) {
+      const emailStr = btn.querySelector('.email-str');
+      const badge = btn.querySelector('.shortcut-badge');
+      const originalText = emailStr.textContent;
+      emailStr.textContent = 'Copied to Clipboard! ✓';
+      btn.style.borderColor = '#10B981';
+      badge.textContent = 'Copied';
+      badge.style.color = '#10B981';
+      setTimeout(() => {
+        emailStr.textContent = originalText;
+        btn.style.borderColor = '';
+        badge.textContent = '⌘C Copy';
+        badge.style.color = '';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

@@ -205,10 +205,12 @@ export function HeroSection({
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/30" />
               </span>
               <span className="tracking-wider uppercase font-bold text-accent">
-                Full-Stack & Backend Architect
+                Actively Interviewing
               </span>
               <span className="text-accent/30 font-bold">/</span>
-              <span className="text-muted-foreground font-semibold">SURAT, IN</span>
+              <span className="text-foreground font-semibold">Full-Time Software Engineer</span>
+              <span className="text-accent/30 font-bold hidden sm:inline">/</span>
+              <span className="text-muted-foreground font-medium hidden sm:inline">Remote • Hybrid • Relocate</span>
             </div>
 
             {/* Stylized Display Headline */}
@@ -355,6 +357,18 @@ export function HeroSection({
               
               {/* Primary Visual Plate (Photo or Architectural Identity Frame) */}
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-2xl transition-all duration-300 hover:shadow-accent/10">
+                {/* Floating Candidate Availability Badge */}
+                <div className="absolute top-4 right-4 z-10 inline-flex items-center gap-1.5 rounded-full border border-border/80 dark:border-white/10 bg-card/90 dark:bg-card/85 px-3 py-1 font-mono text-[10px] font-bold text-foreground shadow-md backdrop-blur-md">
+                  <span className="relative flex h-2 w-2 items-center justify-center">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  </span>
+                  <span className="text-muted-foreground uppercase text-[9px]">STATUS:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold uppercase tracking-wide">
+                    READY TO JOIN
+                  </span>
+                </div>
+
                 {avatarUrl ? (
                   <Image
                     src={avatarUrl}

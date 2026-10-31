@@ -106,6 +106,38 @@ export const fixtureTags: Tag[] = [
     createdAt: "2026-10-01T10:00:00.000Z",
     updatedAt: "2026-10-01T10:00:00.000Z",
   },
+  {
+    id: 5,
+    name: "System Design",
+    slug: "system-design",
+    description: "Distributed architectures, concurrency, and reliability.",
+    createdAt: "2026-10-01T10:00:00.000Z",
+    updatedAt: "2026-10-01T10:00:00.000Z",
+  },
+  {
+    id: 6,
+    name: "AI Engineering",
+    slug: "ai-engineering",
+    description: "AI-assisted coding workflows, agent guardrails, and code generation.",
+    createdAt: "2026-10-01T10:00:00.000Z",
+    updatedAt: "2026-10-01T10:00:00.000Z",
+  },
+  {
+    id: 7,
+    name: "Git & Version Control",
+    slug: "git",
+    description: "Source control strategies, diff hygiene, and staging workflows.",
+    createdAt: "2026-10-01T10:00:00.000Z",
+    updatedAt: "2026-10-01T10:00:00.000Z",
+  },
+  {
+    id: 8,
+    name: "Code Review",
+    slug: "code-review",
+    description: "Maintainability, observability, and code review practices.",
+    createdAt: "2026-10-01T10:00:00.000Z",
+    updatedAt: "2026-10-01T10:00:00.000Z",
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -280,6 +312,179 @@ export const fixtureProjects: Project[] = [
 export const fixturePosts: Post[] = [
   {
     id: 1,
+    title: "The Most Important AI Coding Skill: Knowing When to Say NO",
+    slug: "most-important-ai-coding-skill-knowing-when-to-say-no",
+    excerpt:
+      "AI can generate functions in seconds, but speed without judgment turns small tasks into technical debt. Knowing how to critically evaluate AI output is the real engineering skill.",
+    publishedAt: "2026-10-30T10:00:00.000Z",
+    _status: "published",
+    createdAt: "2026-10-29T14:00:00.000Z",
+    updatedAt: "2026-10-30T10:00:00.000Z",
+    category: fixtureCategories[1],
+    tags: [fixtureTags[5], fixtureTags[7], fixtureTags[0]],
+    content: createLexicalDoc(
+      "The most important AI coding skill might be knowing when to say NO.",
+      "AI can generate a function in seconds. It can suggest a refactor, write unit tests, explain an unfamiliar codebase, and even pinpoint bugs. But just because AI suggests a solution doesn't mean it's the right solution.",
+      "Sometimes, the code works but introduces unnecessary complexity. Sometimes, the fix solves the immediate problem but ignores established patterns and architectural boundaries in the codebase. And sometimes, the best solution is the one you already had.",
+      "That's why AI-assisted development requires far more than writing better prompts. It requires knowing how to evaluate the output with seasoned engineering judgment.",
+      "Before accepting AI-generated code, ask these five questions:",
+      "1. Does this solve the actual root problem or merely patch a symptom?",
+      "2. Is there a simpler, more idiomatic approach using built-in language primitives?",
+      "3. Does it fit the existing system architecture and database transaction boundaries?",
+      "4. What failure modes could emerge under high concurrency or network latency?",
+      "5. Can I independently maintain, debug, and explain this code to a teammate in production?",
+      "AI helps developers move faster. But speed without judgment turns a small task into a much bigger problem. The goal isn't to accept more AI-generated code—it's to make better engineering decisions with AI."
+    ),
+    seo: {
+      title: "The Most Important AI Coding Skill: Knowing When to Say NO",
+      description:
+        "A practical evaluation framework for reviewing AI-generated code and avoiding architectural technical debt.",
+    },
+  },
+  {
+    id: 2,
+    title: "Why Anthropic Built Scion: The New Bottleneck in AI-Accelerated Engineering",
+    slug: "why-anthropic-built-scion-version-control",
+    excerpt:
+      "When daily code changes jumped from 2,500 to over 30,000 per day, Git became the bottleneck. Why faster code generation merely shifts the bottleneck to CI and reviews.",
+    publishedAt: "2026-10-27T10:00:00.000Z",
+    _status: "published",
+    createdAt: "2026-10-26T12:00:00.000Z",
+    updatedAt: "2026-10-27T10:00:00.000Z",
+    category: fixtureCategories[0],
+    tags: [fixtureTags[4], fixtureTags[6], fixtureTags[5]],
+    content: createLexicalDoc(
+      "Anthropic built its own internal version control system. But the interesting part isn't that they built an alternative to Git—it's why they needed one.",
+      "In May, Anthropic was merging around 2,500 code changes per day. By September, that volume exploded past 30,000 daily merges. As AI accelerated code generation, the bottleneck started moving elsewhere.",
+      "Source control, builds, and CI had become the primary bottlenecks in their development workflow. So Anthropic built Scion and migrated its monorepo from Git in five months.",
+      "Of course, this doesn't mean Git is suddenly obsolete. Scion isn't intended to replace Git for general use. But there is a crucial engineering lesson here:",
+      "Making code generation faster doesn't automatically make software delivery faster.",
+      "If code can be produced faster than a team can review, test, integrate, and deploy it, the bottleneck simply moves down the pipeline to the next stage.",
+      "What matters most in the AI era is the architecture behind your delivery pipeline and the design decisions that help you handle scale."
+    ),
+    seo: {
+      title: "Why Anthropic Built Scion: The New Bottleneck in AI-Accelerated Engineering",
+      description:
+        "An analysis of version control bottlenecks and why AI code generation shifts throughput challenges downstream to CI/CD.",
+    },
+  },
+  {
+    id: 3,
+    title: "The Code Was Correct. I Still Asked for Changes.",
+    slug: "the-code-was-correct-still-asked-for-changes",
+    excerpt:
+      "It passed all tests and met the requirements, but maintainability, observability, and query scalability require careful engineering judgment beyond green checkmarks.",
+    publishedAt: "2026-10-24T10:00:00.000Z",
+    _status: "published",
+    createdAt: "2026-10-23T11:00:00.000Z",
+    updatedAt: "2026-10-24T10:00:00.000Z",
+    category: fixtureCategories[1],
+    tags: [fixtureTags[7], fixtureTags[0]],
+    content: createLexicalDoc(
+      "The code was correct. I still asked for changes.",
+      "It passed all tests. It met the requirements. It worked exactly as expected. But something didn't feel right during the review.",
+      "A function that was doing too many disparate things. An error being caught in a try/catch block but never logged or surfaced to observability tooling. A database query that worked fine with 100 records in local development, but would struggle with 100,000 in production. A quick fix that introduced unnecessary architectural complexity.",
+      "None of these necessarily broke the feature today. At least, not yet.",
+      "And that's something AI-assisted development is making me think about more often: getting code that works is becoming easier. Getting code that's maintainable, observable, and safe to operate in production still requires careful human judgment.",
+      "I've started spending more time asking: 'Should we ship this implementation?' instead of only: 'Does this implementation work?'",
+      "Because passing tests is an important part of code quality, but it isn't the entire definition. The best code review doesn't just find immediate bugs—it prevents future production incidents."
+    ),
+    seo: {
+      title: "The Code Was Correct. I Still Asked for Changes.",
+      description:
+        "Why code reviews must prioritize maintainability, observability, and query scalability beyond passing tests.",
+    },
+  },
+  {
+    id: 4,
+    title: "The Feature Worked Perfectly. Until Two Requests Arrived at the Same Time.",
+    slug: "feature-worked-until-two-concurrent-requests",
+    excerpt:
+      "A flow can be completely correct in isolation and still be wrong as a system. Why concurrency, race conditions, and idempotency define backend reliability.",
+    publishedAt: "2026-10-21T10:00:00.000Z",
+    _status: "published",
+    createdAt: "2026-10-20T09:00:00.000Z",
+    updatedAt: "2026-10-21T10:00:00.000Z",
+    category: fixtureCategories[0],
+    tags: [fixtureTags[4], fixtureTags[2]],
+    relatedProjects: [fixtureProjects[0]],
+    content: createLexicalDoc(
+      "The feature worked perfectly. Until two requests arrived at the same time.",
+      "That's one of the foundational lessons backend development has taught me: A flow can be completely correct in isolation and still be wrong as a system.",
+      "The validation can be correct. The database queries can be correct. The tests can all pass. But production doesn't execute your logic politely, one request at a time.",
+      "Two workers can pick up the same job. Two webhooks can arrive seconds apart. Two requests can read the same state before either has finished updating it.",
+      "And suddenly the question is no longer: 'Is this logic correct?' It becomes: 'Is this operation still correct if it runs twice?'",
+      "That small shift changes how you design backend systems. You start thinking about idempotency before duplicate processing becomes an incident. You stop assuming that the state you just read will still be valid when you write. You treat retries, duplicate events, and concurrent updates as normal system behavior, not unusual edge cases.",
+      "The happy path tells you whether a feature works. Concurrency tells you whether the system works."
+    ),
+    seo: {
+      title: "The Feature Worked Perfectly. Until Two Requests Arrived at the Same Time.",
+      description:
+        "Practical architectural considerations for handling concurrency, race conditions, and idempotency in distributed backend systems.",
+    },
+  },
+  {
+    id: 5,
+    title: "Beyond Code Writing: The Harder Part of Software Engineering",
+    slug: "beyond-code-writing-software-engineering",
+    excerpt:
+      "Writing code is becoming the easy part. The high-value engineering skill is shifting from 'Can I write this code?' to 'Should we write it this way?'",
+    publishedAt: "2026-10-18T10:00:00.000Z",
+    _status: "published",
+    createdAt: "2026-10-17T15:00:00.000Z",
+    updatedAt: "2026-10-18T10:00:00.000Z",
+    category: fixtureCategories[0],
+    tags: [fixtureTags[4], fixtureTags[2], fixtureTags[0]],
+    content: createLexicalDoc(
+      "Writing code is becoming the easy part.",
+      "When I started as a developer, I thought getting better mostly meant writing better syntax. Now I'm realizing that writing the code is often the most straightforward part.",
+      "The harder questions usually come before and after implementation:",
+      "• Should this logic even exist here?",
+      "• What happens when this third-party dependency fails?",
+      "• Are we fixing the root cause or just patching the symptom?",
+      "• Will this still make sense six months from now?",
+      "• How do we debug it when something goes wrong in production?",
+      "• What happens when traffic increases by 10x?",
+      "• Is there a simpler, zero-cost architecture?",
+      "Writing a function can be quick. Understanding what that function should do, where it belongs, what it depends on, and how it affects the rest of the system takes much more thought.",
+      "With AI making implementation faster, that distinction matters even more. The valuable skill is becoming less about: 'Can I write this code?' and more about: 'Should we write it this way?'",
+      "Good engineering is not just about producing code. It is about making better decisions around the code."
+    ),
+    seo: {
+      title: "Beyond Code Writing: The Harder Part of Software Engineering",
+      description:
+        "Why architecture, failure modes, and system design judgment matter more than raw code syntax in the age of AI.",
+    },
+  },
+  {
+    id: 6,
+    title: "A Git Checklist for AI-Assisted Coding (Why I Stopped Using git add . on Autopilot)",
+    slug: "git-checklist-ai-assisted-coding",
+    excerpt:
+      "Why small AI-assisted tasks leave surprisingly large diffs, and how a deliberate staging checklist prevents phantom refactors and unintended commits.",
+    publishedAt: "2026-10-14T10:00:00.000Z",
+    _status: "published",
+    createdAt: "2026-10-13T08:00:00.000Z",
+    updatedAt: "2026-10-14T10:00:00.000Z",
+    category: fixtureCategories[1],
+    tags: [fixtureTags[6], fixtureTags[5], fixtureTags[7]],
+    content: createLexicalDoc(
+      "Why I stopped using git add . on autopilot.",
+      "A small AI-assisted task can leave a surprisingly large diff. You ask for a button fix. You get the fix, a scratch script, a local config change, and a refactor nobody requested. Apparently, the button had side quests.",
+      "When in a hurry, it's tempting to run: `git add . && git commit && git push`. The risky part is skipping the moment where you ask, 'Do all these changes belong in this commit?'",
+      "So I've been more deliberate: check `git status`, review the diff and new files, stage the changes I intend to ship (`git add -p`), then check the staged diff (`git diff --staged`) before committing.",
+      "I also want safeguards around that habit: appropriate .gitignore rules, secret checks, and push protection where available. Choosing specific files helps me review; it doesn't make a commit automatically safe.",
+      "One instruction I give AI coding agents: 'Never commit or push code unless I explicitly ask you to.' Permission controls matter too—an instruction alone isn't enforcement.",
+      "I still use AI tools every day. I'm just learning to give the resulting diff the attention it deserves."
+    ),
+    seo: {
+      title: "A Git Checklist for AI-Assisted Coding",
+      description:
+        "A practical Git review workflow and safety checklist for developers collaborating with AI coding agents.",
+    },
+  },
+  {
+    id: 7,
     title: "Designing Idempotent Webhook Handlers in Node.js",
     slug: "designing-idempotent-webhook-handlers",
     excerpt:
@@ -304,32 +509,7 @@ export const fixturePosts: Post[] = [
     },
   },
   {
-    id: 2,
-    title: "Structuring Isolated Layouts in Next.js App Router and Payload 3",
-    slug: "isolated-layouts-nextjs-payload",
-    excerpt:
-      "Solving Tailwind CSS preflight collisions when embedding a full CMS administrative dashboard alongside a custom frontend design system.",
-    publishedAt: "2026-10-05T14:00:00.000Z",
-    _status: "published",
-    createdAt: "2026-10-02T11:00:00.000Z",
-    updatedAt: "2026-10-06T16:45:00.000Z",
-    category: fixtureCategories[1],
-    tags: [fixtureTags[0], fixtureTags[1], fixtureTags[3]],
-    relatedProjects: [fixtureProjects[1]],
-    content: createLexicalDoc(
-      "Integrating a headless CMS directly into the same Next.js application saves infrastructure costs and simplifies code sharing. However, combining modern Tailwind CSS v4 with Payload's administrative UI presents a styling challenge.",
-      "Tailwind's preflight resets global element styles (such as button borders, input paddings, and font sizes), which interferes with Payload CMS's polished admin components.",
-      "The solution is route group isolation: by eliminating the root layout and creating separate (frontend) and (payload) route groups with their own <html> and <body> tags, each domain maintains its own independent CSS stylesheet.",
-      "This architecture guarantees that the public website enjoys custom design tokens without altering administrative controls."
-    ),
-    seo: {
-      title: "Structuring Isolated Layouts in Next.js App Router and Payload 3",
-      description:
-        "Learn how to isolate Tailwind CSS preflight from Payload CMS admin views using Next.js App Router route groups.",
-    },
-  },
-  {
-    id: 3,
+    id: 8,
     title: "Draft Article: Internal Database Migration Notes",
     slug: "draft-internal-database-notes",
     excerpt:
@@ -349,10 +529,10 @@ export const fixturePosts: Post[] = [
 
 export const fixtureSiteSettings: SiteSetting = {
   id: 1,
-  siteName: "Vraj Clerk | Software Engineer",
+  siteName: "Vraj Clerk | Python & Backend Systems Engineer",
   siteUrl: "http://localhost:3000",
   defaultDescription:
-    "Full-stack software engineer focused on reliable backend systems, TypeScript architectures, and modern web applications.",
+    "Python Developer with professional experience building backend services, reusable Python utilities, REST APIs, and cloud-based applications with FastAPI, PostgreSQL, AWS, and OpenSearch.",
   socialLinks: [
     {
       id: "social-1",
@@ -362,37 +542,27 @@ export const fixtureSiteSettings: SiteSetting = {
     {
       id: "social-2",
       label: "LinkedIn",
-      url: "https://linkedin.com/in/vrajclerk",
+      url: "https://linkedin.com/in/vraj-clerk",
     },
   ],
-  publicEmail: "vrajclerk.dev@gmail.com",
+  publicEmail: "vrajclerk04@gmail.com",
 };
 
 export const fixtureProfile: Profile = {
   id: 1,
-  headline: "Full-Stack Software Engineer specializing in Backend Systems & TypeScript",
+  headline: "Python Developer | FastAPI, PostgreSQL, AWS & Distributed Systems",
   shortBio: createLexicalDoc(
-    "I am a software engineer with approximately 1.5 years of professional engineering experience. I focus on building resilient backend services, scalable data pipelines, and responsive full-stack applications with TypeScript, Next.js, and PostgreSQL."
+    "Python Developer with professional experience building backend services, reusable Python utilities, REST APIs, and cloud-based applications. Hands-on experience with FastAPI, PostgreSQL, OpenSearch, AWS, and Docker, including enterprise application development, search integration, and scalable backend architecture. Additional experience in deep learning and computer vision using U-Net and ResNet34."
   ),
   experience: [
     {
       id: "exp-1",
-      organization: "Engineering Team",
-      role: "Full-Stack Software Engineer",
-      startDate: "2025-05-01T00:00:00.000Z",
+      organization: "Techlusion",
+      role: "Software Developer Intern → Junior Software Developer",
+      startDate: "2024-12-01T00:00:00.000Z",
       current: true,
       summary:
-        "Building and maintaining production web applications, API integrations, and PostgreSQL database schemas. Collaborating on CI/CD pipelines, automated testing, and developer tooling.",
-    },
-    {
-      id: "exp-2",
-      organization: "Software Development Internship",
-      role: "Software Engineering Intern",
-      startDate: "2024-06-01T00:00:00.000Z",
-      endDate: "2025-04-30T00:00:00.000Z",
-      current: false,
-      summary:
-        "Contributed to frontend feature development, REST API integrations, and unit test suites across client-facing applications.",
+        "• Developed an internal Python package that encapsulates OpenSearch queries into reusable utilities, simplifying search integration and promoting code reuse across development teams.\n• Designed and implemented a scalable Master-Child Material Architecture for an enterprise material management platform, migrating legacy data models to hierarchical attributes with audit tracking through DynamoDB Streams and OpenSearch indexing.\n• Built and maintained AWS infrastructure using Lambda, DynamoDB, S3, API Gateway, EC2, and ECR to support backend services and application deployments.\n• Implemented Auth0-based authentication and role-based access control (RBAC) across multiple applications, establishing reusable authorization patterns.\n• Developed an equipment visualization and data synchronization module with interactive charts and high-throughput Excel imports, reducing manual data-entry effort.",
     },
   ],
   skills: [
@@ -400,29 +570,58 @@ export const fixtureProfile: Profile = {
       id: "cat-1",
       category: "Languages & Core",
       items: [
-        { id: "s-1", name: "TypeScript", context: "Primary language for frontend and backend applications" },
-        { id: "s-2", name: "JavaScript (ESNext)", context: "Modern ECMAScript runtime & asynchronous patterns" },
-        { id: "s-3", name: "SQL", context: "PostgreSQL queries, relational modeling, and index tuning" },
-        { id: "s-4", name: "HTML5 & CSS3", context: "Semantic web standards, responsive layouts, accessibility" },
+        { id: "s-1", name: "Python", context: "FastAPI, RESTful APIs, OOP, Reusable internal packages" },
+        { id: "s-2", name: "JavaScript", context: "Modern ES6+, Asynchronous runtime, DOM & frontend integrations" },
+        { id: "s-3", name: "TypeScript", context: "Full-stack static typing and modern React/Next.js architectures" },
+        { id: "s-4", name: "SQL", context: "Relational modeling, indexing, ACID transactions in PostgreSQL & MySQL" },
       ],
     },
     {
       id: "cat-2",
-      category: "Frameworks & Backend",
+      category: "Python & Backend Systems",
       items: [
-        { id: "s-5", name: "Next.js (App Router)", context: "Server Components, Route Handlers, SSR/SSG" },
-        { id: "s-6", name: "Node.js", context: "RESTful APIs, event emitters, background script automation" },
-        { id: "s-7", name: "Payload CMS", context: "Headless content modeling, access control, and migrations" },
-        { id: "s-8", name: "Tailwind CSS", context: "Design systems, responsive utilities, dark mode theming" },
+        { id: "s-5", name: "FastAPI", context: "High-performance asynchronous endpoints, dependency injection, Pydantic" },
+        { id: "s-6", name: "RESTful APIs", context: "Resource modeling, Auth0 authentication & RBAC middleware" },
+        { id: "s-7", name: "OpenSearch Integration", context: "Reusable query encapsulation package for development teams" },
+        { id: "s-8", name: "Data Sync & Excel Automation", context: "High-throughput data synchronization and interactive charts" },
       ],
     },
     {
       id: "cat-3",
-      category: "Databases & Infrastructure",
+      category: "Databases & Search",
       items: [
-        { id: "s-9", name: "PostgreSQL", context: "Schema design, migrations, transactional integrity" },
-        { id: "s-10", name: "Git & GitHub", context: "Branching strategies, pull request reviews, Actions CI" },
-        { id: "s-11", name: "Docker", context: "Containerizing local development and service dependencies" },
+        { id: "s-9", name: "PostgreSQL", context: "Relational schema design, complex queries, ACID transactions" },
+        { id: "s-10", name: "OpenSearch", context: "Hierarchical material indexing & high-throughput search queries" },
+        { id: "s-11", name: "Amazon DynamoDB", context: "NoSQL key-value schemas, DynamoDB Streams for audit tracking" },
+        { id: "s-12", name: "MySQL", context: "Relational schemas, meal subscription calendars, transaction logs" },
+        { id: "s-13", name: "MongoDB", context: "Document-oriented storage & flexible NoSQL schemas" },
+      ],
+    },
+    {
+      id: "cat-4",
+      category: "Cloud & DevOps",
+      items: [
+        { id: "s-14", name: "AWS Ecosystem", context: "Lambda (serverless), S3, DynamoDB, API Gateway, EC2, ECR" },
+        { id: "s-15", name: "Docker", context: "Containerizing backend services and local developer environments" },
+        { id: "s-16", name: "Terraform", context: "Infrastructure as Code (IaC) configuration for cloud resources" },
+        { id: "s-17", name: "CI/CD Pipelines", context: "Automated test execution, linting pipelines & deployment workflows" },
+      ],
+    },
+    {
+      id: "cat-5",
+      category: "Deep Learning & Vision",
+      items: [
+        { id: "s-18", name: "U-Net & ResNet34", context: "Semantic segmentation for bottle and liquid level detection" },
+        { id: "s-19", name: "Computer Vision Pipelines", context: "LabelMe image annotation, mask preprocessing, Dice & Cross-Entropy loss" },
+      ],
+    },
+    {
+      id: "cat-6",
+      category: "System Design & Quality",
+      items: [
+        { id: "s-20", name: "Master-Child Architecture", context: "Enterprise material management with stream-based indexing" },
+        { id: "s-21", name: "Role-Based Access Control", context: "Auth0 authorization patterns across multiple services" },
+        { id: "s-22", name: "Locust Load Testing", context: "Load testing under 800+ concurrent users with queue offloading" },
       ],
     },
   ],
@@ -435,16 +634,16 @@ export const fixtureProfile: Profile = {
     {
       id: "prof-soc-2",
       platform: "LinkedIn",
-      url: "https://linkedin.com/in/vrajclerk",
+      url: "https://linkedin.com/in/vraj-clerk",
     },
   ],
 };
 
 export const fixtureHomepageSettings: HomepageSetting = {
   id: 1,
-  heroHeadline: "Building Resilient Full-Stack Systems & Thoughtful Web Architectures",
+  heroHeadline: "Python & Backend Systems Engineer",
   heroSubheadline:
-    "Software engineer with ~1.5 years of experience focusing on TypeScript, PostgreSQL, and clean server-rendered architectures. Focused on evidence-based engineering and zero-cost operational efficiency.",
+    "Building resilient backend services, reusable Python packages, and cloud-native architectures with FastAPI, PostgreSQL, AWS, and OpenSearch. Focused on high-throughput reliability, clean system design, and evidence-based performance.",
   featuredProjects: [fixtureProjects[0], fixtureProjects[1], fixtureProjects[2]],
   featuredPosts: [fixturePosts[0], fixturePosts[1]],
   sectionsVisibility: {

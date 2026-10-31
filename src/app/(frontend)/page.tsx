@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { HeroSection } from "@/components/HeroSection";
 import { PostCard } from "@/components/PostCard";
 import { ProjectCard } from "@/components/ProjectCard";
+import { CtaSection } from "@/components/CtaSection";
 import {
   getHomepageSettings,
   getProfile,
@@ -264,30 +265,7 @@ export default async function HomePage() {
        * Bottom Contact CTA Section
        * --------------------------------------------------------------------- */}
       {showContact && (
-        <section className="mx-auto max-w-4xl w-full px-4 text-center sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-border/60 bg-gradient-to-b from-card/90 to-muted/40 p-10 sm:p-14 shadow-xs backdrop-blur-xs">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Interested in collaborating or discussing a role?
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
-              Always open to conversations regarding backend engineering, distributed systems, and full-stack development opportunities.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4">
-              <Link
-                href="/contact"
-                className="inline-flex items-center rounded-full bg-accent px-7 py-3.5 text-sm font-bold text-accent-foreground shadow-md transition-all duration-200 hover:brightness-110 hover:shadow-lg hover:shadow-accent/25 hover:-translate-y-0.5"
-              >
-                Get in Touch →
-              </Link>
-              <Link
-                href="/about"
-                className="inline-flex items-center rounded-full border border-accent/30 bg-card px-7 py-3.5 text-sm font-semibold text-foreground transition-all duration-200 hover:border-accent hover:text-accent hover:bg-accent/8 hover:-translate-y-0.5"
-              >
-                Learn More About My Background
-              </Link>
-            </div>
-          </div>
-        </section>
+        <CtaSection email={siteSettings.publicEmail || "vrajclerk04@gmail.com"} />
       )}
     </div>
   );

@@ -1,12 +1,17 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
+import { CtaSection } from "@/components/CtaSection";
+import { CopyEmailButton } from "@/components/CopyEmailButton";
 import { getProfile, getSiteSettings } from "@/lib/cms";
 import {
   generateBreadcrumbSchema,
   generatePersonSchema,
 } from "@/utilities/structuredData";
+
+import { fixtureProfile } from "@/lib/fixtures";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [profile, siteSettings] = await Promise.all([
@@ -18,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const description =
     profile.headline ||
     siteSettings.defaultDescription ||
-    "Professional background, engineering work experience, and verified technical skills of full-stack developer Vraj Clerk.";
+    "Professional background, production engineering experience, and technical philosophies of full-stack developer Vraj Clerk.";
 
   return {
     title,
@@ -27,14 +32,14 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: "/about",
     },
     openGraph: {
-      title,
+      title: `${title} | ${siteSettings.siteName || "Vraj Clerk"}`,
       description,
       url: "/about",
       type: "profile",
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${title} | ${siteSettings.siteName || "Vraj Clerk"}`,
       description,
     },
   };
@@ -56,12 +61,27 @@ export default async function AboutPage() {
     siteUrl
   );
 
-  const experience = Array.isArray(profile.experience) ? profile.experience : [];
-  const skills = Array.isArray(profile.skills) ? profile.skills : [];
+  const experience =
+    Array.isArray(profile.experience) && profile.experience.length > 0
+      ? profile.experience
+      : fixtureProfile.experience || [];
+  const skills =
+    Array.isArray(profile.skills) && profile.skills.length > 0
+      ? profile.skills
+      : fixtureProfile.skills || [];
+  const bioData = profile.shortBio || fixtureProfile.shortBio;
   const socialLinks = profile.socialLinks || siteSettings.socialLinks || [];
+  const publicEmail = siteSettings.publicEmail || "vrajclerk04@gmail.com";
+
+  const avatarUrl =
+    profile.profileImage &&
+    typeof profile.profileImage === "object" &&
+    "url" in profile.profileImage
+      ? (profile.profileImage.url as string | null)
+      : null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="relative overflow-hidden py-12 md:py-20">
       {/* Schema.org Structured Data */}
       <script
         type="application/ld+json"
@@ -71,155 +91,431 @@ export default async function AboutPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      {/* Header */}
-      <div className="mb-12 border-b border-border pb-8">
-        <span className="text-xs font-bold uppercase tracking-wider text-accent">
-          Background
-        </span>
-        <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-          About & Experience
-        </h1>
-        {profile.headline && (
-          <p className="mt-3 text-lg font-medium text-muted-foreground">
-            {profile.headline}
+
+      {/* ---------------------------------------------------------------------
+       * Ambient Dynamic Atmosphere & Grid Background
+       * --------------------------------------------------------------------- */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 bg-grid-pattern opacity-50 dark:opacity-30 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_80%)]"
+        aria-hidden="true"
+      />
+      <div
+        className="animate-aurora pointer-events-none absolute top-12 left-1/4 -z-10 h-[500px] w-[500px] rounded-full bg-accent/15 blur-[120px]"
+        aria-hidden="true"
+      />
+      <div
+        className="animate-aurora pointer-events-none absolute top-96 right-10 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400/10 dark:bg-amber-500/10 blur-[100px] [animation-delay:3s]"
+        aria-hidden="true"
+      />
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* ===================================================================
+         * PAGE HEADER & IDENTITY HERO BANNER
+         * =================================================================== */}
+        <div className="mb-14 sm:mb-20 text-left max-w-3xl">
+          {/* Eyebrow Kicker Pill */}
+          <div className="animate-fade-in-up inline-flex items-center gap-2.5 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-mono font-medium text-foreground shadow-xs">
+            <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+              <span className="animate-radar absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/30" />
+            </span>
+            <span className="tracking-wider uppercase font-bold text-accent">
+              Professional Background
+            </span>
+            <span className="text-accent/30 font-bold">/</span>
+            <span className="text-foreground font-semibold">1.5+ Years Production</span>
+            <span className="text-accent/30 font-bold hidden sm:inline">/</span>
+            <span className="text-muted-foreground font-medium hidden sm:inline">Full-Stack & Backend</span>
+          </div>
+
+          {/* Display Headline with Fraunces Serif Accent */}
+          <h1 className="animate-fade-in-up delay-100 mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.08] text-balance">
+            Architecting resilient systems with{" "}
+            <span className="font-serif italic font-normal text-accent underline decoration-accent/30 decoration-wavy underline-offset-8 inline-block">
+              engineering discipline.
+            </span>
+          </h1>
+
+          <p className="animate-fade-in-up delay-200 mt-6 text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl text-balance">
+            {profile.headline ||
+              "Full-stack software engineer specializing in TypeScript, PostgreSQL, and clean server-rendered architectures. Focused on evidence-based engineering, high-throughput reliability, and zero-cost cloud operational efficiency."}
           </p>
-        )}
-      </div>
 
-      {/* Biography Section */}
-      {profile.shortBio && (
-        <section className="mb-14">
-          <h2 className="text-xl font-bold tracking-tight text-foreground mb-4">
-            Biography
-          </h2>
-          <RichTextRenderer data={profile.shortBio} />
-        </section>
-      )}
-
-      {/* Work Experience Timeline */}
-      <section className="mb-14">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-bold tracking-tight text-foreground">
-            Work Experience
-          </h2>
-          <Link
-            href="/resume"
-            className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
-          >
-            View Full Resume →
-          </Link>
+          {/* Quick Candidate Telemetry Bar */}
+          <div className="animate-fade-in-up delay-300 mt-8 inline-flex flex-wrap items-center gap-y-2 gap-x-4 rounded-2xl border border-border/80 dark:border-white/10 bg-card/80 dark:bg-card/40 p-3 sm:px-5 sm:py-2.5 font-mono text-xs text-muted-foreground shadow-xs backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <span>Role: <strong className="text-foreground">Full-Stack / Backend</strong></span>
+            </div>
+            <span className="text-border hidden sm:inline">•</span>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span>Status: <strong className="text-emerald-600 dark:text-emerald-400">Actively Interviewing</strong></span>
+            </div>
+            <span className="text-border hidden sm:inline">•</span>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <span>Preferences: <strong className="text-foreground">Remote / Hybrid / Relocate</strong></span>
+            </div>
+          </div>
         </div>
 
-        {experience.length > 0 ? (
-          <div className="relative border-l-2 border-border ml-3 space-y-8 pl-6 sm:ml-4 sm:pl-8">
-            {experience.map((entry) => {
-              const startFormatted = entry.startDate
-                ? new Date(entry.startDate).toLocaleDateString("en-US", {
-                    month: "short",
-                    year: "numeric",
-                  })
-                : "";
+        {/* ===================================================================
+         * ASYMMETRIC MAIN SECTION: NARRATIVE & VISUAL IDENTITY CANVAS (7/5 Split)
+         * =================================================================== */}
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 items-start mb-20 sm:mb-28">
+          
+          {/* LEFT COLUMN: Editorial Narrative & Principles (7 Cols) */}
+          <div className="lg:col-span-7 space-y-10">
+            {/* Biography Section */}
+            {bioData && (
+              <section className="rounded-3xl border border-border/80 bg-card/80 dark:bg-card/40 p-6 sm:p-8 shadow-xs backdrop-blur-md">
+                <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-accent mb-4">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  <span>Engineering Narrative</span>
+                </div>
+                <RichTextRenderer data={bioData} />
+              </section>
+            )}
 
-              const endFormatted = entry.current
-                ? "Present"
-                : entry.endDate
-                ? new Date(entry.endDate).toLocaleDateString("en-US", {
-                    month: "short",
-                    year: "numeric",
-                  })
-                : "";
+            {/* Core Engineering Philosophies */}
+            <section className="space-y-4">
+              <div className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-accent mb-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                <span>Core Operating Principles</span>
+              </div>
 
-              return (
-                <div key={entry.id || entry.role} className="relative">
-                  {/* Timeline bullet */}
-                  <span className="absolute -left-[31px] sm:-left-[39px] top-1.5 h-3.5 w-3.5 rounded-full border-2 border-background bg-accent" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
+                  <div className="text-xl mb-2">⚡</div>
+                  <h3 className="font-bold text-sm text-foreground mb-1.5">
+                    Simplicity Over Cleverness
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Write code that is easy to reason about and debug at 2 AM in production. Avoid premature abstractions and bloated microservices.
+                  </p>
+                </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
+                  <div className="text-xl mb-2">🛡️</div>
+                  <h3 className="font-bold text-sm text-foreground mb-1.5">
+                    Concurrency & Idempotency
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Design every mutation, webhook handler, and worker job to safely tolerate retries and out-of-order execution without state corruption.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
+                  <div className="text-xl mb-2">🎯</div>
+                  <h3 className="font-bold text-sm text-foreground mb-1.5">
+                    Strict Type Safety
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    End-to-end type validation from database schemas (PostgreSQL) to frontend views (Next.js), catching structural defects at compile time.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
+                  <div className="text-xl mb-2">📊</div>
+                  <h3 className="font-bold text-sm text-foreground mb-1.5">
+                    Zero-Cost Efficiency
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Maximize operational throughput through edge caching, pooled databases, and lightweight runtimes before reaching for costly cloud infrastructure.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            {/* Quick Actions Row */}
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
+              <Link
+                href="/resume"
+                className="group inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-bold text-accent-foreground shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-accent/30 active:scale-[0.98]"
+              >
+                <span>View Full Resume</span>
+                <span className="transition-transform duration-200 group-hover:translate-x-0.5">↗</span>
+              </Link>
+
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card px-6 py-3 text-sm font-semibold text-foreground transition-all duration-200 hover:border-accent hover:text-accent hover:bg-accent/5 hover:-translate-y-0.5"
+              >
+                <span>Discuss a Role</span>
+                <span>→</span>
+              </Link>
+
+              <CopyEmailButton email={publicEmail} />
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN: Identity Plate & Overlapping Proof HUD (5 Cols) */}
+          <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+            <div className="relative mx-auto max-w-[380px] sm:max-w-[420px] lg:max-w-none">
+              
+              {/* Visual Plate Frame */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-2xl transition-all duration-300 hover:shadow-accent/10">
+                {/* Floating Candidate Availability Badge */}
+                <div className="absolute top-4 right-4 z-10 inline-flex items-center gap-1.5 rounded-full border border-border/80 dark:border-white/10 bg-card/90 dark:bg-card/85 px-3 py-1 font-mono text-[10px] font-bold text-foreground shadow-md backdrop-blur-md">
+                  <span className="relative flex h-2 w-2 items-center justify-center">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  </span>
+                  <span className="text-muted-foreground uppercase text-[9px]">STATUS:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold uppercase tracking-wide">
+                    READY TO JOIN
+                  </span>
+                </div>
+
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt="Vraj Clerk"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 420px"
+                    className="object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
+                    priority
+                  />
+                ) : (
+                  <div className="flex h-full w-full flex-col justify-between p-6 sm:p-8 bg-gradient-to-br from-card via-muted/60 to-background text-left">
+                    <div className="flex items-center justify-between border-b border-border/80 pb-4">
+                      <div className="font-bold text-sm tracking-tight text-foreground flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-accent animate-ping" />
+                        <span>Vraj Clerk</span>
+                      </div>
+                      <span className="font-mono text-[10px] uppercase font-bold text-accent bg-accent/10 px-2.5 py-0.5 rounded-full border border-accent/20">
+                        sys.online
+                      </span>
+                    </div>
+
+                    <div className="my-auto py-6 flex flex-col items-start gap-3">
+                      <div className="h-16 w-16 rounded-2xl bg-accent text-accent-foreground flex items-center justify-center font-mono text-2xl font-extrabold shadow-lg shadow-accent/25">
+                        VC
+                      </div>
+                      <div>
+                        <div className="text-lg font-bold text-foreground">
+                          Full-Stack Engineer
+                        </div>
+                        <div className="text-xs text-muted-foreground font-mono mt-1">
+                          TypeScript • PostgreSQL • Next.js
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-border/80 pt-3 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
+                      <span>status: available for roles</span>
+                      <span className="text-accent font-bold">LIVE</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Overlapping Floating Proof HUD Badge */}
+              <div className="animate-float-slow absolute -bottom-6 -left-4 sm:-bottom-8 sm:-left-8 z-20 w-[210px] sm:w-[230px] rounded-2xl border border-border bg-[var(--badge-bg)] text-[var(--badge-fg)] p-5 shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <div className="space-y-3.5 text-left font-mono">
+                  <div>
+                    <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-sans text-[var(--badge-fg)]">
+                      1.5+
+                    </div>
+                    <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--badge-muted)]">
+                      Years Production Exp
+                    </div>
+                  </div>
+                  <div className="h-px w-full bg-[var(--border)] opacity-60" />
+                  <div>
+                    <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-sans text-[var(--badge-fg)]">
+                      &lt; 45ms
+                    </div>
+                    <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--badge-muted)]">
+                      Dynamic Edge TTFB
+                    </div>
+                  </div>
+                  <div className="h-px w-full bg-[var(--border)] opacity-60" />
+                  <div>
+                    <div className="text-2xl sm:text-3xl font-extrabold tracking-tight font-sans text-[var(--badge-accent)]">
+                      $0.00
+                    </div>
+                    <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--badge-muted)]">
+                      Monthly Cloud Cost
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Verified External Profile Channels */}
+              <div className="mt-14 pt-4 flex flex-col gap-2">
+                <span className="font-mono text-[11px] uppercase tracking-wider font-bold text-muted-foreground">
+                  Verified Identity & Channels
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {socialLinks.map((link) => {
+                    const label = "platform" in link ? link.platform : link.label;
+                    return (
+                      <a
+                        key={link.id || link.url}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-card/80 px-3.5 py-1.5 text-xs font-mono font-medium text-foreground hover:border-accent hover:text-accent hover:bg-card transition-all duration-200"
+                      >
+                        <span>{label}</span>
+                        <span className="text-muted-foreground text-[10px]">↗</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        {/* ===================================================================
+         * CAREER PROGRESSION: WORK EXPERIENCE TIMELINE
+         * =================================================================== */}
+        <section className="mb-20 sm:mb-28 pt-8 border-t border-border/80">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-10 pb-4 border-b border-border">
+            <div>
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-accent">
+                Career History
+              </span>
+              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl mt-1">
+                Work Experience & Engineering Roles
+              </h2>
+            </div>
+            <Link
+              href="/resume"
+              className="text-xs font-semibold text-accent hover:underline flex items-center gap-1"
+            >
+              View Full PDF Resume →
+            </Link>
+          </div>
+
+          {experience.length > 0 ? (
+            <div className="relative border-l-2 border-accent/30 dark:border-accent/40 ml-4 sm:ml-6 space-y-10 pl-6 sm:pl-10">
+              {experience.map((entry) => {
+                const startFormatted = entry.startDate
+                  ? new Date(entry.startDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : "";
+
+                const endFormatted = entry.current
+                  ? "Present"
+                  : entry.endDate
+                  ? new Date(entry.endDate).toLocaleDateString("en-US", {
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : "";
+
+                return (
+                  <div key={entry.id || entry.role} className="relative group">
+                    {/* Glowing Timeline Node */}
+                    <span className="absolute -left-[31px] sm:-left-[47px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-card ring-4 ring-background border-2 border-accent transition-transform duration-300 group-hover:scale-125 group-hover:bg-accent" />
+
+                    {/* Timeline Entry Card */}
+                    <div className="rounded-2xl border border-border/80 bg-card/90 dark:bg-card/60 p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
+                      <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 mb-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="text-lg font-bold text-foreground">
+                            {entry.role}
+                          </h3>
+                          {entry.current && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              CURRENT ROLE
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs font-mono text-muted-foreground">
+                          {startFormatted} – {endFormatted}
+                        </span>
+                      </div>
+
+                      <p className="text-sm font-semibold text-accent mb-3">
+                        {entry.organization}
+                      </p>
+
+                      {entry.summary && (
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                          {entry.summary}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Experience entries added in Payload CMS will appear here.
+            </p>
+          )}
+        </section>
+
+        {/* ===================================================================
+         * PRACTICAL SKILLS & TECHNOLOGIES MATRIX
+         * =================================================================== */}
+        {skills.length > 0 && (
+          <section className="mb-20 sm:mb-28 pt-8 border-t border-border/80">
+            <div className="mb-10 pb-4 border-b border-border">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-accent">
+                Core Capabilities
+              </span>
+              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl mt-1">
+                Technical Proficiencies & Practical Context
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Categorized by actual production application and real-world system architecture.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {skills.map((cat) => (
+                <div
+                  key={cat.id || cat.category}
+                  className="rounded-3xl border border-border/80 bg-card/80 p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-all duration-300 hover:border-accent hover:shadow-lg hover:-translate-y-1"
+                >
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-border/60">
                     <h3 className="text-base font-bold text-foreground">
-                      {entry.role}
+                      {cat.category}
                     </h3>
-                    <span className="text-xs font-mono text-muted-foreground">
-                      {startFormatted} – {endFormatted}
+                    <span className="text-xs font-mono text-accent font-bold">
+                      {cat.items?.length || 0} tools
                     </span>
                   </div>
 
-                  <p className="text-sm font-medium text-accent mt-0.5">
-                    {entry.organization}
-                  </p>
-
-                  {entry.summary && (
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      {entry.summary}
-                    </p>
-                  )}
+                  <ul className="space-y-3.5">
+                    {cat.items.map((skill) => (
+                      <li key={skill.id || skill.name} className="text-sm">
+                        <div className="flex items-center gap-1.5 font-semibold text-foreground">
+                          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                          <span>{skill.name}</span>
+                        </div>
+                        {skill.context && (
+                          <p className="text-xs text-muted-foreground mt-0.5 pl-3 border-l border-border/60">
+                            {skill.context}
+                          </p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Experience entries added in Payload CMS will appear here.
-          </p>
+              ))}
+            </div>
+          </section>
         )}
-      </section>
 
-      {/* Skills Grouped by Category */}
-      {skills.length > 0 && (
-        <section className="mb-14">
-          <h2 className="text-xl font-bold tracking-tight text-foreground mb-6">
-            Technical Proficiencies & Practical Context
-          </h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {skills.map((cat) => (
-              <div
-                key={cat.id || cat.category}
-                className="rounded-xl border border-border bg-card p-6 shadow-xs"
-              >
-                <h3 className="text-base font-bold text-foreground mb-4">
-                  {cat.category}
-                </h3>
-                <ul className="space-y-3">
-                  {cat.items.map((skill) => (
-                    <li key={skill.id || skill.name} className="text-sm">
-                      <span className="font-semibold text-foreground">
-                        {skill.name}
-                      </span>
-                      {skill.context && (
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {skill.context}
-                        </p>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      </div>
 
-      {/* Social & Contact Links */}
-      <section className="pt-8 border-t border-border">
-        <h2 className="text-lg font-bold tracking-tight text-foreground mb-4">
-          Connect & Verification
-        </h2>
-        <div className="flex flex-wrap gap-4">
-          {socialLinks.map((link) => {
-            const label = "platform" in link ? link.platform : link.label;
-            return (
-              <a
-                key={link.id || link.url}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors"
-              >
-                {label} ↗
-              </a>
-            );
-          })}
-        </div>
-      </section>
+      {/* ===================================================================
+       * SEAMLESS BOTTOM CTA
+       * =================================================================== */}
+      <CtaSection email={publicEmail} />
     </div>
   );
 }
