@@ -117,11 +117,11 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(22px);
+    transform: translate3d(0, 16px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -132,10 +132,10 @@ body {
 
 @keyframes floatGentle {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translate3d(0, 0px, 0);
   }
   50% {
-    transform: translateY(-8px) rotate(0.3deg);
+    transform: translate3d(0, -6px, 0);
   }
 }
 
@@ -146,7 +146,7 @@ body {
   }
   50% {
     opacity: 1;
-    transform: scale(1.15);
+    transform: scale(1.05);
   }
 }
 
@@ -157,7 +157,7 @@ body {
   }
   70% {
     transform: scale(1);
-    box-shadow: 0 0 0 10px rgba(22, 163, 74, 0);
+    box-shadow: 0 0 0 8px rgba(22, 163, 74, 0);
   }
   100% {
     transform: scale(0.95);
@@ -166,15 +166,18 @@ body {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s ease both;
+  animation: fadeIn 0.4s ease both;
+  will-change: opacity;
 }
 
 .animate-float {
   animation: floatGentle 7s ease-in-out infinite;
+  will-change: transform;
 }
 
 .animate-pulse-subtle {
@@ -196,12 +199,12 @@ body {
 
 @keyframes auroraPulse {
   0%, 100% {
-    transform: scale(1) translateY(0px);
-    opacity: 0.18;
+    opacity: 0.16;
+    transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: scale(1.2) translateY(-14px);
-    opacity: 0.32;
+    opacity: 0.28;
+    transform: translate3d(0, -6px, 0);
   }
 }
 

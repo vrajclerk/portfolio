@@ -142,7 +142,11 @@ export default async function FrontendLayout({
           <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
             {children}
           </main>
-          <Footer siteSettings={siteSettings} />
+          <Footer
+            siteSettings={siteSettings}
+            showProjects={showProjects}
+            showBlog={showBlog}
+          />
         </div>
       </body>
     </html>

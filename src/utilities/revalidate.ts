@@ -4,6 +4,7 @@ import type {
   CollectionAfterDeleteHook,
   GlobalAfterChangeHook,
 } from "payload";
+import { invalidateCmsCache } from "@/lib/cms";
 
 /**
  * Revalidation hooks for Next.js App Router cache invalidation.
@@ -17,6 +18,8 @@ export const revalidatePostAfterChange: CollectionAfterChangeHook = ({
   previousDoc,
 }) => {
   try {
+    invalidateCmsCache("posts");
+    invalidateCmsCache("post");
     revalidatePath("/blog");
     revalidatePath("/");
     if (doc?.slug) {
@@ -35,6 +38,8 @@ export const revalidatePostAfterDelete: CollectionAfterDeleteHook = ({
   doc,
 }) => {
   try {
+    invalidateCmsCache("posts");
+    invalidateCmsCache("post");
     revalidatePath("/blog");
     revalidatePath("/");
     if (doc?.slug) {
@@ -51,6 +56,8 @@ export const revalidateProjectAfterChange: CollectionAfterChangeHook = ({
   previousDoc,
 }) => {
   try {
+    invalidateCmsCache("projects");
+    invalidateCmsCache("project");
     revalidatePath("/projects");
     revalidatePath("/");
     if (doc?.slug) {
@@ -69,6 +76,8 @@ export const revalidateProjectAfterDelete: CollectionAfterDeleteHook = ({
   doc,
 }) => {
   try {
+    invalidateCmsCache("projects");
+    invalidateCmsCache("project");
     revalidatePath("/projects");
     revalidatePath("/");
     if (doc?.slug) {
@@ -84,6 +93,7 @@ export const revalidateSiteSettingsAfterChange: GlobalAfterChangeHook = ({
   doc,
 }) => {
   try {
+    invalidateCmsCache("site-settings");
     revalidatePath("/", "layout");
   } catch {
     // Gracefully handle executions outside active Next.js request context
@@ -95,6 +105,7 @@ export const revalidateProfileAfterChange: GlobalAfterChangeHook = ({
   doc,
 }) => {
   try {
+    invalidateCmsCache("profile");
     revalidatePath("/");
     revalidatePath("/about");
     revalidatePath("/resume");
@@ -108,6 +119,7 @@ export const revalidateHomepageAfterChange: GlobalAfterChangeHook = ({
   doc,
 }) => {
   try {
+    invalidateCmsCache("homepage-settings");
     revalidatePath("/");
   } catch {
     // Gracefully handle executions outside active Next.js request context

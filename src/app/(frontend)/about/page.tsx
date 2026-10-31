@@ -114,18 +114,18 @@ export default async function AboutPage() {
          * =================================================================== */}
         <div className="mb-14 sm:mb-20 text-left max-w-3xl">
           {/* Eyebrow Kicker Pill */}
-          <div className="animate-fade-in-up inline-flex items-center gap-2.5 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-mono font-medium text-foreground shadow-xs">
-            <span className="relative flex h-2.5 w-2.5 items-center justify-center">
-              <span className="animate-radar absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/30" />
+          <div className="animate-fade-in-up inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-card/85 dark:bg-card/60 px-3.5 py-1.5 text-xs text-foreground shadow-xs backdrop-blur-md transition-all duration-300 hover:border-accent/40 hover:shadow-xs">
+            <span className="relative flex h-2 w-2 items-center justify-center">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            <span className="tracking-wider uppercase font-bold text-accent">
+            <span className="font-semibold text-foreground tracking-tight">
               Professional Background
             </span>
-            <span className="text-accent/30 font-bold">/</span>
-            <span className="text-foreground font-semibold">1.5+ Years Production</span>
-            <span className="text-accent/30 font-bold hidden sm:inline">/</span>
-            <span className="text-muted-foreground font-medium hidden sm:inline">Full-Stack & Backend</span>
+            <span className="h-3 w-px bg-border/80" />
+            <span className="text-muted-foreground font-medium hidden sm:inline">
+              Python &amp; Backend Engineering
+            </span>
           </div>
 
           {/* Display Headline with Fraunces Serif Accent */}

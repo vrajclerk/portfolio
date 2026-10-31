@@ -1,8 +1,7 @@
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { HeroCopyButton } from "@/components/HeroCopyButton";
 
 export interface HeroMetric {
   value: string;
@@ -60,19 +59,22 @@ function renderStyledHeadline(text?: string | null) {
 function renderHighlightedNarrative(text?: string | null) {
   const content =
     text ||
-    "I build resilient cloud-native web applications, persistent PostgreSQL architectures, and autonomous self-hosted pipelines. Focused on clean system design, sub-45ms dynamic response times, and zero-cost cloud reliability.";
+    "Building resilient backend services, reusable Python packages, and cloud-native architectures with FastAPI, PostgreSQL, AWS, and OpenSearch. Focused on high-throughput reliability, clean system design, and evidence-based performance.";
 
   const keywords = [
-    "TypeScript",
+    "FastAPI",
     "PostgreSQL",
+    "AWS",
+    "OpenSearch",
+    "Python",
+    "DynamoDB",
+    "Docker",
+    "TypeScript",
     "Next.js",
-    "cloud-native web applications",
-    "PostgreSQL architectures",
-    "server-rendered architectures",
-    "sub-45ms",
-    "zero-cost",
-    "evidence-based engineering",
-    "operational efficiency",
+    "reusable Python packages",
+    "high-throughput reliability",
+    "clean system design",
+    "evidence-based performance",
   ];
 
   const regex = new RegExp(
@@ -84,21 +86,14 @@ function renderHighlightedNarrative(text?: string | null) {
 
   return parts.map((part, i) => {
     const lower = part.toLowerCase();
-    if (lower === "sub-45ms" || lower === "zero-cost") {
-      return (
-        <span
-          key={i}
-          className="font-mono font-bold text-accent px-1.5 py-0.5 rounded-md bg-accent/10 border border-accent/20"
-        >
-          {part}
-        </span>
-      );
-    }
     if (
+      lower === "fastapi" ||
       lower === "postgresql" ||
-      lower === "typescript" ||
-      lower === "next.js" ||
-      lower === "postgresql architectures"
+      lower === "aws" ||
+      lower === "opensearch" ||
+      lower === "python" ||
+      lower === "dynamodb" ||
+      lower === "docker"
     ) {
       return (
         <span
@@ -110,10 +105,10 @@ function renderHighlightedNarrative(text?: string | null) {
       );
     }
     if (
-      lower === "cloud-native web applications" ||
-      lower === "server-rendered architectures" ||
-      lower === "evidence-based engineering" ||
-      lower === "operational efficiency"
+      lower === "high-throughput reliability" ||
+      lower === "clean system design" ||
+      lower === "evidence-based performance" ||
+      lower === "reusable python packages"
     ) {
       return (
         <span key={i} className="font-semibold text-foreground">
@@ -132,59 +127,29 @@ export function HeroSection({
   email,
   metrics,
 }: HeroSectionProps) {
-  const [copied, setCopied] = useState(false);
-  const displayEmail = email || "vrajclerk.dev@gmail.com";
+  const displayEmail = email || "vrajclerk04@gmail.com";
 
   const defaultMetrics: HeroMetric[] = [
-    { value: "99.9%", label: "SLA Availability" },
-    { value: "< 45ms", label: "Dynamic Edge TTFB" },
-    { value: "$0.00", label: "Monthly Cloud Cost", isAccent: true },
+    { value: "800+", label: "Concurrent Load Tested (Locust)" },
+    { value: "< 100ms", label: "Match & Query Latency" },
+    { value: "Python & AWS", label: "Cloud & Search Stack", isAccent: true },
   ];
 
   const activeMetrics = metrics && metrics.length > 0 ? metrics : defaultMetrics;
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(displayEmail);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2400);
-  };
-
   return (
-    <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24">
+    <section className="relative overflow-hidden pt-6 pb-12 sm:pt-10 sm:pb-16 lg:py-20">
       {/* ---------------------------------------------------------------------
-       * Dynamic Lighting & Ambient Aurora Atmosphere
+       * Fluid Ambient Glows with Hardware Acceleration
        * --------------------------------------------------------------------- */}
       <div
-        className="pointer-events-none absolute inset-0 -z-10 bg-grid-pattern opacity-60 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"
-        aria-hidden="true"
-      />
-      
-      {/* Breathing Accent Aurora Orb behind Hero */}
-      <div
-        className="animate-aurora pointer-events-none absolute -top-12 left-1/4 -z-10 h-96 w-[520px] rounded-full bg-accent/15 blur-[120px]"
+        className="pointer-events-none absolute -top-12 left-1/4 -z-10 h-96 w-[520px] rounded-full bg-accent/12 blur-[100px] will-change-transform"
         aria-hidden="true"
       />
       <div
-        className="animate-float pointer-events-none absolute top-40 right-10 -z-10 h-72 w-80 rounded-full bg-accent/8 blur-[100px]"
+        className="pointer-events-none absolute top-40 right-10 -z-10 h-72 w-80 rounded-full bg-accent/6 blur-[80px] will-change-transform"
         aria-hidden="true"
       />
-
-      {/* Floating Architecture Ambient Chips */}
-      <div
-        className="animate-float pointer-events-none absolute top-8 left-8 hidden lg:inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-3.5 py-1 text-[11px] font-mono text-muted-foreground/70 backdrop-blur-md shadow-xs opacity-60 hover:opacity-100 transition-opacity"
-        aria-hidden="true"
-      >
-        <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-        <span>runtime: Node.js 22 • Next.js 16</span>
-      </div>
-
-      <div
-        className="animate-float-slow pointer-events-none absolute bottom-12 right-12 hidden lg:inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-3.5 py-1 text-[11px] font-mono text-muted-foreground/70 backdrop-blur-md shadow-xs opacity-60 hover:opacity-100 transition-opacity"
-        aria-hidden="true"
-      >
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        <span>database: PostgreSQL • connection-pooled</span>
-      </div>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 items-center">
@@ -194,37 +159,33 @@ export function HeroSection({
            * =================================================================== */}
           <div className="lg:col-span-7 text-left">
             
-            {/* Eyebrow / Kicker Pill with Live Beacon */}
-            <div className="animate-fade-in-up group relative inline-flex items-center gap-2.5 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-mono font-medium text-foreground shadow-xs transition-all duration-300 hover:border-accent hover:shadow-accent/15 overflow-hidden">
-              <span
-                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-accent/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full"
-                aria-hidden="true"
-              />
-              <span className="relative flex h-2.5 w-2.5 items-center justify-center">
-                <span className="animate-radar absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/30" />
+            {/* Eyebrow / Kicker with Live Beacon */}
+            <div className="flex items-center gap-2.5 text-xs font-semibold tracking-wide text-foreground">
+              <span className="relative flex h-2 w-2 items-center justify-center">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
-              <span className="tracking-wider uppercase font-bold text-accent">
-                Actively Interviewing
+              <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider text-[11px]">
+                Available for Full-Time Roles
               </span>
-              <span className="text-accent/30 font-bold">/</span>
-              <span className="text-foreground font-semibold">Full-Time Software Engineer</span>
-              <span className="text-accent/30 font-bold hidden sm:inline">/</span>
-              <span className="text-muted-foreground font-medium hidden sm:inline">Remote • Hybrid • Relocate</span>
+              <span className="text-border dark:text-white/20">•</span>
+              <span className="text-muted-foreground font-medium hidden sm:inline">
+                Python &amp; Backend Systems Engineer
+              </span>
             </div>
 
-            {/* Stylized Display Headline */}
-            <h1 className="animate-fade-in-up delay-100 mt-6 text-4xl sm:text-5xl lg:text-[62px] font-extrabold tracking-tight text-foreground leading-[1.06] text-balance">
+            {/* Stylized Display Headline (LCP Candidate - Immediate Visible Paint) */}
+            <h1 className="mt-6 text-4xl sm:text-5xl lg:text-[62px] font-extrabold tracking-tight text-foreground leading-[1.06] text-balance">
               {renderStyledHeadline(headline)}
             </h1>
 
             {/* Impact Narrative with Smart Highlights */}
-            <p className="animate-fade-in-up delay-200 mt-6 text-base sm:text-lg leading-relaxed text-muted-foreground max-w-xl text-balance">
+            <p className="mt-6 text-base sm:text-lg leading-relaxed text-muted-foreground max-w-xl text-balance">
               {renderHighlightedNarrative(subheadline)}
             </p>
 
             {/* Action Buttons & Bespoke Copy Email Chip */}
-            <div className="animate-fade-in-up delay-300 mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="mt-8 sm:mt-10 flex flex-wrap items-center gap-3 sm:gap-4">
               
               {/* Primary CTA Button with Shimmer Sweep */}
               <Link
@@ -242,6 +203,7 @@ export function HeroSection({
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth="2.5"
+                  aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
@@ -259,92 +221,14 @@ export function HeroSection({
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth="2"
+                  aria-hidden="true"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
                 </svg>
               </Link>
 
-              {/* -------------------------------------------------------------
-               * Bespoke Interactive Copy Email Chip (Redesigned)
-               * Features animated icon, keyboard shortcut chip, and copied feedback
-               * ------------------------------------------------------------- */}
-              <button
-                type="button"
-                onClick={handleCopyEmail}
-                className={`group relative inline-flex items-center gap-3 rounded-full border bg-card/90 px-4 py-2.5 text-xs font-mono transition-all duration-300 hover:border-accent hover:shadow-xl hover:shadow-accent/15 hover:-translate-y-0.5 active:translate-y-0 overflow-hidden ${
-                  copied
-                    ? "border-emerald-500/60 ring-2 ring-emerald-500/20"
-                    : "border-border hover:border-accent"
-                }`}
-                title="Click to copy email address (⌘C)"
-              >
-                {/* Subtle Hover Shimmer Beam */}
-                <span
-                  className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-accent/15 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
-                  aria-hidden="true"
-                />
-
-                {/* Left Animated Icon Circle */}
-                <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300 ${
-                    copied
-                      ? "bg-emerald-500 text-white scale-110"
-                      : "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-accent-foreground group-hover:scale-105"
-                  }`}
-                >
-                  {copied ? (
-                    <svg
-                      className="h-3.5 w-3.5 animate-fade-in"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:scale-110"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.483-.04 1.258-.04 2.024-.04h.5c.766 0 1.54.001 2.024.04 1.131.094 1.976 1.057 1.976 2.192V7.5m-8.5 0h8.5m-8.5 0A2.25 2.25 0 0 0 5.25 9.75v9A2.25 2.25 0 0 0 7.5 21h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25"
-                      />
-                    </svg>
-                  )}
-                </span>
-
-                {/* Email Address */}
-                <span className="font-semibold text-foreground tracking-tight transition-colors group-hover:text-accent">
-                  {displayEmail}
-                </span>
-
-                {/* Interactive Status / Shortcut Chip */}
-                <span
-                  className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition-all duration-200 ${
-                    copied
-                      ? "bg-emerald-500/15 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 animate-fade-in"
-                      : "bg-muted text-muted-foreground border border-border/70 group-hover:bg-accent/15 group-hover:text-accent group-hover:border-accent/40"
-                  }`}
-                >
-                  {copied ? (
-                    <>
-                      <span>✓</span>
-                      <span>Copied!</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="opacity-60 text-[9px]">⌘C</span>
-                      <span>Copy</span>
-                    </>
-                  )}
-                </span>
-              </button>
+              {/* Isolated Micro Client Component for Copy Email */}
+              <HeroCopyButton email={displayEmail} />
             </div>
 
           </div>
@@ -357,17 +241,6 @@ export function HeroSection({
               
               {/* Primary Visual Plate (Photo or Architectural Identity Frame) */}
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-2xl transition-all duration-300 hover:shadow-accent/10">
-                {/* Floating Candidate Availability Badge */}
-                <div className="absolute top-4 right-4 z-10 inline-flex items-center gap-1.5 rounded-full border border-border/80 dark:border-white/10 bg-card/90 dark:bg-card/85 px-3 py-1 font-mono text-[10px] font-bold text-foreground shadow-md backdrop-blur-md">
-                  <span className="relative flex h-2 w-2 items-center justify-center">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  </span>
-                  <span className="text-muted-foreground uppercase text-[9px]">STATUS:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold uppercase tracking-wide">
-                    READY TO JOIN
-                  </span>
-                </div>
 
                 {avatarUrl ? (
                   <Image
@@ -377,6 +250,8 @@ export function HeroSection({
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 420px"
                     className="object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
                     priority
+                    fetchPriority="high"
+                    quality={85}
                   />
                 ) : (
                   /* Refined Architectural Identity Canvas */
@@ -398,52 +273,47 @@ export function HeroSection({
                       </div>
                       <div>
                         <div className="text-lg sm:text-xl font-bold text-foreground tracking-tight">
-                          Full-Stack Engineer
+                          Python &amp; Backend Engineer
                         </div>
                         <div className="text-xs sm:text-sm text-muted-foreground font-mono mt-1 flex items-center gap-1.5 flex-wrap">
-                          <span className="text-accent font-bold">TypeScript</span>
+                          <span className="text-accent font-bold">FastAPI</span>
                           <span className="text-border">•</span>
-                          <span>Next.js</span>
+                          <span>AWS</span>
                           <span className="text-border">•</span>
-                          <span className="text-accent font-bold">PostgreSQL</span>
+                          <span>OpenSearch</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="border-t border-border/80 pt-3 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
-                      <span>status: available for roles</span>
-                      <span className="text-accent font-bold flex items-center gap-1">
-                        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                        LIVE
-                      </span>
+                    {/* Verification Metric Footnote */}
+                    <div className="flex items-center justify-between pt-4 border-t border-border/70 text-xs font-mono">
+                      <span className="text-muted-foreground">Specialization</span>
+                      <span className="text-foreground font-bold">Distributed Systems</span>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* ---------------------------------------------------------------
-               * FLOATING PROOF CARD (Overlapping Bottom-Left Badge with HUD Float)
-               * --------------------------------------------------------------- */}
-              <div className="animate-float-slow absolute -bottom-6 -left-4 sm:-bottom-8 sm:-left-8 z-20 w-[200px] sm:w-[220px] rounded-2xl border border-border bg-[var(--badge-bg)] text-[var(--badge-fg)] p-5 sm:p-6 shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                <div className="space-y-4 text-left font-mono">
-                  {activeMetrics.map((m, idx) => (
-                    <React.Fragment key={idx}>
-                      {idx > 0 && <div className="h-px w-full bg-[var(--border)] opacity-60" />}
-                      <div>
-                        <div
-                          className={`text-2xl sm:text-3xl font-extrabold tracking-tight font-sans ${
-                            m.isAccent || idx === activeMetrics.length - 1
-                              ? "text-[var(--badge-accent)]"
-                              : "text-[var(--badge-fg)]"
-                          }`}
-                        >
-                          {m.value}
-                        </div>
-                        <div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--badge-muted)]">
-                          {m.label}
-                        </div>
+              {/* -------------------------------------------------------------
+               * Dynamic Multi-Metric Dock Card
+               * ------------------------------------------------------------- */}
+              <div
+                className="mt-4 w-full rounded-2xl border border-border/90 bg-card/95 p-4 sm:p-5 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-accent/40"
+              >
+                <div className="grid grid-cols-3 divide-x divide-border/60 text-center">
+                  {activeMetrics.slice(0, 3).map((metric, idx) => (
+                    <div key={idx} className="px-2 sm:px-3 first:pl-0 last:pr-0">
+                      <div
+                        className={`text-base sm:text-xl font-mono font-extrabold tracking-tight ${
+                          metric.isAccent ? "text-accent" : "text-foreground"
+                        }`}
+                      >
+                        {metric.value}
                       </div>
-                    </React.Fragment>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground font-medium mt-1 leading-tight line-clamp-2">
+                        {metric.label}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>

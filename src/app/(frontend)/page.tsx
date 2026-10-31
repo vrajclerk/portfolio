@@ -19,6 +19,9 @@ import {
   generateWebsiteSchema,
 } from "@/utilities/structuredData";
 
+// Incremental Static Regeneration (1 hour TTL, invalidated on CMS change)
+export const revalidate = 3600;
+
 export async function generateMetadata(): Promise<Metadata> {
   const [siteSettings, profile] = await Promise.all([
     getSiteSettings(),
@@ -132,7 +135,7 @@ export default async function HomePage() {
       />
 
       {/* ---------------------------------------------------------------------
-       * Hero Section (Asymmetric Split & Overlapping Proof Badge)
+       * Hero Section (Server Component - Immediate Zero-Hydration Paint)
        * --------------------------------------------------------------------- */}
       <HeroSection
         headline={heroHeadline}
@@ -142,10 +145,10 @@ export default async function HomePage() {
       />
 
       {/* ---------------------------------------------------------------------
-       * Featured Projects Section
+       * Featured Projects Section (Optimized with content-visibility)
        * --------------------------------------------------------------------- */}
       {showProjects && (
-        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:1px_500px]">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-8 border-b border-border pb-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-accent">
@@ -182,7 +185,7 @@ export default async function HomePage() {
        * Practical Skills & Technology Groups Section
        * --------------------------------------------------------------------- */}
       {showSkills && Array.isArray(profile.skills) && profile.skills.length > 0 && (
-        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
           <div className="mb-8 border-b border-border pb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-accent">
               Core Capabilities
@@ -228,7 +231,7 @@ export default async function HomePage() {
        * Latest Articles / Technical Writing Section
        * --------------------------------------------------------------------- */}
       {showPosts && (
-        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:1px_450px]">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-8 border-b border-border pb-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-accent">
@@ -265,7 +268,9 @@ export default async function HomePage() {
        * Bottom Contact CTA Section
        * --------------------------------------------------------------------- */}
       {showContact && (
-        <CtaSection email={siteSettings.publicEmail || "vrajclerk04@gmail.com"} />
+        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_400px]">
+          <CtaSection email={siteSettings.publicEmail || "vrajclerk04@gmail.com"} />
+        </div>
       )}
     </div>
   );
