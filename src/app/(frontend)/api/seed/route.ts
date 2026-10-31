@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
+import { sql } from "@payloadcms/db-vercel-postgres";
 import fs from "fs";
 import path from "path";
 import {
@@ -12,6 +13,20 @@ import {
 export async function GET() {
   try {
     const payload = await getPayload({ config: configPromise });
+
+    // Ensure hidden columns exist in PostgreSQL
+    try {
+      if (payload.db && (payload.db as any).drizzle) {
+        await (payload.db as any).drizzle.execute(sql`
+          ALTER TABLE "posts" ADD COLUMN IF NOT EXISTS "hidden" boolean DEFAULT false;
+          ALTER TABLE "_posts_v" ADD COLUMN IF NOT EXISTS "version_hidden" boolean DEFAULT false;
+          ALTER TABLE "projects" ADD COLUMN IF NOT EXISTS "hidden" boolean DEFAULT false;
+          ALTER TABLE "_projects_v" ADD COLUMN IF NOT EXISTS "version_hidden" boolean DEFAULT false;
+        `);
+      }
+    } catch (sqlErr) {
+      console.warn("SQL migration notice:", sqlErr);
+    }
 
     // -------------------------------------------------------------------------
     // 0. Ensure Admin User

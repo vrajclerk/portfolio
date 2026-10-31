@@ -8,19 +8,25 @@ import { Logo } from "@/components/Logo";
 
 interface HeaderProps {
   siteName?: string;
+  showProjects?: boolean;
+  showBlog?: boolean;
 }
 
-const navItems = [
-  { label: "Projects", href: "/projects" },
-  { label: "Blog", href: "/blog" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-  { label: "Resume", href: "/resume" },
-];
-
-export function Header({ siteName = "Vraj Clerk" }: HeaderProps) {
+export function Header({
+  siteName = "Vraj Clerk",
+  showProjects = true,
+  showBlog = true,
+}: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  const navItems = [
+    ...(showProjects ? [{ label: "Projects", href: "/projects" }] : []),
+    ...(showBlog ? [{ label: "Blog", href: "/blog" }] : []),
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
+    { label: "Resume", href: "/resume" },
+  ];
 
   return (
     <header className="sticky top-3 sm:top-5 z-40 w-full px-3 sm:px-6 pointer-events-none animate-dock-entrance">

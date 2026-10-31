@@ -11,7 +11,7 @@ export const Projects: CollectionConfig = {
   slug: "projects",
   admin: {
     useAsTitle: "title",
-    defaultColumns: ["title", "slug", "projectType", "featured", "_status"],
+    defaultColumns: ["title", "slug", "projectType", "featured", "hidden", "_status"],
     preview: (doc) => {
       if (doc?.slug && typeof doc.slug === "string") {
         const siteUrl =
@@ -234,6 +234,16 @@ export const Projects: CollectionConfig = {
       label: "Featured Project",
       admin: {
         position: "sidebar",
+      },
+    },
+    {
+      name: "hidden",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Hide Project from Public Site",
+      admin: {
+        position: "sidebar",
+        description: "When checked, this project is hidden from public project listings, homepage, and sitemaps.",
       },
     },
     {

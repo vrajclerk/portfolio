@@ -248,6 +248,10 @@ export interface Post {
   category?: (number | null) | Category;
   tags?: (number | Tag)[] | null;
   relatedProjects?: (number | Project)[] | null;
+  /**
+   * When checked, this post is hidden from public blog listings, homepage, RSS, and sitemaps.
+   */
+  hidden?: boolean | null;
   publishedAt?: string | null;
   seo?: {
     title?: string | null;
@@ -415,6 +419,10 @@ export interface Project {
   gallery?: (number | Media)[] | null;
   relatedPosts?: (number | Post)[] | null;
   featured?: boolean | null;
+  /**
+   * When checked, this project is hidden from public project listings, homepage, and sitemaps.
+   */
+  hidden?: boolean | null;
   displayOrder?: number | null;
   seo?: {
     title?: string | null;
@@ -597,6 +605,7 @@ export interface PostsSelect<T extends boolean = true> {
   category?: T;
   tags?: T;
   relatedProjects?: T;
+  hidden?: T;
   publishedAt?: T;
   seo?:
     | T
@@ -644,6 +653,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   gallery?: T;
   relatedPosts?: T;
   featured?: T;
+  hidden?: T;
   displayOrder?: T;
   seo?:
     | T

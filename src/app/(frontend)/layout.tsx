@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { getSiteSettings } from "@/lib/cms";
+import { getHomepageSettings, getSiteSettings } from "@/lib/cms";
 import "@/styles/globals.css";
 
 // ---------------------------------------------------------------------------
@@ -100,7 +100,14 @@ export default async function FrontendLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const siteSettings = await getSiteSettings();
+  const [siteSettings, homepageSettings] = await Promise.all([
+    getSiteSettings(),
+    getHomepageSettings(),
+  ]);
+
+  const showProjects =
+    homepageSettings.sectionsVisibility?.showProjects !== false;
+  const showBlog = homepageSettings.sectionsVisibility?.showPosts !== false;
 
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
@@ -126,7 +133,11 @@ export default async function FrontendLayout({
 
         <div className="flex min-h-screen flex-col bg-background text-foreground">
           <Suspense fallback={<div className="h-16 w-full border-b border-border/70" />}>
-            <Header siteName={siteSettings.siteName} />
+            <Header
+              siteName={siteSettings.siteName}
+              showProjects={showProjects}
+              showBlog={showBlog}
+            />
           </Suspense>
           <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
             {children}

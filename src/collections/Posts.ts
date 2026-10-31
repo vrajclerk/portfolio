@@ -11,7 +11,7 @@ export const Posts: CollectionConfig = {
   slug: "posts",
   admin: {
     useAsTitle: "title",
-    defaultColumns: ["title", "slug", "category", "_status", "publishedAt"],
+    defaultColumns: ["title", "slug", "category", "hidden", "_status", "publishedAt"],
     preview: (doc) => {
       if (doc?.slug && typeof doc.slug === "string") {
         const siteUrl =
@@ -128,6 +128,16 @@ export const Posts: CollectionConfig = {
       label: "Related Projects",
       admin: {
         position: "sidebar",
+      },
+    },
+    {
+      name: "hidden",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Hide Post from Public Site",
+      admin: {
+        position: "sidebar",
+        description: "When checked, this post is hidden from public blog listings, homepage, RSS, and sitemaps.",
       },
     },
     {

@@ -133,6 +133,10 @@ export async function getPublishedProjects(
     try {
       const whereClause: Where = {
         _status: { equals: "published" },
+        or: [
+          { hidden: { equals: false } },
+          { hidden: { exists: false } },
+        ],
       };
 
       if (projectType && projectType !== "all") {
@@ -155,8 +159,8 @@ export async function getPublishedProjects(
     }
   }
 
-  // Fallback fixtures (guaranteeing _status === 'published' only)
-  let projects = fixtureProjects.filter((p) => p._status === "published");
+  // Fallback fixtures (guaranteeing _status === 'published' only and not hidden)
+  let projects = fixtureProjects.filter((p) => p._status === "published" && !p.hidden);
 
   if (projectType && projectType !== "all") {
     projects = projects.filter((p) => p.projectType === projectType);
@@ -184,6 +188,10 @@ export async function getProjectBySlug(
 
       if (!isDraftMode) {
         whereClause._status = { equals: "published" };
+        whereClause.or = [
+          { hidden: { equals: false } },
+          { hidden: { exists: false } },
+        ];
       }
 
       const result = await payload.find({
@@ -204,7 +212,7 @@ export async function getProjectBySlug(
 
   // Fallback to fixture
   const project = fixtureProjects.find(
-    (p) => p.slug === slug && (isDraftMode || p._status === "published")
+    (p) => p.slug === slug && (isDraftMode || (p._status === "published" && !p.hidden))
   );
 
   return project ?? null;
@@ -230,6 +238,10 @@ export async function getPublishedPosts(
     try {
       const whereClause: Where = {
         _status: { equals: "published" },
+        or: [
+          { hidden: { equals: false } },
+          { hidden: { exists: false } },
+        ],
       };
 
       if (category) {
@@ -256,8 +268,8 @@ export async function getPublishedPosts(
     }
   }
 
-  // Fallback fixtures (guaranteeing _status === 'published' only)
-  let posts = fixturePosts.filter((p) => p._status === "published");
+  // Fallback fixtures (guaranteeing _status === 'published' only and not hidden)
+  let posts = fixturePosts.filter((p) => p._status === "published" && !p.hidden);
 
   if (category) {
     posts = posts.filter(
@@ -298,6 +310,10 @@ export async function getPostBySlug(
 
       if (!isDraftMode) {
         whereClause._status = { equals: "published" };
+        whereClause.or = [
+          { hidden: { equals: false } },
+          { hidden: { exists: false } },
+        ];
       }
 
       const result = await payload.find({
@@ -318,7 +334,7 @@ export async function getPostBySlug(
 
   // Fallback to fixture
   const post = fixturePosts.find(
-    (p) => p.slug === slug && (isDraftMode || p._status === "published")
+    (p) => p.slug === slug && (isDraftMode || (p._status === "published" && !p.hidden))
   );
 
   return post ?? null;
