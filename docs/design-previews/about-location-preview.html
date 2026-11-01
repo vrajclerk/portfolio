@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vraj Clerk — Location & Background (Google Maps Integration)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Geist+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --card: #FFFFFF;
+      --card-muted: #F1F5F9;
+      --border: #CBD5E1;
+      --border-subtle: #E2E8F0;
+      --muted-fg: #64748B;
+      --accent: #1D4ED8;
+      --accent-fg: #FFFFFF;
+      --accent-warm: #FF6B00;
+      --emerald: #059669;
+      --grid-pattern: rgba(15, 23, 42, 0.04);
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    }
+
+    body.dark-mode {
+      --bg: #0E1013;
+      --fg: #F8FAFC;
+      --card: #161A22;
+      --card-muted: #1B212D;
+      --border: #2D333F;
+      --border-subtle: #1E2430;
+      --muted-fg: #94A3B8;
+      --accent: #FF6B00;
+      --accent-fg: #0E1013;
+      --accent-warm: #FF6B00;
+      --emerald: #10B981;
+      --grid-pattern: rgba(255, 255, 255, 0.035);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 6px 12px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.55);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      padding: 32px 20px 100px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      background-image: 
+        linear-gradient(to right, var(--grid-pattern) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-pattern) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Top Control Bar */
+    .preview-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 24px;
+      margin-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .preview-title h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-title p {
+      font-size: 13px;
+      color: var(--muted-fg);
+      margin-top: 4px;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .section-eyebrow {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .section-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .section-heading {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--muted-fg);
+      margin-top: 6px;
+      max-width: 680px;
+      margin-bottom: 24px;
+    }
+
+    /* =========================================================================
+       SIDE-BY-SIDE LAYOUT (GOOGLE MAP + DUAL CARDS)
+       ========================================================================= */
+    .location-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    .grid-side-by-side {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    @media (min-width: 900px) {
+      .grid-side-by-side {
+        grid-template-columns: 1.15fr 1fr;
+        align-items: stretch;
+      }
+    }
+
+    /* Google Map Wrapper */
+    .map-frame-wrapper {
+      background: var(--card-muted);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-height: 440px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .map-controls-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      z-index: 5;
+    }
+
+    .map-switch-buttons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .map-switch-btn {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--card-muted);
+      color: var(--fg);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .map-switch-btn:hover {
+      border-color: var(--accent);
+      background: var(--card);
+    }
+
+    .map-switch-btn.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .map-iframe-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      position: relative;
+      background: #E5E7EB;
+    }
+
+    /* Dark Mode Filter for Google Maps */
+    body.dark-mode .map-iframe-container iframe {
+      filter: invert(90%) hue-rotate(180deg) contrast(95%);
+    }
+
+    .map-iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      border: 0;
+      display: block;
+      transition: filter 0.3s ease;
+    }
+
+    /* =========================================================================
+       INSIDE-MAP LOCATION POINT SIGNS (PINS DIRECTLY ON MAP)
+       ========================================================================= */
+    .in-map-pins-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.3s ease;
+    }
+
+    .map-geo-pin {
+      position: absolute;
+      pointer-events: auto;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translate(-50%, -100%);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35));
+    }
+
+    .map-geo-pin:hover {
+      transform: translate(-50%, -112%) scale(1.08);
+    }
+
+    .pin-bubble {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      background: var(--card);
+      border: 2px solid var(--accent);
+      color: var(--fg);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: var(--shadow-md);
+    }
+
+    .pin-bubble.home-sign {
+      border-color: var(--emerald);
+    }
+
+    .pin-bubble.work-sign {
+      border-color: var(--accent);
+    }
+
+    .pin-pointer {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 7px solid var(--accent);
+      margin-top: -1px;
+    }
+
+    .pin-pointer.home-pointer {
+      border-top-color: var(--emerald);
+    }
+
+    .pin-pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 0 0 var(--accent);
+      animation: radarPulse 2s infinite;
+    }
+
+    .pin-pulse-dot.home-dot {
+      background: var(--emerald);
+      box-shadow: 0 0 0 0 var(--emerald);
+      animation: radarPulseEmerald 2s infinite;
+    }
+
+    @keyframes radarPulse {
+      0% { box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(29, 78, 216, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(29, 78, 216, 0); }
+    }
+
+    @keyframes radarPulseEmerald {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* Geographical Anchor Positioning when Gujarat View is Active */
+    .pin-ahmedabad {
+      top: 46%;
+      left: 74%;
+    }
+
+    .pin-surat {
+      top: 76%;
+      left: 76%;
+    }
+
+    /* Focused Single Pin when zoomed into city */
+    .single-focus-pin {
+      top: 50%;
+      left: 50%;
+    }
+
+    /* Cards Column */
+    .location-cards-col {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      justify-content: center;
+    }
+
+    .location-detail-card {
+      background: var(--card-muted);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 22px 24px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .location-detail-card:hover, .location-detail-card.active-card, .location-detail-card.active-ahm {
+      border-color: var(--accent);
+      background: var(--card);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .location-detail-card.active-sur {
+      border-color: var(--emerald);
+      background: var(--card);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .city-heading {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    .heading-sign-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .loc-badge {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .loc-badge.current {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .loc-badge.native {
+      background: rgba(29, 78, 216, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(29, 78, 216, 0.25);
+    }
+
+    body.dark-mode .loc-badge.native {
+      background: rgba(255, 107, 0, 0.12);
+      color: var(--accent-warm);
+      border-color: rgba(255, 107, 0, 0.3);
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 0 currentColor;
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 currentColor; }
+      70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(0, 0, 0, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+    }
+
+    .city-subtitle {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11.5px;
+      color: var(--muted-fg);
+      margin-bottom: 10px;
+    }
+
+    .city-narrative {
+      font-size: 13.5px;
+      color: var(--muted-fg);
+      line-height: 1.6;
+    }
+
+    .city-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .city-pill {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--fg);
+    }
+
+    /* Open in Google Maps Link Button */
+    .external-map-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 12px;
+      font-weight: 600;
+      transition: gap 0.2s ease;
+    }
+
+    .external-map-link:hover {
+      text-decoration: underline;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body class="dark-mode">
+
+  <div class="container">
+    
+    <!-- Top Preview Header & Mode Toggle -->
+    <header class="preview-header">
+      <div class="preview-title">
+        <h1>Geographic Base &amp; Engineering Presence</h1>
+        <p>Location Mapping • Ahmedabad &amp; Surat, Gujarat</p>
+      </div>
+
+      <div class="controls-group">
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()">
+          <span id="themeIcon">☀️</span>
+          <span id="themeLabel">Light Mode</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Section -->
+    <section>
+      <div class="section-eyebrow">Location &amp; Mobility</div>
+      <h2 class="section-heading">Geographic Base &amp; Engineering Presence</h2>
+      <p class="section-desc">
+        Operating out of Ahmedabad with foundational roots in Surat, India — open to local, hybrid, and remote engineering roles.
+      </p>
+
+      <div class="location-box">
+        <div class="grid-side-by-side">
+          
+          <!-- LEFT: Interactive Google Map with Inside-Map Location Point Signs -->
+          <div class="map-frame-wrapper">
+            
+            <!-- Clean Header: No Cluttered Signs, Direct City Switchers -->
+            <div class="map-controls-header">
+              <span style="font-weight: 700; color: var(--fg);" id="mapStatusText">
+                Showing: Gujarat
+              </span>
+              
+              <div class="map-switch-buttons">
+                <!-- Gujarat (Both) Button -->
+                <button type="button" class="map-switch-btn active" id="btnGujarat" onclick="setMapLocation('gujarat')">
+                  Gujarat
+                </button>
+
+                <!-- Ahmedabad Button -->
+                <button type="button" class="map-switch-btn" id="btnAhm" onclick="setMapLocation('ahmedabad')">
+                  Ahmedabad
+                </button>
+
+                <!-- Surat Button -->
+                <button type="button" class="map-switch-btn" id="btnSur" onclick="setMapLocation('surat')">
+                  Surat
+                </button>
+              </div>
+            </div>
+
+            <!-- Google Maps Iframe & In-Map Location Point Pins Layer -->
+            <div class="map-iframe-container">
+              <iframe
+                id="googleMapIframe"
+                title="Google Map - Gujarat Region"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://maps.google.com/maps?q=Gujarat,+India&t=&z=7&ie=UTF8&iwloc=&output=embed"
+                allowfullscreen>
+              </iframe>
+
+              <!-- IN-MAP LOCATION POINT SIGNS (Hidden in Gujarat view) -->
+              <div class="in-map-pins-overlay" id="inMapPinsOverlay" style="display: none;">
+                
+                <!-- AHMEDABAD WORKSPACE PIN -->
+                <div class="map-geo-pin pin-ahmedabad" id="mapPinAhm" onclick="setMapLocation('ahmedabad')" title="Click to zoom into Ahmedabad" style="display: none;">
+                  <div class="pin-bubble work-sign">
+                    <span>💻</span>
+                    <span>Ahmedabad</span>
+                  </div>
+                  <div class="pin-pointer"></div>
+                  <div class="pin-pulse-dot"></div>
+                </div>
+
+                <!-- SURAT HOME SIGN PIN -->
+                <div class="map-geo-pin pin-surat" id="mapPinSur" onclick="setMapLocation('surat')" title="Click to zoom into Surat (Hometown)" style="display: none;">
+                  <div class="pin-bubble home-sign">
+                    <span>🏠</span>
+                    <span>Surat (Home)</span>
+                  </div>
+                  <div class="pin-pointer home-pointer"></div>
+                  <div class="pin-pulse-dot home-dot"></div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          <!-- RIGHT: City Detail Cards -->
+          <div class="location-cards-col">
+            
+            <!-- CARD 1: AHMEDABAD (Current Location with Laptop/Work Sign) -->
+            <div class="location-detail-card active-ahm" id="cardAhm" onclick="setMapLocation('ahmedabad')">
+              <div class="card-top-row">
+                <div class="city-heading">
+                  <span class="heading-sign-badge" title="Current Location / Workspace">💻</span>
+                  <span>Ahmedabad</span>
+                </div>
+                <span class="loc-badge current">
+                  <span class="pulse-dot"></span>
+                  Current Location
+                </span>
+              </div>
+              
+              <div class="city-subtitle">Ahmedabad, Gujarat, India</div>
+              
+              <p class="city-narrative">
+                Where I am currently based, living, and working. Active daily building reliable backend systems, writing production code, and collaborating with engineering teams. Open to local opportunities, hybrid roles, and remote work.
+              </p>
+
+              <div class="city-pills-row">
+                <span class="city-pill">💻 Active Base</span>
+                <span class="city-pill">Available for Roles</span>
+                <span class="city-pill">IST (UTC+5:30)</span>
+              </div>
+
+              <a href="https://maps.google.com/?q=Ahmedabad,+Gujarat,+India" target="_blank" rel="noopener noreferrer" class="external-map-link">
+                <span>Open Ahmedabad in Google Maps</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <!-- CARD 2: SURAT (Hometown / Native Place with Home Sign) -->
+            <div class="location-detail-card active-sur" id="cardSur" onclick="setMapLocation('surat')">
+              <div class="card-top-row">
+                <div class="city-heading">
+                  <span class="heading-sign-badge" title="Hometown / Native Place">🏠</span>
+                  <span>Surat</span>
+                </div>
+                <span class="loc-badge native">
+                  <span>🏠</span>
+                  Hometown • Native Place
+                </span>
+              </div>
+              
+              <div class="city-subtitle">Surat, Gujarat, India</div>
+              
+              <p class="city-narrative">
+                My hometown and native city where I was born and raised. Growing up in Surat gave me my foundational roots, personal values, and a practical, grounded work ethic.
+              </p>
+
+              <div class="city-pills-row">
+                <span class="city-pill">🏠 Native Roots</span>
+                <span class="city-pill">Born &amp; Raised</span>
+                <span class="city-pill">Family Heritage</span>
+              </div>
+
+              <a href="https://maps.google.com/?q=Surat,+Gujarat,+India" target="_blank" rel="noopener noreferrer" class="external-map-link">
+                <span>Open Surat in Google Maps</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Theme toggle
+    function toggleTheme() {
+      const body = document.body;
+      const isDark = body.classList.toggle('dark-mode');
+      document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+      document.getElementById('themeLabel').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+    }
+
+    // Google Map Location URLs
+    const mapUrls = {
+      gujarat: "https://maps.google.com/maps?q=Gujarat,+India&t=&z=7&ie=UTF8&iwloc=&output=embed",
+      ahmedabad: "https://maps.google.com/maps?q=Ahmedabad,+Gujarat,+India&t=&z=11&ie=UTF8&iwloc=&output=embed",
+      surat: "https://maps.google.com/maps?q=Surat,+Gujarat,+India&t=&z=12&ie=UTF8&iwloc=&output=embed"
+    };
+
+    function setMapLocation(locationKey) {
+      const iframe = document.getElementById('googleMapIframe');
+      if (iframe && mapUrls[locationKey]) {
+        iframe.src = mapUrls[locationKey];
+      }
+
+      // Update button states
+      const btnGujarat = document.getElementById('btnGujarat');
+      const btnAhm = document.getElementById('btnAhm');
+      const btnSur = document.getElementById('btnSur');
+
+      if (btnGujarat) btnGujarat.classList.remove('active');
+      if (btnAhm) btnAhm.classList.remove('active');
+      if (btnSur) btnSur.classList.remove('active');
+
+      if (locationKey === 'gujarat' && btnGujarat) btnGujarat.classList.add('active');
+      if (locationKey === 'ahmedabad' && btnAhm) btnAhm.classList.add('active');
+      if (locationKey === 'surat' && btnSur) btnSur.classList.add('active');
+
+      // Update in-map location point pins (removed in Gujarat view)
+      const pinAhm = document.getElementById('mapPinAhm');
+      const pinSur = document.getElementById('mapPinSur');
+      const pinsOverlay = document.getElementById('inMapPinsOverlay');
+
+      if (pinAhm) pinAhm.style.display = 'none';
+      if (pinSur) pinSur.style.display = 'none';
+      if (pinsOverlay) pinsOverlay.style.display = 'none';
+
+      // Update card active states
+      const cardAhm = document.getElementById('cardAhm');
+      const cardSur = document.getElementById('cardSur');
+
+      if (cardAhm) {
+        cardAhm.classList.remove('active-card', 'active-ahm');
+      }
+      if (cardSur) {
+        cardSur.classList.remove('active-card', 'active-sur');
+      }
+
+      if (locationKey === 'gujarat') {
+        // Draw border for both Ahmedabad and Surat like done individually
+        if (cardAhm) cardAhm.classList.add('active-ahm');
+        if (cardSur) cardSur.classList.add('active-sur');
+      } else if (locationKey === 'ahmedabad') {
+        if (cardAhm) cardAhm.classList.add('active-ahm');
+      } else if (locationKey === 'surat') {
+        if (cardSur) cardSur.classList.add('active-sur');
+      }
+
+      // Update status header text
+      const statusText = document.getElementById('mapStatusText');
+      if (statusText) {
+        if (locationKey === 'gujarat') statusText.textContent = "Showing: Gujarat";
+        else if (locationKey === 'ahmedabad') statusText.textContent = "Showing: Ahmedabad";
+        else if (locationKey === 'surat') statusText.textContent = "Showing: Surat";
+      }
+    }
+  </script>
+
+</body>
+</html>

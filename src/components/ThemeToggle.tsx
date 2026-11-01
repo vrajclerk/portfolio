@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 /**
  * ThemeToggle component.
@@ -15,26 +15,52 @@ import React, { useState } from "react";
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const isEnabled = process.env.NEXT_PUBLIC_ENABLE_THEME_TOGGLE === "true";
 
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window !== "undefined") {
-      try {
-        return localStorage.getItem("theme") === "dark" ? "dark" : "light";
-      } catch {
-        return "light";
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const syncTheme = () => {
+      const isDark =
+        document.documentElement.classList.contains("dark") ||
+        document.documentElement.getAttribute("data-theme") === "dark";
+      setTheme(isDark ? "dark" : "light");
+    };
+
+    // Initial sync with DOM (set by inline script in layout.tsx)
+    syncTheme();
+
+    const handleThemeChange = (e: Event) => {
+      const customEvent = e as CustomEvent<"light" | "dark">;
+      if (customEvent.detail) {
+        setTheme(customEvent.detail);
+      } else {
+        syncTheme();
       }
-    }
-    return "light";
-  });
+    };
+
+    window.addEventListener("theme-change", handleThemeChange);
+    window.addEventListener("storage", syncTheme);
+
+    return () => {
+      window.removeEventListener("theme-change", handleThemeChange);
+      window.removeEventListener("storage", syncTheme);
+    };
+  }, []);
 
   if (!isEnabled) {
     return null;
   }
 
-  const isDark = theme === "dark";
+  const isDark = mounted ? theme === "dark" : false;
 
   const toggleTheme = () => {
-    const nextTheme = isDark ? "light" : "dark";
-    setTheme(nextTheme);
+    // Check actual DOM state as ground truth to prevent any desync
+    const isCurrentlyDark =
+      document.documentElement.classList.contains("dark") ||
+      document.documentElement.getAttribute("data-theme") === "dark";
+    const nextTheme = isCurrentlyDark ? "light" : "dark";
 
     try {
       if (nextTheme === "dark") {
@@ -49,13 +75,17 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     } catch {
       // Ignore localStorage errors
     }
+
+    setTheme(nextTheme);
+    window.dispatchEvent(new CustomEvent("theme-change", { detail: nextTheme }));
   };
 
   return (
     <button
       type="button"
       onClick={toggleTheme}
-      aria-label={`Switch to ${isDark ? "light" : "dark"} mode (currently ${theme})`}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode (currently ${mounted ? theme : "light"})`}
+      suppressHydrationWarning
       className={`group relative flex h-9 w-9 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${className}`}
     >
       {isDark ? (

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 import { CtaSection } from "@/components/CtaSection";
 import { CopyEmailButton } from "@/components/CopyEmailButton";
+import { AboutLocationSection } from "@/components/AboutLocationSection";
 import { getProfile, getSiteSettings } from "@/lib/cms";
 import {
   generateBreadcrumbSchema,
@@ -371,6 +372,11 @@ export default async function AboutPage() {
           </div>
 
         </div>
+
+        {/* ===================================================================
+         * GEOGRAPHIC BACKGROUND & LOCATION: AHMEDABAD & SURAT
+         * =================================================================== */}
+        <AboutLocationSection />
 
         {/* ===================================================================
          * CAREER PROGRESSION: WORK EXPERIENCE TIMELINE

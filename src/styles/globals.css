@@ -12,6 +12,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, [data-theme="dark"], .dark *, [data-theme="dark"] *));
+
 /* ---------------------------------------------------------------------------
  * Design tokens — Fluid Sculptural Editorial Aesthetic
  * Light mode (Cashmere Milk & Terracotta) by default.
