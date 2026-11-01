@@ -14,6 +14,7 @@ import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { CustomCursor } from "@/components/CustomCursor";
 import { getHomepageSettings, getSiteSettings } from "@/lib/cms";
 import "@/styles/globals.css";
 
@@ -123,6 +124,7 @@ export default async function FrontendLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} flex min-h-full flex-col font-sans antialiased`}
       >
+        <CustomCursor />
         {/* Skip to main content link for keyboard and screen reader accessibility (WCAG 2.2 AA) */}
         <a
           href="#main-content"

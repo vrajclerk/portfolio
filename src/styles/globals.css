@@ -401,3 +401,42 @@ body {
   background-color: transparent;
   padding: 0;
 }
+
+/* ---------------------------------------------------------------------------
+ * Custom Crosshair Reticle Cursor
+ * --------------------------------------------------------------------------- */
+
+body.custom-cursor-enabled,
+body.custom-cursor-enabled a,
+body.custom-cursor-enabled button,
+body.custom-cursor-enabled [role="button"],
+body.custom-cursor-enabled select,
+body.custom-cursor-enabled summary,
+body.custom-cursor-enabled .cursor-pointer {
+  cursor: none !important;
+}
+
+/* Preserve native I-beam for typing and text selection */
+body.custom-cursor-enabled input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]),
+body.custom-cursor-enabled textarea,
+body.custom-cursor-enabled [contenteditable="true"] {
+  cursor: text !important;
+}
+
+.custom-reticle-cursor.cursor-hovering svg {
+  transform: scale(1.3) rotate(45deg);
+  filter: drop-shadow(0 0 10px var(--accent)) !important;
+}
+
+.custom-reticle-cursor.cursor-clicking svg {
+  transform: scale(0.85);
+  filter: drop-shadow(0 0 12px var(--accent)) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-reticle-cursor svg {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+

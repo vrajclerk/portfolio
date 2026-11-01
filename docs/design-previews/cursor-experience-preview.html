@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crosshair Target Reticle Cursor — Vraj Clerk Portfolio</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans, Geist Mono, Fraunces -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Geist+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Portfolio Default Light Theme (Nordic Ice & Deep Cobalt) */
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --muted: #F1F5F9;
+      --muted-fg: #64748B;
+      --border: #CBD5E1;
+      --border-subtle: #E2E8F0;
+      --card: #FFFFFF;
+      --accent: #1D4ED8;              /* Deep Cobalt Brand Color */
+      --accent-rgb: 29, 78, 216;
+      --accent-fg: #FFFFFF;
+      --accent-glow: rgba(29, 78, 216, 0.22);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.08);
+      --grid-line: rgba(15, 23, 42, 0.045);
+    }
+
+    body.dark-theme {
+      /* Portfolio Dark Theme (Matte Carbon & Hyper Orange) */
+      --bg: #0E1013;
+      --fg: #FFFFFF;
+      --muted: #161A22;
+      --muted-fg: #9BA3AF;
+      --border: #2D333F;
+      --border-subtle: #1E2430;
+      --card: #161A22;
+      --accent: #FF6B00;              /* Blaze Orange Brand Color */
+      --accent-rgb: 255, 107, 0;
+      --accent-fg: #0E1013;
+      --accent-glow: rgba(255, 107, 0, 0.3);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.6);
+      --grid-line: rgba(255, 255, 255, 0.04);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      line-height: 1.6;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      position: relative;
+      overflow-x: hidden;
+      padding-bottom: 60px;
+    }
+
+    /* Hide OS mouse cursor when custom cursor is active */
+    body.custom-cursor-active,
+    body.custom-cursor-active * {
+      cursor: none !important;
+    }
+
+    /* Architectural grid background resembling the user's reference image */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background-image: 
+        radial-gradient(circle, var(--grid-line) 1.5px, transparent 1.5px);
+      background-size: 28px 28px;
+    }
+
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    /* =========================================================================
+       CUSTOM TARGET RETICLE CURSOR
+       ========================================================================= */
+    #cursor-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 99999;
+      display: none;
+    }
+
+    body.custom-cursor-active #cursor-container {
+      display: block;
+    }
+
+    /* Primary Reticle Container (0-latency tracking) */
+    #cursor-reticle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 32px;
+      height: 32px;
+      transform: translate3d(-50%, -50%, 0);
+      will-change: transform;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.08s ease-out;
+    }
+
+    /* Inner SVG element with brand color and responsive animations */
+    #cursor-reticle svg {
+      width: 100%;
+      height: 100%;
+      color: var(--accent);
+      filter: drop-shadow(0 0 5px var(--accent-glow));
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.2s ease,
+                  filter 0.2s ease;
+      transform-origin: center center;
+    }
+
+    /* Optional Spring Follower Aura (for Mode 2) */
+    #cursor-aura {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px dashed var(--accent);
+      background: radial-gradient(circle, rgba(var(--accent-rgb), 0.08) 0%, transparent 70%);
+      transform: translate3d(-50%, -50%, 0);
+      will-change: transform;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease,
+                  width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.2s ease;
+    }
+
+    /* -------------------------------------------------------------
+       MODE 1: Exact Pixel-Art Reticle (Faithful match to reference)
+       ------------------------------------------------------------- */
+    .mode-pixel-art #cursor-reticle {
+      width: 28px;
+      height: 28px;
+      image-rendering: pixelated;
+    }
+
+    .mode-pixel-art #cursor-reticle svg {
+      shape-rendering: crispEdges;
+    }
+
+    /* Hover State: Target Lock-on Expansion */
+    .mode-pixel-art.is-hovering #cursor-reticle svg {
+      transform: scale(1.35) rotate(45deg);
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+
+    /* Click State: Micro Recoil */
+    .mode-pixel-art.is-clicking #cursor-reticle svg {
+      transform: scale(0.85);
+      filter: drop-shadow(0 0 12px var(--accent));
+    }
+
+    /* -------------------------------------------------------------
+       MODE 2: Precision Vector Reticle (Sleek High-DPI Smooth)
+       ------------------------------------------------------------- */
+    .mode-vector #cursor-reticle {
+      width: 30px;
+      height: 30px;
+    }
+
+    .mode-vector #cursor-reticle svg {
+      shape-rendering: geometricPrecision;
+    }
+
+    .mode-vector.is-hovering #cursor-reticle svg {
+      transform: scale(1.3) rotate(90deg);
+      filter: drop-shadow(0 0 10px var(--accent));
+    }
+
+    .mode-vector.is-clicking #cursor-reticle svg {
+      transform: scale(0.8);
+    }
+
+    /* -------------------------------------------------------------
+       MODE 3: Reticle + Inertia Follower Ring
+       ------------------------------------------------------------- */
+    .mode-reticle-inertia #cursor-reticle {
+      width: 26px;
+      height: 26px;
+    }
+
+    .mode-reticle-inertia #cursor-aura {
+      opacity: 0.5;
+    }
+
+    .mode-reticle-inertia.is-hovering #cursor-aura {
+      opacity: 0.9;
+      width: 58px;
+      height: 58px;
+      border-style: solid;
+      background: radial-gradient(circle, rgba(var(--accent-rgb), 0.15) 0%, transparent 70%);
+    }
+
+    .mode-reticle-inertia.is-hovering #cursor-reticle svg {
+      transform: scale(1.25);
+    }
+
+    /* Click ping effect */
+    .reticle-ping {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid var(--accent);
+      pointer-events: none;
+      animation: pingWave 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes pingWave {
+      0% {
+        opacity: 1;
+        transform: translate3d(-50%, -50%, 0) scale(0.8);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(-50%, -50%, 0) scale(2.8);
+      }
+    }
+
+    /* =========================================================================
+       PAGE CONTENT & DEMO CONTROLS
+       ========================================================================= */
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--muted-fg);
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .mode-switcher {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--muted);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .mode-btn {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--muted-fg);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .mode-btn.active {
+      background: var(--card);
+      color: var(--fg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--fg);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+    }
+
+    /* Spec details card */
+    .spec-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin-bottom: 36px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .spec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.1);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .spec-desc {
+      font-size: 13px;
+      color: var(--muted-fg);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      margin-bottom: 48px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-fg);
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-heading {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      max-width: 800px;
+    }
+
+    .hero-heading span.italic-serif {
+      font-family: 'Fraunces', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-color: rgba(var(--accent-rgb), 0.35);
+      text-underline-offset: 8px;
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--muted-fg);
+      line-height: 1.7;
+      max-width: 680px;
+      margin-bottom: 28px;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-pill-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 24px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-weight: 600;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px var(--accent-glow);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    }
+
+    .btn-pill-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px var(--accent-glow);
+    }
+
+    .btn-pill-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 999px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-pill-secondary:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .copy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-pill:hover {
+      border-color: var(--accent);
+      background: var(--card);
+    }
+
+    /* Cards Grid */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .mini-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .mini-card-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .mini-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .mini-card-desc {
+      font-size: 13px;
+      color: var(--muted-fg);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .tag-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-pill {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--muted);
+      color: var(--muted-fg);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .tag-pill:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 768px) {
+      .hero-heading { font-size: 32px; }
+      .top-bar { flex-direction: column; align-items: stretch; }
+      .mode-switcher { overflow-x: auto; }
+    }
+  </style>
+</head>
+<body class="custom-cursor-active mode-pixel-art">
+
+  <div class="bg-grid"></div>
+
+  <!-- Hardware-Accelerated Reticle Cursor Elements -->
+  <div id="cursor-container">
+    <div id="cursor-aura"></div>
+    <div id="cursor-reticle">
+      <!-- 
+        Authentic Target Reticle SVG:
+        Matches the uploaded reference image:
+        - Outer ring with 4 extending crosshair ticks (N, S, E, W)
+        - Inner precision ring with center crosshair alignment
+        - Driven dynamically by CSS currentColor / var(--accent)
+      -->
+      <svg id="reticleSvg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer Target Ring -->
+        <circle cx="14" cy="14" r="7.5" stroke="currentColor" stroke-width="1.25" />
+        
+        <!-- Inner Target Ring / Core -->
+        <circle cx="14" cy="14" r="2.75" stroke="currentColor" stroke-width="1.1" stroke-dasharray="2 1.5" />
+        
+        <!-- 4 Outer Crosshair Extension Ticks -->
+        <line x1="14" y1="1.5" x2="14" y2="6.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+        <line x1="14" y1="21.5" x2="14" y2="26.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+        <line x1="1.5" y1="14" x2="6.5" y2="14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+        <line x1="21.5" y1="14" x2="26.5" y2="14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+        
+        <!-- Precision Center Dot -->
+        <circle cx="14" cy="14" r="0.75" fill="currentColor" />
+      </svg>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Top Bar with Reticle Modes -->
+    <header class="top-bar">
+      <div>
+        <h1 class="brand-title">Crosshair Target Reticle</h1>
+        <p class="brand-sub">// Brand Color Integration &bull; Vraj Clerk Portfolio</p>
+      </div>
+
+      <div class="mode-switcher">
+        <button class="mode-btn active" data-mode="pixel-art" title="Crisp pixel-rendered reticle matching reference image">
+          1. Pixel-Crisp Reticle
+        </button>
+        <button class="mode-btn" data-mode="vector" title="Smooth anti-aliased vector reticle with 90° rotation lock on hover">
+          2. Smooth Vector Reticle
+        </button>
+        <button class="mode-btn" data-mode="reticle-inertia" title="Reticle plus trailing fluid dashed aura">
+          3. Reticle + Trailing Aura
+        </button>
+        <button class="mode-btn" data-mode="native" title="Restore OS pointer">
+          Native OS
+        </button>
+      </div>
+
+      <button id="themeToggle" class="theme-btn">
+        <span id="themeLabel">☀️ Light (Cobalt)</span>
+      </button>
+    </header>
+
+    <!-- Spec info card -->
+    <div class="spec-card">
+      <div class="spec-badge">
+        <span>ACTIVE COLOR:</span>
+        <strong id="activeColorName">#1D4ED8 (Copenhagen Deep Cobalt)</strong>
+      </div>
+      <p class="spec-desc">
+        Exact reticle geometry from your reference image, rendered dynamically in your portfolio's brand accent color.
+      </p>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-eyebrow">// HIGH-THROUGHPUT BACKEND ARCHITECTURE</div>
+      
+      <h2 class="hero-heading">
+        Systems built to <span class="italic-serif">scale.</span>
+      </h2>
+
+      <p class="hero-desc">
+        Move your mouse over the buttons, tags, and project cards below. Notice the zero-lag target tracking, 
+        subtle lock-on expansion over clickable elements, and micro-recoil compression on mouse click.
+      </p>
+
+      <div class="actions-row">
+        <button class="btn-pill-primary interactive-target">
+          <span>Initialize Cluster</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
+        </button>
+
+        <button class="btn-pill-secondary interactive-target">
+          <span>Architecture Specs</span>
+        </button>
+
+        <button class="copy-pill interactive-target" id="copyBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+          </svg>
+          <span id="emailText">vrajclerk.work@gmail.com</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Cards Row -->
+    <div class="cards-row">
+      <article class="mini-card interactive-target">
+        <div>
+          <span class="mini-card-tag">LOGGING & TELEMETRY</span>
+          <h3 class="mini-card-title">Distributed Log Indexer</h3>
+          <p class="mini-card-desc">
+            Asynchronous ingestion pipeline in FastAPI & OpenSearch handling 25,000 events/sec with sub-50ms query latency.
+          </p>
+        </div>
+        <div class="tag-pills">
+          <span class="tag-pill interactive-target">FastAPI</span>
+          <span class="tag-pill interactive-target">PostgreSQL</span>
+          <span class="tag-pill interactive-target">Docker</span>
+        </div>
+      </article>
+
+      <article class="mini-card interactive-target">
+        <div>
+          <span class="mini-card-tag">SYSTEM RESILIENCE</span>
+          <h3 class="mini-card-title">Resilient Circuit Breaker</h3>
+          <p class="mini-card-desc">
+            Zero-dependency Python package implementing token-bucket rate limiting, exponential backoff, and dead-letter routing.
+          </p>
+        </div>
+        <div class="tag-pills">
+          <span class="tag-pill interactive-target">Python</span>
+          <span class="tag-pill interactive-target">AWS SQS</span>
+          <span class="tag-pill interactive-target">Redis</span>
+        </div>
+      </article>
+
+      <article class="mini-card interactive-target">
+        <div>
+          <span class="mini-card-tag">EDGE INFRASTRUCTURE</span>
+          <h3 class="mini-card-title">Cloudflare Reverse Proxy</h3>
+          <p class="mini-card-desc">
+            High-speed routing gateway deployed globally on Cloudflare Workers with cryptographic token verification.
+          </p>
+        </div>
+        <div class="tag-pills">
+          <span class="tag-pill interactive-target">TypeScript</span>
+          <span class="tag-pill interactive-target">Workers</span>
+          <span class="tag-pill interactive-target">Next.js</span>
+        </div>
+      </article>
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      const body = document.body;
+      const reticle = document.getElementById('cursor-reticle');
+      const aura = document.getElementById('cursor-aura');
+      const modeButtons = document.querySelectorAll('.mode-btn');
+      const themeToggle = document.getElementById('themeToggle');
+      const themeLabel = document.getElementById('themeLabel');
+      const activeColorName = document.getElementById('activeColorName');
+
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let auraX = mouseX;
+      let auraY = mouseY;
+      let targetX = mouseX;
+      let targetY = mouseY;
+      let isMagnetic = false;
+      let currentMode = 'pixel-art';
+
+      // Mouse Move: Zero-latency reticle placement
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        reticle.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+
+        if (!isMagnetic) {
+          targetX = mouseX;
+          targetY = mouseY;
+        }
+      });
+
+      // Mouse Down / Up for Recoil and Ping Wave
+      window.addEventListener('mousedown', (e) => {
+        body.classList.add('is-clicking');
+
+        if (currentMode !== 'native') {
+          const ping = document.createElement('div');
+          ping.className = 'reticle-ping';
+          ping.style.left = `${e.clientX}px`;
+          ping.style.top = `${e.clientY}px`;
+          document.body.appendChild(ping);
+          setTimeout(() => ping.remove(), 450);
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        body.classList.remove('is-clicking');
+      });
+
+      // Hover on interactive elements
+      const interactiveTargets = document.querySelectorAll('.interactive-target, a, button');
+      interactiveTargets.forEach((el) => {
+        el.addEventListener('mouseenter', () => {
+          body.classList.add('is-hovering');
+
+          if (el.tagName === 'BUTTON' && currentMode === 'reticle-inertia') {
+            const rect = el.getBoundingClientRect();
+            isMagnetic = true;
+            targetX = rect.left + rect.width / 2;
+            targetY = rect.top + rect.height / 2;
+          }
+        });
+
+        el.addEventListener('mousemove', (e) => {
+          if (isMagnetic && el.tagName === 'BUTTON') {
+            const rect = el.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            targetX = centerX + (e.clientX - centerX) * 0.25;
+            targetY = centerY + (e.clientY - centerY) * 0.25;
+          }
+        });
+
+        el.addEventListener('mouseleave', () => {
+          body.classList.remove('is-hovering');
+          isMagnetic = false;
+          targetX = mouseX;
+          targetY = mouseY;
+        });
+      });
+
+      // Spring Interpolation Loop for trailing aura (Mode 3)
+      function render() {
+        if (currentMode === 'reticle-inertia') {
+          auraX += (targetX - auraX) * 0.22;
+          auraY += (targetY - auraY) * 0.22;
+          aura.style.transform = `translate3d(${auraX}px, ${auraY}px, 0)`;
+        }
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+
+      // Mode Switcher
+      modeButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          modeButtons.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          const mode = btn.getAttribute('data-mode');
+          currentMode = mode;
+
+          body.classList.remove(
+            'custom-cursor-active',
+            'mode-pixel-art',
+            'mode-vector',
+            'mode-reticle-inertia'
+          );
+
+          if (mode === 'native') {
+            return;
+          }
+
+          body.classList.add('custom-cursor-active', `mode-${mode}`);
+        });
+      });
+
+      // Dark / Light Theme Toggle
+      let isDark = false;
+      themeToggle.addEventListener('click', () => {
+        isDark = !isDark;
+        if (isDark) {
+          body.classList.add('dark-theme');
+          themeLabel.textContent = '🌙 Dark (Blaze Orange)';
+          activeColorName.textContent = '#FF6B00 (High-Voltage Blaze Orange)';
+        } else {
+          body.classList.remove('dark-theme');
+          themeLabel.textContent = '☀️ Light (Cobalt)';
+          activeColorName.textContent = '#1D4ED8 (Copenhagen Deep Cobalt)';
+        }
+      });
+
+      // Copy email feedback
+      const copyBtn = document.getElementById('copyBtn');
+      const emailText = document.getElementById('emailText');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', () => {
+          const original = emailText.textContent;
+          emailText.textContent = 'Target Copied!';
+          setTimeout(() => {
+            emailText.textContent = original;
+          }, 1500);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
