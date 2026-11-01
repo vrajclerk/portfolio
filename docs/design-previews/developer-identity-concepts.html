@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Backgrounds & Interactive Animations — Live Portfolio Preview</title>
+  
+  <!-- Google Fonts: Geist Sans, Geist Mono, Fraunces, Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Geist+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Nordic Ice & Deep Cobalt (Portfolio Default Light Mode) */
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --card: rgba(255, 255, 255, 0.88);
+      --card-solid: #FFFFFF;
+      --card-muted: #F1F5F9;
+      --border: #CBD5E1;
+      --border-subtle: #E2E8F0;
+      --muted-fg: #475569;
+      --accent: #1D4ED8;
+      --accent-rgb: 29, 78, 216;
+      --accent-fg: #FFFFFF;
+      --accent-warm: #FF6B00;
+      --emerald: #059669;
+      --canvas-node: #1D4ED8;
+      --canvas-line: rgba(29, 78, 216, 0.16);
+      --canvas-pulse: #FF6B00;
+      --grid-line: rgba(15, 23, 42, 0.05);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      --shadow-xl: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
+    }
+
+    body.dark-mode {
+      /* Matte Carbon & Hyper Orange (Portfolio Dark Mode) */
+      --bg: #0B0E14;
+      --fg: #FFFFFF;
+      --card: rgba(22, 26, 34, 0.82);
+      --card-solid: #161A22;
+      --card-muted: #1B212D;
+      --border: #2D333F;
+      --border-subtle: #1E2430;
+      --muted-fg: #9BA3AF;
+      --accent: #FF6B00;
+      --accent-rgb: 255, 107, 0;
+      --accent-fg: #0E1013;
+      --accent-warm: #FF6B00;
+      --emerald: #10B981;
+      --canvas-node: #FF6B00;
+      --canvas-line: rgba(255, 107, 0, 0.22);
+      --canvas-pulse: #38BDF8;
+      --grid-line: rgba(255, 255, 255, 0.04);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      --shadow-xl: 0 20px 35px rgba(0, 0, 0, 0.7);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      padding: 0 0 120px;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* =========================================================================
+       FULLSCREEN BACKGROUND ANIMATION CANVAS LAYER
+       ========================================================================= */
+    #bgAnimationCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.95;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Ambient Subtle Grid Backing */
+    .bg-grid-underlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      pointer-events: none;
+      background-image: 
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Top Radial Vignette for Lighting Depth */
+    .bg-vignette-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 20%, transparent 40%, var(--bg) 95%);
+    }
+
+    /* The Content Container (Sits above the animations) */
+    .content-layer {
+      position: relative;
+      z-index: 10;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 20px 0;
+    }
+
+    /* =========================================================================
+       INTERACTIVE CONTROL DOCK (TOP BAR)
+       ========================================================================= */
+    .control-dock {
+      position: sticky;
+      top: 16px;
+      z-index: 100;
+      background: var(--card-solid);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 12px 20px;
+      margin-bottom: 36px;
+      box-shadow: var(--shadow-xl);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .dock-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dock-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .dock-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dock-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+    }
+
+    .dock-sub {
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--muted-fg);
+    }
+
+    /* Animation Mode Selector Buttons */
+    .mode-pills-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      background: var(--card-muted);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .mode-pill-btn {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted-fg);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mode-pill-btn:hover {
+      color: var(--fg);
+    }
+
+    .mode-pill-btn.active {
+      background: var(--card-solid);
+      color: var(--accent);
+      border-color: var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      font-weight: 700;
+    }
+
+    .dock-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      background: var(--card-muted);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+    }
+
+    /* Intensity Slider Group */
+    .intensity-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--muted-fg);
+      background: var(--card-muted);
+      padding: 5px 12px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .intensity-box input[type="range"] {
+      width: 70px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    /* =========================================================================
+       ACTIVE MODE BANNER (Explains what is running)
+       ========================================================================= */
+    .mode-status-banner {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 20px;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-badge {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(var(--accent-rgb), 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(var(--accent-rgb), 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .status-desc {
+      font-size: 13.5px;
+      color: var(--muted-fg);
+    }
+
+    .interactive-hint {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      background: var(--card-muted);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* =========================================================================
+       YOUR ACTUAL HERO SECTION (WITH THE BACKGROUND ANIMATION FLOWING BEHIND)
+       ========================================================================= */
+    .hero-wrapper {
+      padding: 30px 0 50px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero-wrapper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kicker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--emerald);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 18px;
+    }
+
+    .kicker-beacon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+    }
+
+    .hero-title {
+      font-size: 50px;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+      margin-bottom: 20px;
+    }
+
+    .serif-accent {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-style: wavy;
+      text-decoration-color: rgba(var(--accent-rgb), 0.4);
+      text-underline-offset: 8px;
+    }
+
+    .hero-narrative {
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--muted-fg);
+      margin-bottom: 28px;
+      max-width: 580px;
+    }
+
+    .hero-narrative strong {
+      color: var(--fg);
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-main {
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 26px;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.45);
+    }
+
+    .btn-glass {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 22px;
+      border-radius: 9999px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+
+    .btn-glass:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* RIGHT COLUMN: HERO PROFILE GLASS CARD */
+    .hero-profile-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: var(--shadow-xl);
+      backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .hero-profile-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .profile-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .profile-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald);
+    }
+
+    .profile-badge {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      background: rgba(var(--accent-rgb), 0.1);
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      border: 1px solid rgba(var(--accent-rgb), 0.25);
+    }
+
+    .profile-avatar-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Geist Mono', monospace;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 20px rgba(var(--accent-rgb), 0.3);
+    }
+
+    .profile-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+
+    .profile-role {
+      font-size: 14px;
+      color: var(--muted-fg);
+      font-family: 'Geist Mono', monospace;
+      margin-bottom: 20px;
+    }
+
+    .profile-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 18px;
+      text-align: center;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .metric-value {
+      font-family: 'Geist Mono', monospace;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .metric-lbl {
+      font-size: 10px;
+      color: var(--muted-fg);
+      text-transform: uppercase;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    /* =========================================================================
+       SECTION 2: CASE STUDIES SECTION (SHOWING HOW CARDS FLOAT OVER ANIMATION)
+       ========================================================================= */
+    .section-shelf {
+      margin-top: 60px;
+    }
+
+    .section-header-bar {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .section-kicker {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .section-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .glass-project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 26px;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .glass-project-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .card-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-type-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald);
+      background: rgba(5, 150, 105, 0.1);
+      border: 1px solid rgba(5, 150, 105, 0.25);
+      padding: 3px 8px;
+      border-radius: 9999px;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--muted-fg);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+
+    .card-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .c-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      background: var(--card-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--fg);
+    }
+
+    .card-action-bar {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-link {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* =========================================================================
+       EXPLANATION CARDS (Why each animation speaks "Developer")
+       ========================================================================= */
+    .concepts-guide {
+      margin-top: 70px;
+      background: var(--card-solid);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .guide-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .guide-desc {
+      font-size: 14px;
+      color: var(--muted-fg);
+      margin-bottom: 24px;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .guide-card {
+      background: var(--card-muted);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .guide-card:hover, .guide-card.active {
+      border-color: var(--accent);
+      background: var(--card);
+      transform: translateY(-2px);
+    }
+
+    .guide-card-icon {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .guide-card-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 4px;
+    }
+
+    .guide-card-p {
+      font-size: 12px;
+      color: var(--muted-fg);
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Hardware-Accelerated Animation Canvas -->
+  <canvas id="bgAnimationCanvas"></canvas>
+  <div class="bg-grid-underlay"></div>
+  <div class="bg-vignette-overlay"></div>
+
+  <!-- Content Layer -->
+  <div class="content-layer">
+
+    <!-- Interactive Control Dock -->
+    <header class="control-dock">
+      <div class="dock-title-group">
+        <div class="dock-logo">VC</div>
+        <div class="dock-info">
+          <span class="dock-label">Developer Background &amp; Animation Studio</span>
+          <span class="dock-sub">Interactive Preview on Your Actual Portfolio</span>
+        </div>
+      </div>
+
+      <!-- Mode Selector Pills -->
+      <div class="mode-pills-row">
+        <button class="mode-pill-btn active" onclick="switchAnimationMode('mesh', this)">
+          <span>🕸️</span> Distributed Mesh
+        </button>
+        <button class="mode-pill-btn" onclick="switchAnimationMode('circuit', this)">
+          <span>⚡</span> Circuit Bus
+        </button>
+        <button class="mode-pill-btn" onclick="switchAnimationMode('matrix', this)">
+          <span>💻</span> Syntax Floating
+        </button>
+        <button class="mode-pill-btn" onclick="switchAnimationMode('radar', this)">
+          <span>📡</span> Radar Grid Scan
+        </button>
+        <button class="mode-pill-btn" onclick="switchAnimationMode('stream', this)">
+          <span>🌊</span> Event Data Stream
+        </button>
+      </div>
+
+      <!-- Right Actions: Intensity & Theme -->
+      <div class="dock-right-actions">
+        <div class="intensity-box">
+          <span>Speed:</span>
+          <input type="range" id="speedSlider" min="0.3" max="2.5" step="0.1" value="1.0" oninput="setSpeed(this.value)">
+        </div>
+
+        <button type="button" class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+          <span id="themeIcon">☀️</span>
+          <span id="themeText">Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Active Mode Status Banner -->
+    <div class="mode-status-banner">
+      <div class="status-left">
+        <span class="status-badge" id="currentModeBadge">
+          <span class="dot"></span>
+          <span id="currentModeLabel">Mode 1: Distributed Network Mesh &amp; Packet Pulses</span>
+        </span>
+        <span class="status-desc" id="currentModeDesc">
+          Interconnected backend server nodes communicating with animated light pulses (representing API requests &amp; data replication).
+        </span>
+      </div>
+      <span class="interactive-hint">💡 Move your mouse to interact with the background</span>
+    </div>
+
+    <!-- YOUR ACTUAL HERO SECTION (Floating atop the animation) -->
+    <section class="hero-wrapper">
+      <div>
+        <div class="kicker-pill">
+          <span class="kicker-beacon"></span>
+          <span>Available for Full-Time Roles • Python &amp; Backend</span>
+        </div>
+
+        <h1 class="hero-title">
+          Systems built to <span class="serif-accent">scale.</span>
+        </h1>
+
+        <p class="hero-narrative">
+          Building resilient backend services, reusable Python packages, and cloud-native architectures with <strong>FastAPI</strong>, <strong>PostgreSQL</strong>, <strong>AWS</strong>, and <strong>OpenSearch</strong>. Focused on high-throughput reliability, clean system design, and evidence-based performance.
+        </p>
+
+        <div class="hero-ctas">
+          <button class="btn-main">Explore Case Studies →</button>
+          <button class="btn-glass">View Resume ↗</button>
+          <button class="btn-glass" style="font-family: 'Geist Mono', monospace; font-size: 12px;">📋 Copy Email</button>
+        </div>
+      </div>
+
+      <!-- Right: Actual Profile Monogram/Photo Plate with Glassmorphic Depth -->
+      <div>
+        <div class="hero-profile-card">
+          <div class="profile-card-header">
+            <div class="profile-status">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--emerald);"></span>
+              <span>sys.operational</span>
+            </div>
+            <span class="profile-badge">Backend Engineer</span>
+          </div>
+
+          <div class="profile-avatar-circle">VC</div>
+          <h2 class="profile-name">Vraj Clerk</h2>
+          <div class="profile-role">Distributed Systems &amp; APIs</div>
+
+          <div class="profile-metrics-grid">
+            <div class="metric-item">
+              <span class="metric-value">800+</span>
+              <span class="metric-lbl">Locust VUs</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-value">&lt; 38ms</span>
+              <span class="metric-lbl">p99 Latency</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-value" style="color: var(--emerald);">100%</span>
+              <span class="metric-lbl">Test Coverage</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- YOUR ACTUAL CASE STUDIES (Floating atop the animation) -->
+    <section class="section-shelf">
+      <div class="section-header-bar">
+        <div>
+          <span class="section-kicker">Case Studies</span>
+          <h2 class="section-title">Featured Engineering Projects</h2>
+        </div>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--accent);">3 Published Projects →</span>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <article class="glass-project-card">
+          <div>
+            <div class="card-meta-row">
+              <span class="card-type-tag">● Personal R&amp;D</span>
+              <span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted-fg);">01</span>
+            </div>
+            <h3 class="card-title">Pickleball Matchmaking Engine</h3>
+            <p class="card-desc">
+              Automated court scheduling and skill-based player pairing backend. Replaced manual WhatsApp coordination with asynchronous Python event loops.
+            </p>
+            <div class="card-tags-row">
+              <span class="c-tag">FastAPI</span>
+              <span class="c-tag">DynamoDB</span>
+              <span class="c-tag">Locust</span>
+              <span class="c-tag">Docker</span>
+            </div>
+          </div>
+          <div class="card-action-bar">
+            <a href="#" class="card-link">Explore Case Study →</a>
+            <span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted-fg);">github ↗</span>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="glass-project-card">
+          <div>
+            <div class="card-meta-row">
+              <span class="card-type-tag" style="color: var(--accent); background: rgba(var(--accent-rgb), 0.1); border-color: rgba(var(--accent-rgb), 0.25);">● Professional</span>
+              <span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted-fg);">02</span>
+            </div>
+            <h3 class="card-title">Enterprise OpenSearch Catalog</h3>
+            <p class="card-desc">
+              Hierarchical nested taxonomy search engine indexing 50,000+ manufacturing material variants with instant autocomplete and multi-field filtering.
+            </p>
+            <div class="card-tags-row">
+              <span class="c-tag">OpenSearch</span>
+              <span class="c-tag">PostgreSQL</span>
+              <span class="c-tag">Python 3.12</span>
+              <span class="c-tag">AWS ECS</span>
+            </div>
+          </div>
+          <div class="card-action-bar">
+            <a href="#" class="card-link">Explore Case Study →</a>
+            <span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted-fg);">github ↗</span>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="glass-project-card">
+          <div>
+            <div class="card-meta-row">
+              <span class="card-type-tag" style="color: var(--accent-warm); background: rgba(255, 107, 0, 0.1); border-color: rgba(255, 107, 0, 0.25);">● Open Source</span>
+              <span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted-fg);">03</span>
+            </div>
+            <h3 class="card-title">FastAPI Architecture Boilerplate</h3>
+            <p class="card-desc">
+              Production-ready asynchronous API scaffold featuring clean architecture, dependency injection, Auth0 RBAC middleware, and automated pytest fixtures.
+            </p>
+            <div class="card-tags-row">
+              <span class="c-tag">Pydantic v2</span>
+              <span class="c-tag">pytest</span>
+              <span class="c-tag">GitHub Actions</span>
+              <span class="c-tag">Docker</span>
+            </div>
+          </div>
+          <div class="card-action-bar">
+            <a href="#" class="card-link">Explore Case Study →</a>
+            <span style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted-fg);">pypi ↗</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Explanatory Guide on the 5 Animation Options -->
+    <div class="concepts-guide">
+      <h3 class="guide-title">How Each Animation Direction Transforms Your Technical Identity</h3>
+      <p class="guide-desc">
+        Click any of the cards below to switch the background animation live, or use the top dock to toggle between them:
+      </p>
+
+      <div class="guide-grid">
+        <div class="guide-card active" id="guide-mesh" onclick="switchAnimationMode('mesh')">
+          <div class="guide-card-icon">🕸️</div>
+          <div class="guide-card-title">1. Distributed Network Mesh</div>
+          <p class="guide-card-p">
+            Simulates distributed backend server nodes. Packets pulse between nodes, reacting dynamically to mouse movement. Signals cloud architecture and microservices.
+          </p>
+        </div>
+
+        <div class="guide-card" id="guide-circuit" onclick="switchAnimationMode('circuit')">
+          <div class="guide-card-icon">⚡</div>
+          <div class="guide-card-title">2. Glowing Circuit Bus</div>
+          <p class="guide-card-p">
+            Orthogonal circuit board traces with glowing electronic signals traveling at 90-degree and 45-degree angles. Gives an IT infrastructure, hardware, and engineering feel.
+          </p>
+        </div>
+
+        <div class="guide-card" id="guide-matrix" onclick="switchAnimationMode('matrix')">
+          <div class="guide-card-icon">💻</div>
+          <div class="guide-card-title">3. Subtle Syntax Particle Matrix</div>
+          <p class="guide-card-p">
+            Floating backend tokens (<code>async</code>, <code>await</code>, <code>200 OK</code>, <code>SELECT</code>, <code>p99</code>, <code>λ</code>) drifting with depth and mouse parallax.
+          </p>
+        </div>
+
+        <div class="guide-card" id="guide-radar" onclick="switchAnimationMode('radar')">
+          <div class="guide-card-icon">📡</div>
+          <div class="guide-card-title">4. Blueprint Radar &amp; Laser Scan</div>
+          <p class="guide-card-p">
+            Technical blueprint grid with illuminated crosshairs and a sweeping laser scanline that lights up intersections. Signals mission-control server telemetry.
+          </p>
+        </div>
+
+        <div class="guide-card" id="guide-stream" onclick="switchAnimationMode('stream')">
+          <div class="guide-card-icon">🌊</div>
+          <div class="guide-card-title">5. Event Data Stream (Kafka)</div>
+          <p class="guide-card-p">
+            Streams of glowing particle queues flowing horizontally like real-time message brokers and event ingestion pipelines. Mouse movement creates velocity ripples.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- =========================================================================
+       CANVAS ANIMATION ENGINE (60 FPS, ZERO DEPENDENCIES, RESPONSIVE)
+       ========================================================================= -->
+  <script>
+    const canvas = document.getElementById('bgAnimationCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = 0;
+    let height = 0;
+    let currentMode = 'mesh';
+    let speedMultiplier = 1.0;
+
+    // Mouse coordinates
+    const mouse = {
+      x: -1000,
+      y: -1000,
+      radius: 180
+    };
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.x = -1000;
+      mouse.y = -1000;
+    });
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', () => {
+      resize();
+      initMode(currentMode);
+    });
+    resize();
+
+    function setSpeed(val) {
+      speedMultiplier = parseFloat(val);
+    }
+
+    // Theme Switcher
+    function toggleTheme() {
+      const isDark = document.body.classList.toggle('dark-mode');
+      document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+      document.getElementById('themeText').textContent = isDark ? 'Dark' : 'Light';
+    }
+
+    // Mode Descriptions
+    const modeMeta = {
+      mesh: {
+        label: "Mode 1: Distributed Network Mesh & Packet Pulses",
+        desc: "Interconnected backend server nodes communicating with animated light pulses (representing API requests & data replication)."
+      },
+      circuit: {
+        label: "Mode 2: Glowing Circuit Traces & Micro-Bus Lines",
+        desc: "Orthogonal electronic circuit tracks with data pulses traveling along geometric paths. Signals core IT & hardware infrastructure."
+      },
+      matrix: {
+        label: "Mode 3: Floating Syntax & Backend Keyword Matrix",
+        desc: "Subtle floating symbols (async, await, 200 OK, SELECT, p99, lambda) drifting smoothly with mouse parallax."
+      },
+      radar: {
+        label: "Mode 4: Technical Blueprint Grid & Laser Scanline",
+        desc: "Engineering blueprint grid with coordinate crosshairs illuminated by a sweeping laser scanner beam."
+      },
+      stream: {
+        label: "Mode 5: Event Data Pipeline & Kafka Stream Flow",
+        desc: "Streams of glowing particle queues flowing horizontally like real-time message brokers and event ingestion pipelines."
+      }
+    };
+
+    function switchAnimationMode(mode, btn) {
+      currentMode = mode;
+      
+      // Update top pills
+      document.querySelectorAll('.mode-pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const matchingBtn = Array.from(document.querySelectorAll('.mode-pill-btn')).find(b => b.onclick.toString().includes(mode));
+        if (matchingBtn) matchingBtn.classList.add('active');
+      }
+
+      // Update bottom guide cards
+      document.querySelectorAll('.guide-card').forEach(c => c.classList.remove('active'));
+      const activeGuide = document.getElementById(`guide-${mode}`);
+      if (activeGuide) activeGuide.classList.add('active');
+
+      // Update banner
+      document.getElementById('currentModeLabel').textContent = modeMeta[mode].label;
+      document.getElementById('currentModeDesc').textContent = modeMeta[mode].desc;
+
+      initMode(mode);
+    }
+
+    /* -------------------------------------------------------------------------
+       1. MODE: DISTRIBUTED NETWORK MESH (Nodes & Traveling Packets)
+       ------------------------------------------------------------------------- */
+    let meshNodes = [];
+    let meshPackets = [];
+
+    function initMesh() {
+      meshNodes = [];
+      meshPackets = [];
+      const count = Math.floor((width * height) / 22000); // Responsive count
+
+      for (let i = 0; i < count; i++) {
+        meshNodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: (Math.random() - 0.5) * 0.7,
+          radius: Math.random() * 2 + 2,
+          isServer: Math.random() > 0.85 // Special master nodes
+        });
+      }
+
+      // Pre-seed some traveling packets
+      for (let i = 0; i < 18; i++) {
+        spawnPacket();
+      }
+    }
+
+    function spawnPacket() {
+      if (meshNodes.length < 2) return;
+      const fromIdx = Math.floor(Math.random() * meshNodes.length);
+      let toIdx = Math.floor(Math.random() * meshNodes.length);
+      while (toIdx === fromIdx) {
+        toIdx = Math.floor(Math.random() * meshNodes.length);
+      }
+      meshPackets.push({
+        from: fromIdx,
+        to: toIdx,
+        progress: 0,
+        speed: (Math.random() * 0.008 + 0.004)
+      });
+    }
+
+    function renderMesh(accent, isDark) {
+      ctx.clearRect(0, 0, width, height);
+
+      const maxDist = 140;
+      const lineColor = isDark ? 'rgba(255, 107, 0, 0.16)' : 'rgba(29, 78, 216, 0.14)';
+      const nodeColor = isDark ? '#FF6B00' : '#1D4ED8';
+      const pulseColor = isDark ? '#38BDF8' : '#FF6B00';
+
+      // Update & Draw Nodes
+      for (let i = 0; i < meshNodes.length; i++) {
+        const n = meshNodes[i];
+        n.x += n.vx * speedMultiplier;
+        n.y += n.vy * speedMultiplier;
+
+        if (n.x < 0 || n.x > width) n.vx *= -1;
+        if (n.y < 0 || n.y > height) n.vy *= -1;
+
+        // Mouse attraction/repulsion
+        const dx = mouse.x - n.x;
+        const dy = mouse.y - n.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouse.radius) {
+          const force = (mouse.radius - dist) / mouse.radius;
+          n.x -= (dx / dist) * force * 1.5;
+          n.y -= (dy / dist) * force * 1.5;
+        }
+
+        // Draw connections
+        for (let j = i + 1; j < meshNodes.length; j++) {
+          const n2 = meshNodes[j];
+          const dxx = n.x - n2.x;
+          const dyy = n.y - n2.y;
+          const d = Math.sqrt(dxx * dxx + dyy * dyy);
+
+          if (d < maxDist) {
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(n2.x, n2.y);
+            const alpha = (1 - d / maxDist);
+            ctx.strokeStyle = isDark ? `rgba(255, 107, 0, ${alpha * 0.25})` : `rgba(29, 78, 216, ${alpha * 0.22})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+
+        // Draw node dot
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.isServer ? n.radius + 2 : n.radius, 0, Math.PI * 2);
+        ctx.fillStyle = n.isServer ? pulseColor : nodeColor;
+        ctx.fill();
+
+        if (n.isServer) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.radius + 6, 0, Math.PI * 2);
+          ctx.strokeStyle = isDark ? 'rgba(56, 189, 248, 0.4)' : 'rgba(255, 107, 0, 0.35)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+
+      // Connect mouse to nearby nodes
+      if (mouse.x > 0 && mouse.y > 0) {
+        ctx.beginPath();
+        ctx.arc(mouse.x, mouse.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = pulseColor;
+        ctx.fill();
+
+        for (let i = 0; i < meshNodes.length; i++) {
+          const n = meshNodes[i];
+          const dx = mouse.x - n.x;
+          const dy = mouse.y - n.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < mouse.radius) {
+            ctx.beginPath();
+            ctx.moveTo(mouse.x, mouse.y);
+            ctx.lineTo(n.x, n.y);
+            ctx.strokeStyle = isDark ? `rgba(56, 189, 248, ${(1 - d / mouse.radius) * 0.5})` : `rgba(255, 107, 0, ${(1 - d / mouse.radius) * 0.45})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Animate Traveling Packets
+      for (let i = meshPackets.length - 1; i >= 0; i--) {
+        const p = meshPackets[i];
+        p.progress += p.speed * speedMultiplier;
+
+        if (p.progress >= 1) {
+          meshPackets.splice(i, 1);
+          spawnPacket();
+          continue;
+        }
+
+        const from = meshNodes[p.from];
+        const to = meshNodes[p.to];
+        if (!from || !to) continue;
+
+        const px = from.x + (to.x - from.x) * p.progress;
+        const py = from.y + (to.y - from.y) * p.progress;
+
+        ctx.beginPath();
+        ctx.arc(px, py, 3, 0, Math.PI * 2);
+        ctx.fillStyle = pulseColor;
+        ctx.shadowColor = pulseColor;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       2. MODE: CIRCUIT TRACES (Hardware & Systems PCB)
+       ------------------------------------------------------------------------- */
+    let circuitTracks = [];
+    let circuitPulses = [];
+
+    function initCircuit() {
+      circuitTracks = [];
+      circuitPulses = [];
+      const numLines = Math.floor(height / 45);
+
+      for (let i = 0; i < numLines; i++) {
+        const yStart = i * 45 + 20;
+        const pts = [];
+        let curX = 0;
+        let curY = yStart;
+        pts.push({ x: curX, y: curY });
+
+        while (curX < width) {
+          const segLen = Math.random() * 140 + 80;
+          curX += segLen;
+          pts.push({ x: curX, y: curY });
+
+          // 45 degree jog
+          if (Math.random() > 0.4 && curX < width - 100) {
+            const jog = (Math.random() > 0.5 ? 1 : -1) * 35;
+            curX += 35;
+            curY += jog;
+            pts.push({ x: curX, y: curY });
+          }
+        }
+        circuitTracks.push(pts);
+
+        // Add 1-2 pulses per track
+        circuitPulses.push({
+          trackIdx: i,
+          progress: Math.random(),
+          speed: Math.random() * 0.003 + 0.002
+        });
+      }
+    }
+
+    function renderCircuit(accent, isDark) {
+      ctx.clearRect(0, 0, width, height);
+      const traceColor = isDark ? 'rgba(255, 107, 0, 0.12)' : 'rgba(29, 78, 216, 0.1)';
+      const pulseColor = isDark ? '#38BDF8' : '#1D4ED8';
+      const padColor = isDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(15, 23, 42, 0.15)';
+
+      // Draw tracks
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < circuitTracks.length; i++) {
+        const pts = circuitTracks[i];
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let j = 1; j < pts.length; j++) {
+          ctx.lineTo(pts[j].x, pts[j].y);
+        }
+        ctx.strokeStyle = traceColor;
+        ctx.stroke();
+
+        // Terminal solder pads
+        for (let j = 0; j < pts.length; j += 2) {
+          ctx.beginPath();
+          ctx.arc(pts[j].x, pts[j].y, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = padColor;
+          ctx.fill();
+        }
+      }
+
+      // Animate electronic pulses
+      for (let i = 0; i < circuitPulses.length; i++) {
+        const pulse = circuitPulses[i];
+        pulse.progress += pulse.speed * speedMultiplier;
+        if (pulse.progress >= 1) pulse.progress = 0;
+
+        const pts = circuitTracks[pulse.trackIdx];
+        if (!pts || pts.length < 2) continue;
+
+        // Find position along polyline
+        const totalSegments = pts.length - 1;
+        const segFloat = pulse.progress * totalSegments;
+        const segIdx = Math.min(Math.floor(segFloat), totalSegments - 1);
+        const subProgress = segFloat - segIdx;
+
+        const p1 = pts[segIdx];
+        const p2 = pts[segIdx + 1];
+        const px = p1.x + (p2.x - p1.x) * subProgress;
+        const py = p1.y + (p2.y - p1.y) * subProgress;
+
+        ctx.beginPath();
+        ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = pulseColor;
+        ctx.shadowColor = pulseColor;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       3. MODE: SYNTAX MATRIX (Floating Code Tokens)
+       ------------------------------------------------------------------------- */
+    const codeTokens = [
+      'async', 'await', 'def', '200 OK', 'SELECT *', 'p99 < 38ms', 'λ lambda', 
+      'FastAPI', 'PostgreSQL', '0x7F', 'git commit', 'pytest', 'Docker', 'DynamoDB',
+      'JSON', 'Uvicorn', 'worker_pid', 'health: true', 'OpenSearch', '{...}', 'req/s: 840'
+    ];
+    let syntaxParticles = [];
+
+    function initMatrix() {
+      syntaxParticles = [];
+      const count = 42;
+      for (let i = 0; i < count; i++) {
+        syntaxParticles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vy: -(Math.random() * 0.4 + 0.2),
+          vx: (Math.random() - 0.5) * 0.2,
+          text: codeTokens[Math.floor(Math.random() * codeTokens.length)],
+          opacity: Math.random() * 0.45 + 0.15,
+          fontSize: Math.floor(Math.random() * 4) + 11
+        });
+      }
+    }
+
+    function renderMatrix(accent, isDark) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.font = '600 12px "Geist Mono", monospace';
+
+      for (let i = 0; i < syntaxParticles.length; i++) {
+        const p = syntaxParticles[i];
+        p.y += p.vy * speedMultiplier;
+        p.x += p.vx * speedMultiplier;
+
+        // Loop back to bottom
+        if (p.y < -20) {
+          p.y = height + 20;
+          p.x = Math.random() * width;
+          p.text = codeTokens[Math.floor(Math.random() * codeTokens.length)];
+        }
+
+        // Mouse drift interaction
+        const dx = mouse.x - p.x;
+        const dy = mouse.y - p.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        let curAlpha = p.opacity;
+        if (d < 160) {
+          curAlpha = Math.min(p.opacity + (1 - d / 160) * 0.5, 0.9);
+        }
+
+        ctx.font = `600 ${p.fontSize}px "Geist Mono", monospace`;
+        ctx.fillStyle = isDark 
+          ? `rgba(255, 107, 0, ${curAlpha})` 
+          : `rgba(29, 78, 216, ${curAlpha})`;
+        ctx.fillText(p.text, p.x, p.y);
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       4. MODE: RADAR GRID & LASER SCAN
+       ------------------------------------------------------------------------- */
+    let scanY = 0;
+    let scanDirection = 1;
+
+    function initRadar() {
+      scanY = 0;
+      scanDirection = 1;
+    }
+
+    function renderRadar(accent, isDark) {
+      ctx.clearRect(0, 0, width, height);
+
+      scanY += 1.8 * scanDirection * speedMultiplier;
+      if (scanY > height) scanY = 0;
+
+      const gridSpacing = 60;
+      const scanColor = isDark ? 'rgba(56, 189, 248, 0.85)' : 'rgba(29, 78, 216, 0.75)';
+      const crossColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(15, 23, 42, 0.12)';
+
+      // Draw grid intersection markers (+)
+      for (let x = gridSpacing; x < width; x += gridSpacing) {
+        for (let y = gridSpacing; y < height; y += gridSpacing) {
+          const dy = Math.abs(y - scanY);
+          let intensity = 1;
+
+          // Light up when scanline passes
+          if (dy < 60) {
+            intensity = 1 + (1 - dy / 60) * 3;
+            ctx.fillStyle = isDark ? `rgba(56, 189, 248, ${0.3 + (1 - dy / 60) * 0.6})` : `rgba(29, 78, 216, ${0.3 + (1 - dy / 60) * 0.5})`;
+          } else {
+            ctx.fillStyle = crossColor;
+          }
+
+          // Draw small +
+          ctx.fillRect(x - 3, y - 0.5, 6, 1);
+          ctx.fillRect(x - 0.5, y - 3, 1, 6);
+        }
+      }
+
+      // Draw Laser Beam Scanline
+      const grad = ctx.createLinearGradient(0, scanY - 30, 0, scanY);
+      grad.addColorStop(0, 'rgba(56, 189, 248, 0)');
+      grad.addColorStop(1, isDark ? 'rgba(56, 189, 248, 0.18)' : 'rgba(29, 78, 216, 0.12)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, scanY - 30, width, 30);
+
+      ctx.beginPath();
+      ctx.moveTo(0, scanY);
+      ctx.lineTo(width, scanY);
+      ctx.strokeStyle = scanColor;
+      ctx.lineWidth = 1.5;
+      ctx.shadowColor = scanColor;
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    /* -------------------------------------------------------------------------
+       5. MODE: EVENT DATA STREAM (Kafka Pipelines)
+       ------------------------------------------------------------------------- */
+    let streamParticles = [];
+
+    function initStream() {
+      streamParticles = [];
+      const count = 90;
+      for (let i = 0; i < count; i++) {
+        streamParticles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: Math.random() * 3 + 1.5,
+          length: Math.random() * 25 + 10,
+          colorIdx: Math.random() > 0.3 ? 0 : 1,
+          laneY: Math.floor(Math.random() * (height / 28)) * 28 + 14
+        });
+      }
+    }
+
+    function renderStream(accent, isDark) {
+      ctx.clearRect(0, 0, width, height);
+
+      const color1 = isDark ? '#FF6B00' : '#1D4ED8';
+      const color2 = isDark ? '#38BDF8' : '#059669';
+
+      for (let i = 0; i < streamParticles.length; i++) {
+        const p = streamParticles[i];
+        p.x += p.vx * speedMultiplier;
+
+        if (p.x > width + 50) {
+          p.x = -50;
+          p.laneY = Math.floor(Math.random() * (height / 28)) * 28 + 14;
+        }
+
+        const chosenColor = p.colorIdx === 0 ? color1 : color2;
+
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.laneY);
+        ctx.lineTo(p.x - p.length, p.laneY);
+        ctx.strokeStyle = chosenColor;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Glowing packet head
+        ctx.beginPath();
+        ctx.arc(p.x, p.laneY, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = chosenColor;
+        ctx.fill();
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       MAIN LOOP & INITIALIZER
+       ------------------------------------------------------------------------- */
+    function initMode(mode) {
+      if (mode === 'mesh') initMesh();
+      else if (mode === 'circuit') initCircuit();
+      else if (mode === 'matrix') initMatrix();
+      else if (mode === 'radar') initRadar();
+      else if (mode === 'stream') initStream();
+    }
+
+    function loop() {
+      const isDark = document.body.classList.contains('dark-mode');
+      const accent = isDark ? '#FF6B00' : '#1D4ED8';
+
+      if (currentMode === 'mesh') renderMesh(accent, isDark);
+      else if (currentMode === 'circuit') renderCircuit(accent, isDark);
+      else if (currentMode === 'matrix') renderMatrix(accent, isDark);
+      else if (currentMode === 'radar') renderRadar(accent, isDark);
+      else if (currentMode === 'stream') renderStream(accent, isDark);
+
+      requestAnimationFrame(loop);
+    }
+
+    // Start with Distributed Mesh
+    initMode('mesh');
+    loop();
+  </script>
+
+</body>
+</html>

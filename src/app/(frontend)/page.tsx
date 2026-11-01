@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { HeroSection } from "@/components/HeroSection";
 import { PostCard } from "@/components/PostCard";
 import { ProjectCard } from "@/components/ProjectCard";
+import { SkillCard } from "@/components/SkillCard";
 import { CtaSection } from "@/components/CtaSection";
 import {
   getHomepageSettings,
@@ -167,9 +168,9 @@ export default async function HomePage() {
           </div>
 
           {displayProjects.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {displayProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+              {displayProjects.map((project, idx) => (
+                <ProjectCard key={project.id} project={project} index={idx} />
               ))}
             </div>
           ) : (
@@ -194,34 +195,17 @@ export default async function HomePage() {
               Practical Technologies & Tooling
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Categorized by real-world usage and production experience.
+              Categorized by real-world usage, architectural specialization, and production experience.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {profile.skills.map((group) => (
-              <div
-                key={group.id || group.category}
-                className="rounded-2xl border border-border/60 bg-card/75 p-6 sm:p-7 shadow-xs backdrop-blur-xs transition-all duration-300 hover:border-foreground/20 hover:shadow-md hover:-translate-y-0.5"
-              >
-                <h3 className="text-base font-bold text-foreground mb-4">
-                  {group.category}
-                </h3>
-                <ul className="space-y-3">
-                  {group.items.map((skill) => (
-                    <li key={skill.id || skill.name} className="text-sm">
-                      <span className="font-semibold text-foreground">
-                        {skill.name}
-                      </span>
-                      {skill.context && (
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {skill.context}
-                        </p>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+            {profile.skills.map((group, idx) => (
+              <SkillCard
+                key={group.id || group.category || idx}
+                group={group}
+                index={idx}
+              />
             ))}
           </div>
         </section>
@@ -250,9 +234,9 @@ export default async function HomePage() {
           </div>
 
           {displayPosts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {displayPosts.map((post) => (
-                <PostCard key={post.id} post={post} />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 items-stretch">
+              {displayPosts.map((post, idx) => (
+                <PostCard key={post.id} post={post} index={idx} />
               ))}
             </div>
           ) : (

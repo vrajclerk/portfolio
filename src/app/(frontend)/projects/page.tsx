@@ -79,9 +79,9 @@ async function ProjectsList({
 
       {/* Project Grid / Empty State */}
       {projects.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+          {projects.map((project, idx) => (
+            <ProjectCard key={project.id} project={project} index={idx} />
           ))}
         </div>
       ) : (

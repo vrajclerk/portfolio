@@ -85,9 +85,9 @@ async function BlogList({
 
       {/* Article Grid / Empty State */}
       {posts.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 items-stretch">
+          {posts.map((post, idx) => (
+            <PostCard key={post.id} post={post} index={idx} />
           ))}
         </div>
       ) : (

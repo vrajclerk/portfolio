@@ -6,6 +6,7 @@ import { RichTextRenderer } from "@/components/RichTextRenderer";
 import { CtaSection } from "@/components/CtaSection";
 import { CopyEmailButton } from "@/components/CopyEmailButton";
 import { AboutLocationSection } from "@/components/AboutLocationSection";
+import { SkillCard } from "@/components/SkillCard";
 import { getProfile, getSiteSettings } from "@/lib/cms";
 import {
   generateBreadcrumbSchema,
@@ -480,37 +481,13 @@ export default async function AboutPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {skills.map((cat) => (
-                <div
-                  key={cat.id || cat.category}
-                  className="rounded-3xl border border-border/80 bg-card/80 p-6 sm:p-7 shadow-xs backdrop-blur-sm transition-all duration-300 hover:border-accent hover:shadow-lg hover:-translate-y-1"
-                >
-                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-border/60">
-                    <h3 className="text-base font-bold text-foreground">
-                      {cat.category}
-                    </h3>
-                    <span className="text-xs font-mono text-accent font-bold">
-                      {cat.items?.length || 0} tools
-                    </span>
-                  </div>
-
-                  <ul className="space-y-3.5">
-                    {cat.items.map((skill) => (
-                      <li key={skill.id || skill.name} className="text-sm">
-                        <div className="flex items-center gap-1.5 font-semibold text-foreground">
-                          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                          <span>{skill.name}</span>
-                        </div>
-                        {skill.context && (
-                          <p className="text-xs text-muted-foreground mt-0.5 pl-3 border-l border-border/60">
-                            {skill.context}
-                          </p>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+              {skills.map((cat, idx) => (
+                <SkillCard
+                  key={cat.id || cat.category || idx}
+                  group={cat}
+                  index={idx}
+                />
               ))}
             </div>
           </section>

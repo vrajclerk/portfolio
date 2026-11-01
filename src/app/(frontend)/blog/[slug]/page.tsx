@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/Badge";
@@ -8,7 +9,7 @@ import { ProjectCard } from "@/components/ProjectCard";
 import { PreviewBanner } from "@/components/PreviewBanner";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
 import { getPostBySlug, getPublishedPosts, getSiteSettings } from "@/lib/cms";
-import type { Category, Project, Tag } from "@/payload-types";
+import type { Category, Media, Project, Tag } from "@/payload-types";
 import { calculateReadingTime, formatReadingTime } from "@/utilities/readingTime";
 import {
   generateArticleSchema,
@@ -40,6 +41,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = post.seo?.title || post.title;
   const description = post.seo?.description || post.excerpt;
   const siteName = siteSettings.siteName || "Vraj Clerk";
+  const coverImageUrl =
+    post.coverImage && typeof post.coverImage === "object" && "url" in post.coverImage
+      ? (post.coverImage.url as string)
+      : undefined;
 
   return {
     title,
@@ -53,11 +58,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `/blog/${slug}`,
       type: "article",
       publishedTime: post.publishedAt || undefined,
+      images: coverImageUrl ? [{ url: coverImageUrl }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${siteName}`,
       description,
+      images: coverImageUrl ? [coverImageUrl] : undefined,
     },
   };
 }
@@ -103,6 +110,11 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
           typeof p === "object" && p !== null && p._status === "published"
       ) as Project[])
     : [];
+
+  const coverImage =
+    post.coverImage && typeof post.coverImage === "object" && "url" in post.coverImage
+      ? (post.coverImage as Media)
+      : null;
 
   const readingTime = calculateReadingTime(post.content);
   const formattedPublishDate = post.publishedAt
@@ -162,6 +174,20 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
           {post.excerpt}
         </p>
       </header>
+
+      {/* Featured Cover Image */}
+      {coverImage?.url && (
+        <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border/80 bg-muted shadow-md">
+          <Image
+            src={coverImage.url}
+            alt={coverImage.alt || post.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 768px"
+            className="object-cover object-center"
+            priority
+          />
+        </div>
+      )}
 
       {/* Main Body */}
       <div className="py-10">
