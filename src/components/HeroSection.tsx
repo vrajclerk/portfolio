@@ -242,9 +242,9 @@ export function HeroSection({
               {/* Primary Visual Plate (Photo or Architectural Identity Frame) */}
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-border bg-card shadow-2xl transition-all duration-300 hover:shadow-accent/10">
 
-                {avatarUrl ? (
+                {(avatarUrl || "/media/IMG_20240306_180503_775.webp") ? (
                   <Image
-                    src={avatarUrl}
+                    src={avatarUrl || "/media/IMG_20240306_180503_775.webp"}
                     alt="Vraj Clerk"
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 420px"

@@ -119,9 +119,10 @@ export default async function HomePage() {
   const avatarUrl =
     profile.profileImage &&
     typeof profile.profileImage === "object" &&
-    "url" in profile.profileImage
-      ? (profile.profileImage.url as string | null)
-      : null;
+    "url" in profile.profileImage &&
+    profile.profileImage.url
+      ? (profile.profileImage.url as string)
+      : "/media/IMG_20240306_180503_775.webp";
 
   return (
     <div className="flex flex-col gap-16 py-12 md:py-20">
