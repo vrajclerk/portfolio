@@ -558,6 +558,16 @@ export const fixtureProfile: Profile = {
     createdAt: "2026-10-29T19:11:21.438Z",
     updatedAt: "2026-10-29T19:11:21.439Z",
   },
+  resumeFile: {
+    id: 2,
+    alt: "Vraj Clerk Resume - Python Developer",
+    url: "/media/VRAJ_Python_Developer.pdf",
+    filename: "VRAJ_Python_Developer.pdf",
+    mimeType: "application/pdf",
+    filesize: 146690,
+    createdAt: "2026-10-29T19:11:21.438Z",
+    updatedAt: "2026-10-29T19:11:21.439Z",
+  },
   shortBio: createLexicalDoc(
     "Python Developer with professional experience building backend services, reusable Python utilities, REST APIs, and cloud-based applications. Hands-on experience with FastAPI, PostgreSQL, OpenSearch, AWS, and Docker, including enterprise application development, search integration, and scalable backend architecture. Additional experience in deep learning and computer vision using U-Net and ResNet34."
   ),
