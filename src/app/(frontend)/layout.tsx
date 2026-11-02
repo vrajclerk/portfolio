@@ -89,6 +89,14 @@ export async function generateMetadata(): Promise<Metadata> {
       title: siteName,
       description: defaultDesc,
     },
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+      ],
+      apple: [
+        { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      ],
+    },
   };
 }
 
