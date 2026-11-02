@@ -152,13 +152,13 @@ export default async function AboutPage() {
             </div>
             <span className="text-border hidden sm:inline">•</span>
             <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              <span>Status: <strong className="text-emerald-600 dark:text-emerald-400">Actively Interviewing</strong></span>
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <span>Status: <strong className="text-foreground">Employed (Software Developer)</strong></span>
             </div>
             <span className="text-border hidden sm:inline">•</span>
             <div className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              <span>Preferences: <strong className="text-foreground">Remote / Hybrid / Relocate</strong></span>
+              {/* <span>Notice Period: <strong className="text-foreground">2 Months</strong></span> */}
             </div>
           </div>
         </div>
@@ -307,7 +307,7 @@ export default async function AboutPage() {
                     </div>
 
                     <div className="border-t border-border/80 pt-3 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
-                      <span>status: available for roles</span>
+                      <span>status: active software developer</span>
                       <span className="text-accent font-bold">LIVE</span>
                     </div>
                   </div>

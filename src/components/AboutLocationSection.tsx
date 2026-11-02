@@ -25,7 +25,7 @@ export function AboutLocationSection() {
           Geographic Base &amp; Engineering Presence
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Operating out of Ahmedabad with foundational roots in Surat, India — open to local, hybrid, and remote engineering roles.
+          Operating out of Ahmedabad with foundational roots in Surat, India — collaborating across local, hybrid, and distributed engineering setups.
         </p>
       </div>
 
@@ -137,7 +137,7 @@ export function AboutLocationSection() {
               </div>
 
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                Where I am currently based, living, and working. Active daily building reliable backend systems, writing production code, and collaborating with engineering teams. Open to local opportunities, hybrid roles, and remote work.
+                Where I am currently based, living, and working. Active daily building reliable backend systems, writing production code, and collaborating with engineering teams across hybrid and distributed setups.
               </p>
 
               <div className="flex flex-wrap gap-1.5 mt-4">
@@ -145,7 +145,7 @@ export function AboutLocationSection() {
                   💻 Active Base
                 </span>
                 <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-1 font-mono text-[11px] text-foreground border border-border/60">
-                  Available for Roles
+                  Full-Stack / Backend
                 </span>
                 <span className="inline-flex items-center rounded-md bg-muted px-2.5 py-1 font-mono text-[11px] text-foreground border border-border/60">
                   IST (UTC+5:30)

@@ -111,7 +111,7 @@ export function Header({
                 aria-hidden="true"
                 className="absolute inset-0 w-3/5 h-full bg-linear-to-r from-transparent via-white/35 to-transparent -skew-x-20 animate-shimmer-sweep pointer-events-none"
               />
-              <span>Discuss Role</span>
+              <span>Get in Touch</span>
               <span
                 aria-hidden="true"
                 className="transition-transform duration-200 group-hover:translate-x-1"

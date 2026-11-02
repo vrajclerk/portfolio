@@ -10,8 +10,8 @@ interface CtaSectionProps {
 
 export function CtaSection({
   email = "vrajclerk04@gmail.com",
-  headline = "Looking for a full-time software engineer?",
-  subheadline = "I am actively interviewing for full-time Software Engineer roles. Ready to bring production backend experience in Python, FastAPI, AWS, and scalable distributed systems to your engineering team.",
+  headline = "Interested in engineering collaboration or systems architecture?",
+  subheadline = "Bringing production experience in Python, FastAPI, AWS, and distributed backend systems. Always interested in discussing technical architectures, engineering challenges, and impactful opportunities.",
 }: CtaSectionProps) {
 
   return (
@@ -54,14 +54,14 @@ export function CtaSection({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
             </span>
-            <span>Open for Full-Time Engineering Roles</span>
+            <span>Backend &amp; Cloud Systems Engineer</span>
           </div>
 
           {/* Headline with Fraunces Serif Italic Accent */}
           <h2 className="text-3xl sm:text-4xl lg:text-[46px] font-extrabold tracking-tight text-foreground leading-[1.12] text-balance">
-            Looking to expand your{" "}
+            Interested in connecting or{" "}
             <span className="font-serif italic font-normal text-accent underline decoration-accent/30 underline-offset-8">
-              engineering team?
+              collaborating?
             </span>
           </h2>
 
@@ -81,7 +81,7 @@ export function CtaSection({
                 aria-hidden="true"
                 className="absolute inset-0 w-3/5 h-full bg-linear-to-r from-transparent via-white/35 to-transparent -skew-x-20 animate-shimmer-sweep pointer-events-none"
               />
-              <span>Discuss an Engineering Role</span>
+              <span>Start a Conversation</span>
               <span
                 aria-hidden="true"
                 className="transition-transform duration-200 group-hover:translate-x-1"
@@ -110,19 +110,19 @@ export function CtaSection({
             <div className="inline-flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               <span>
-                Target Role: <strong className="text-foreground">Full-Stack / Backend Engineer</strong>
+                Focus: <strong className="text-foreground">Backend &amp; Cloud Systems</strong>
               </span>
             </div>
             <div className="inline-flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               <span>
-                Availability: <strong className="text-foreground">Immediate / Ready to Join</strong>
+                Notice Period: <strong className="text-foreground">2 Months</strong>
               </span>
             </div>
             <div className="inline-flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               <span>
-                Location: <strong className="text-foreground">Surat, IN • Open to Relocation</strong>
+                Location: <strong className="text-foreground">Surat / Ahmedabad, IN</strong>
               </span>
             </div>
           </div>

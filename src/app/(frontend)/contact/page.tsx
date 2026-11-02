@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteName = siteSettings.siteName || "Vraj Clerk";
   const title = "Contact & Engineering Inquiries";
   const description =
-    "Direct contact channels, recruiter availability, and inquiry routing for Full-Stack & Backend Software Engineer Vraj Clerk.";
+    "Direct contact channels, professional inquiries, and technical collaboration for Full-Stack & Backend Software Engineer Vraj Clerk.";
 
   return {
     title,
@@ -94,12 +94,12 @@ export default async function ContactPage() {
           <h1 className="animate-fade-in-up delay-100 mt-6 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground leading-[1.08] text-balance">
             Let&apos;s discuss an engineering{" "}
             <span className="font-serif italic font-normal text-accent underline decoration-accent/30 decoration-wavy underline-offset-8 inline-block">
-              opportunity.
+              collaboration.
             </span>
           </h1>
 
           <p className="animate-fade-in-up delay-200 mt-6 text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl text-balance">
-            I am actively interviewing for full-time Full-Stack and Backend Software Engineer roles. Whether you represent an engineering team, have an open role, or want to discuss technical architectures, reach out directly below.
+            Always open to connecting with fellow engineers, technology teams, and discussing technical architectures, impactful engineering challenges, or career opportunities. Feel free to reach out directly.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default async function ContactPage() {
          * =================================================================== */}
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 items-start">
           
-          {/* LEFT COLUMN: Channels & Recruiter Telemetry (5 Cols) */}
+          {/* LEFT COLUMN: Communication Channels & Telemetry (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
             
             {/* Card 1: Direct Email Channel */}
@@ -127,7 +127,7 @@ export default async function ContactPage() {
                 Direct Email Communication
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed mb-5">
-                Direct email is the fastest and most reliable way to initiate recruiter screens, technical interviews, and candidate reviews.
+                Direct email is the fastest and most reliable way for technical inquiries, engineering discussions, and professional correspondence.
               </p>
 
               <div>
@@ -135,31 +135,31 @@ export default async function ContactPage() {
               </div>
             </div>
 
-            {/* Card 2: Candidate Telemetry & Hiring Status */}
+            {/* Card 2: Professional Telemetry & Status */}
             <div className="rounded-3xl border border-border/80 bg-card/80 p-6 sm:p-7 shadow-xs backdrop-blur-md">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-mono font-bold uppercase tracking-wider text-accent flex items-center gap-2">
                   <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                  Hiring Telemetry
+                  Professional Status
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  AVAILABLE NOW
+                <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/30 px-2 py-0.5 text-[10px] font-mono font-bold text-accent">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  EMPLOYED
                 </span>
               </div>
 
               <div className="space-y-3 font-mono text-xs">
                 <div className="flex items-start justify-between gap-3 py-2 border-b border-border/60">
-                  <span className="text-muted-foreground shrink-0">Target Roles</span>
+                  <span className="text-muted-foreground shrink-0">Specialization</span>
                   <span className="font-semibold text-foreground text-right">
-                    Full-Stack / Backend Engineer
+                    Full-Stack / Backend Systems
                   </span>
                 </div>
 
                 <div className="flex items-start justify-between gap-3 py-2 border-b border-border/60">
-                  <span className="text-muted-foreground shrink-0">Availability</span>
-                  <span className="font-semibold text-emerald-600 dark:text-emerald-400 text-right">
-                    Immediate / Ready to Join
+                  <span className="text-muted-foreground shrink-0">Notice Period</span>
+                  <span className="font-semibold text-foreground text-right">
+                    2 Months (Standard)
                   </span>
                 </div>
 

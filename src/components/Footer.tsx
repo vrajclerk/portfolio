@@ -134,15 +134,15 @@ export function Footer({
               and resilient cloud platforms built with Python, FastAPI, and AWS.
             </p>
 
-            {/* Live Availability Beacon with Dynamic IST Clock */}
+            {/* Professional Status Beacon with Dynamic IST Clock */}
             <div className="inline-flex flex-col sm:flex-row sm:items-center gap-2 rounded-2xl border border-border/70 bg-card/60 dark:bg-card/40 px-3.5 py-2 text-xs backdrop-blur-md">
               <div className="flex items-center gap-2">
                 <span className="relative flex h-2 w-2 items-center justify-center">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
                 </span>
-                <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                  Open for Full-Time Roles
+                <span className="font-semibold text-foreground">
+                  Active Software Developer
                 </span>
               </div>
               <span className="hidden sm:inline text-border dark:text-white/20">•</span>

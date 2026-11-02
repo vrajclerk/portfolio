@@ -7,14 +7,14 @@ interface ContactFormProps {
 }
 
 const INQUIRY_TYPES = [
-  { id: "full-time", label: "Full-Time Role" },
-  { id: "interview", label: "Technical Interview" },
+  { id: "collaboration", label: "Technical Collaboration" },
+  { id: "opportunities", label: "Career & Opportunities" },
   { id: "architecture", label: "Architecture / Systems" },
   { id: "general", label: "General Inquiry" },
 ];
 
 export function ContactForm({ recipientEmail }: ContactFormProps) {
-  const [selectedType, setSelectedType] = useState("full-time");
+  const [selectedType, setSelectedType] = useState("collaboration");
   const [formData, setFormData] = useState({
     name: "",
     email: "",

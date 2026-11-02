@@ -162,15 +162,15 @@ export function HeroSection({
             {/* Eyebrow / Kicker with Live Beacon */}
             <div className="flex items-center gap-2.5 text-xs font-semibold tracking-wide text-foreground">
               <span className="relative flex h-2 w-2 items-center justify-center">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
               </span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider text-[11px]">
-                Available for Full-Time Roles
+              <span className="text-accent font-bold uppercase tracking-wider text-[11px]">
+                Software Developer
               </span>
               <span className="text-border dark:text-white/20">•</span>
               <span className="text-muted-foreground font-medium hidden sm:inline">
-                Python &amp; Backend Systems Engineer
+                Python, FastAPI &amp; Cloud Systems
               </span>
             </div>
 
