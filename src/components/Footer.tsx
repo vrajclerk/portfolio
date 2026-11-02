@@ -317,25 +317,38 @@ export function Footer({
             <span>Crafted for high performance &amp; zero recurring cloud cost.</span>
           </div>
 
-          {/* Smooth Back to Top Button */}
-          <button
-            type="button"
-            onClick={handleScrollToTop}
-            className="group inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-4 py-1.5 font-medium text-foreground transition-all duration-200 hover:border-accent hover:text-accent hover:bg-card hover:-translate-y-0.5 active:translate-y-0"
-            aria-label="Back to top of page"
-          >
-            <span>Back to top</span>
-            <svg
-              className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              aria-hidden="true"
+          <div className="flex items-center gap-2">
+            {/* Interactive CLI Terminal Trigger */}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("terminal-toggle"))}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-card/60 px-3.5 py-1.5 font-mono text-xs font-semibold text-foreground transition-all duration-200 hover:border-accent hover:text-accent hover:bg-card hover:-translate-y-0.5 active:translate-y-0"
+              aria-label="Open Interactive CLI Terminal"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-            </svg>
-          </button>
+              <span className="text-accent font-bold">&gt;_</span>
+              <span>CLI</span>
+            </button>
+
+            {/* Smooth Back to Top Button */}
+            <button
+              type="button"
+              onClick={handleScrollToTop}
+              className="group inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-4 py-1.5 font-medium text-foreground transition-all duration-200 hover:border-accent hover:text-accent hover:bg-card hover:-translate-y-0.5 active:translate-y-0"
+              aria-label="Back to top of page"
+            >
+              <span>Back to top</span>
+              <svg
+                className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+              </svg>
+            </button>
+          </div>
         </div>
 
       </div>

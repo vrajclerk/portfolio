@@ -158,7 +158,7 @@ export default async function AboutPage() {
             <span className="text-border hidden sm:inline">•</span>
             <div className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              {/* <span>Notice Period: <strong className="text-foreground">2 Months</strong></span> */}
+              <span>Base: <strong className="text-foreground">Ahmedabad / Surat</strong></span>
             </div>
           </div>
         </div>

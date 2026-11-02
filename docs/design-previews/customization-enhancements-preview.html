@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Customization Prototypes — Vraj Clerk Portfolio</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans, Geist Mono, Fraunces -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Geist+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Portfolio Default Light Theme (Nordic Ice & Deep Cobalt) */
+      --bg: #F8FAFC;
+      --fg: #0F172A;
+      --muted: #F1F5F9;
+      --muted-fg: #64748B;
+      --border: #CBD5E1;
+      --border-subtle: #E2E8F0;
+      --card: #FFFFFF;
+      --card-alt: #F8FAFC;
+      --accent: #1D4ED8;              /* Deep Cobalt */
+      --accent-rgb: 29, 78, 216;
+      --accent-fg: #FFFFFF;
+      --accent-glow: rgba(29, 78, 216, 0.22);
+      --code-bg: #0F172A;
+      --code-fg: #F8FAFC;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.09);
+      --grid-line: rgba(15, 23, 42, 0.05);
+      --reticle-color: #1D4ED8;
+    }
+
+    body.dark-theme {
+      /* Portfolio Dark Theme (Matte Carbon & Hyper Orange) */
+      --bg: #0E1013;
+      --fg: #FFFFFF;
+      --muted: #161A22;
+      --muted-fg: #9BA3AF;
+      --border: #2D333F;
+      --border-subtle: #1E2430;
+      --card: #161A22;
+      --card-alt: #11141B;
+      --accent: #FF6B00;              /* Blaze Orange */
+      --accent-rgb: 255, 107, 0;
+      --accent-fg: #0E1013;
+      --accent-glow: rgba(255, 107, 0, 0.32);
+      --code-bg: #080A0D;
+      --code-fg: #E2E8F0;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.65);
+      --grid-line: rgba(255, 255, 255, 0.04);
+      --reticle-color: #FF6B00;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      cursor: none; /* Hide native cursor for the custom reticle experience */
+    }
+
+    /* Ambient Technical Grid Pattern */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 100px;
+    }
+
+    /* Header & Navigation Bar */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 36px;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #0E1013;
+      border: 1px solid #2D333F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-btn, .cmd-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--muted);
+      color: var(--fg);
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn:hover, .cmd-btn:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .cmd-btn kbd {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-family: inherit;
+    }
+
+    /* Page Intro */
+    .hero-header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 44px;
+    }
+
+    .pill-beacon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      background: rgba(var(--accent-rgb), 0.1);
+      border: 1px solid rgba(var(--accent-rgb), 0.25);
+      color: var(--accent);
+      font-size: 11px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+
+    .beacon-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    h1.display-title {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    h1.display-title span.italic-serif {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--muted-fg);
+      line-height: 1.6;
+    }
+
+    /* Interactive Tab Navigation */
+    .tabs-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .tab-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted-fg);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tab-trigger:hover {
+      color: var(--fg);
+      border-color: var(--accent);
+    }
+
+    .tab-trigger.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    /* Prototype Section Card */
+    .prototype-card {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .prototype-card.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .proto-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .proto-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+
+    .proto-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 2px;
+    }
+
+    .proto-stats {
+      display: flex;
+      gap: 16px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--muted-fg);
+    }
+
+    .proto-stats span strong {
+      color: var(--fg);
+    }
+
+    /* -------------------------------------------------------------
+     * PROTOTYPE 1: Command Palette Simulator
+     * ------------------------------------------------------------- */
+    .cmd-canvas {
+      min-height: 440px;
+      background: var(--card-alt);
+      border: 1px dashed var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .cmd-trigger-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 28px;
+      border-radius: 9999px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 6px 24px var(--accent-glow);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+    }
+
+    .cmd-trigger-cta:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 30px var(--accent-glow);
+    }
+
+    .cmd-trigger-cta kbd {
+      background: rgba(0, 0, 0, 0.25);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+    }
+
+    /* Command Palette Overlay */
+    .cmd-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 100;
+    }
+
+    .cmd-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cmd-modal {
+      width: 100%;
+      max-width: 580px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transform: scale(0.96) translateY(-10px);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cmd-overlay.open .cmd-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .cmd-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cmd-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--fg);
+    }
+
+    .cmd-input::placeholder {
+      color: var(--muted-fg);
+    }
+
+    .cmd-list {
+      max-height: 290px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .cmd-group-label {
+      padding: 6px 12px 4px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted-fg);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cmd-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .cmd-item:hover, .cmd-item.selected {
+      background: var(--muted);
+      color: var(--accent);
+    }
+
+    .cmd-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cmd-item-shortcut {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+
+    .cmd-footer {
+      padding: 10px 18px;
+      background: var(--muted);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+
+    /* -------------------------------------------------------------
+     * PROTOTYPE 2: Magnetic Button Gravity
+     * ------------------------------------------------------------- */
+    .magnetic-canvas {
+      min-height: 440px;
+      background: var(--card-alt);
+      border: 1px dashed var(--border);
+      border-radius: 20px;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      position: relative;
+    }
+
+    .magnetic-hint {
+      font-size: 13px;
+      color: var(--muted-fg);
+      font-family: 'Geist Mono', monospace;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .magnetic-btn-primary {
+      padding: 18px 36px;
+      border-radius: 9999px;
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-weight: 700;
+      font-size: 15px;
+      border: none;
+      box-shadow: 0 6px 24px var(--accent-glow);
+      cursor: pointer;
+      transition: box-shadow 0.2s ease;
+      will-change: transform;
+    }
+
+    .magnetic-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .magnetic-chip {
+      padding: 10px 22px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--fg);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s ease;
+      will-change: transform;
+    }
+
+    .magnetic-card-sample {
+      width: 100%;
+      max-width: 440px;
+      padding: 22px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      will-change: transform;
+      transition: border-color 0.2s ease;
+    }
+
+    .magnetic-card-sample:hover {
+      border-color: var(--accent);
+    }
+
+    /* -------------------------------------------------------------
+     * PROTOTYPE 3: Interactive System Architecture Flow
+     * ------------------------------------------------------------- */
+    .arch-canvas {
+      min-height: 480px;
+      background: var(--card-alt);
+      border: 1px dashed var(--border);
+      border-radius: 20px;
+      padding: 32px 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .arch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .arch-nodes-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      padding: 40px 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Flow SVG Wire */
+    .arch-wire-svg {
+      position: absolute;
+      top: 50%;
+      left: 5%;
+      width: 90%;
+      height: 4px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .arch-wire-line {
+      stroke: var(--border);
+      stroke-width: 2;
+      stroke-dasharray: 6 6;
+      animation: wireFlow 1.2s linear infinite;
+    }
+
+    @keyframes wireFlow {
+      from { stroke-dashoffset: 12; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .arch-node {
+      position: relative;
+      z-index: 2;
+      width: 150px;
+      padding: 16px 12px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .arch-node:hover, .arch-node.active-node {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px var(--accent-glow);
+    }
+
+    .arch-node-icon {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .arch-node-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .arch-node-metric {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .arch-inspector {
+      margin-top: 24px;
+      padding: 18px 24px;
+      background: var(--code-bg);
+      border-radius: 14px;
+      color: var(--code-fg);
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+    }
+
+    /* -------------------------------------------------------------
+     * PROTOTYPE 4: Mini Developer Terminal Drawer
+     * ------------------------------------------------------------- */
+    .terminal-canvas {
+      min-height: 440px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      font-family: 'Geist Mono', monospace;
+      color: var(--code-fg);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .term-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 16px;
+    }
+
+    .term-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .term-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .td-red { background: #FF5F56; }
+    .td-yellow { background: #FFBD2E; }
+    .td-green { background: #27C93F; }
+
+    .term-title {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .term-body {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .term-line {
+      margin-bottom: 6px;
+    }
+
+    .term-prompt {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    .term-input-row {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .term-cmd-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 13px;
+      flex: 1;
+    }
+
+    /* Custom Precision Reticle Cursor (Exact Port from Portfolio) */
+    #custom-reticle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 30px;
+      height: 30px;
+      pointer-events: none;
+      transform: translate3d(-100px, -100px, 0);
+      z-index: 999999;
+      will-change: transform;
+      transition: opacity 0.15s ease;
+      opacity: 0;
+    }
+
+    #reticle-svg {
+      width: 100%;
+      height: 100%;
+      color: var(--reticle-color);
+      filter: drop-shadow(0 0 6px var(--reticle-color));
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.cursor-hover #reticle-svg {
+      transform: scale(1.28) rotate(45deg);
+    }
+
+    body.cursor-active #reticle-svg {
+      transform: scale(0.85);
+    }
+
+    /* Explanatory Spec Grid */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .spec-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .spec-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spec-desc {
+      font-size: 13px;
+      color: var(--muted-fg);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body class="dark-theme">
+  <!-- Grid & Ambient Depth Layer -->
+  <div class="grid-bg"></div>
+  <div class="ambient-glow"></div>
+
+  <!-- Custom Precision Crosshair Reticle Cursor -->
+  <div id="custom-reticle">
+    <svg id="reticle-svg" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="7.5" stroke="currentColor" stroke-width="1.25" />
+      <circle cx="14" cy="14" r="2.75" stroke="currentColor" stroke-width="1.1" stroke-dasharray="2 1.5" />
+      <line x1="14" y1="1.5" x2="14" y2="6.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+      <line x1="14" y1="21.5" x2="14" y2="26.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+      <line x1="1.5" y1="14" x2="6.5" y2="14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+      <line x1="21.5" y1="14" x2="26.5" y2="14" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+    </svg>
+  </div>
+
+  <div class="container">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="logo-badge">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 36 36" fill="none">
+            <path d="M8.5 11.5 L14.5 24.5 L20.5 11.5" stroke="#38BDF8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M28.5 12.5 C28.5 12.5 25 10.5 21 12.2 C18 13.6 17 17 17.5 19.8 C18.2 23.2 21 25.5 24.8 24.8 C27.5 24.2 28.5 23 28.5 23" stroke="#FF6B00" stroke-width="3.5" stroke-linecap="round"/>
+            <circle cx="20.8" cy="18" r="1.4" fill="#38BDF8"/>
+          </svg>
+        </div>
+        <span>Vraj Clerk • Interactive Prototypes</span>
+      </div>
+
+      <div class="controls-group">
+        <button class="cmd-btn" id="open-cmd-btn">
+          <span>Search</span>
+          <kbd>⌘K</kbd>
+        </button>
+        <button class="theme-btn" id="theme-toggle">
+          <span id="theme-icon">☀️ Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Introduction -->
+    <div class="hero-header">
+      <div class="pill-beacon">
+        <span class="beacon-dot"></span>
+        <span>Portfolio Interaction Prototypes</span>
+      </div>
+      <h1 class="display-title">
+        Experience proposed <span class="italic-serif">micro-customizations</span>
+      </h1>
+      <p class="hero-desc">
+        Interactive demonstrations of 4 high-impact additions tailored for a Backend &amp; Cloud Systems Engineer portfolio. Test each live simulation directly below.
+      </p>
+    </div>
+
+    <!-- Tab Switcher -->
+    <nav class="tabs-nav">
+      <button class="tab-trigger active" data-tab="tab-cmd">
+        <span>⌘1 Command Palette</span>
+      </button>
+      <button class="tab-trigger" data-tab="tab-magnetic">
+        <span>🧲2 Magnetic Gravity</span>
+      </button>
+      <button class="tab-trigger" data-tab="tab-arch">
+        <span>⚡3 System Flow Canvas</span>
+      </button>
+      <button class="tab-trigger" data-tab="tab-terminal">
+        <span>💻4 CLI Drawer</span>
+      </button>
+    </nav>
+
+    <!-- =========================================================
+         PROTOTYPE 1: Command Palette
+         ========================================================= -->
+    <section class="prototype-card active" id="tab-cmd">
+      <div class="proto-meta">
+        <div>
+          <span class="proto-tag">Concept 01 • Developer Ergonomics</span>
+          <h2 class="proto-title">IDE-Style Command Palette (⌘K)</h2>
+        </div>
+        <div class="proto-stats">
+          <span>Impact: <strong>9.5/10</strong></span>
+          <span>Feasibility: <strong>High (0 npm dependencies)</strong></span>
+        </div>
+      </div>
+
+      <div class="cmd-canvas">
+        <p style="margin-bottom: 20px; font-size: 14px; color: var(--muted-fg); text-align: center;">
+          Press <kbd style="background:var(--card); border:1px solid var(--border); padding:3px 8px; border-radius:6px; font-family:'Geist Mono',monospace;">⌘K</kbd> or click the button below to launch the spotlight search:
+        </p>
+        <button class="cmd-trigger-cta" id="canvas-cmd-trigger">
+          <span>Open Command Palette</span>
+          <kbd>⌘K</kbd>
+        </button>
+
+        <!-- Command Palette Modal Overlay -->
+        <div class="cmd-overlay" id="palette-overlay">
+          <div class="cmd-modal">
+            <div class="cmd-header">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted-fg)">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" class="cmd-input" id="palette-search" placeholder="Type a command or search case studies (e.g. AWS, Material, Resume)..." autocomplete="off" />
+              <kbd style="font-family:'Geist Mono',monospace; font-size:10px; color:var(--muted-fg); background:var(--muted); padding:2px 6px; border-radius:4px;">ESC</kbd>
+            </div>
+
+            <div class="cmd-list" id="palette-items">
+              <div class="cmd-group-label">Navigation</div>
+              <div class="cmd-item selected" data-action="nav" data-target="Projects">
+                <div class="cmd-item-left">📁 <span>View All Projects (6 Case Studies)</span></div>
+                <span class="cmd-item-shortcut">G P</span>
+              </div>
+              <div class="cmd-item" data-action="nav" data-target="About">
+                <div class="cmd-item-left">👤 <span>About &amp; Engineering Narrative</span></div>
+                <span class="cmd-item-shortcut">G A</span>
+              </div>
+              <div class="cmd-item" data-action="nav" data-target="Resume">
+                <div class="cmd-item-left">📄 <span>Software Engineer Resume (CV)</span></div>
+                <span class="cmd-item-shortcut">G R</span>
+              </div>
+
+              <div class="cmd-group-label">Quick Actions</div>
+              <div class="cmd-item" data-action="copy-email">
+                <div class="cmd-item-left">✉️ <span>Copy Email Address (vrajclerk04@gmail.com)</span></div>
+                <span class="cmd-item-shortcut">↵</span>
+              </div>
+              <div class="cmd-item" data-action="github">
+                <div class="cmd-item-left">🐙 <span>Open GitHub Profile (@vrajclerk)</span></div>
+                <span class="cmd-item-shortcut">↗</span>
+              </div>
+              <div class="cmd-item" data-action="toggle-theme">
+                <div class="cmd-item-left">🌓 <span>Toggle Light / Dark Theme</span></div>
+                <span class="cmd-item-shortcut">T</span>
+              </div>
+            </div>
+
+            <div class="cmd-footer">
+              <span>Navigate with <kbd>↑</kbd> <kbd>↓</kbd></span>
+              <span>Select with <kbd>↵</kbd></span>
+              <span>Close with <kbd>ESC</kbd></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         PROTOTYPE 2: Magnetic Gravity
+         ========================================================= -->
+    <section class="prototype-card" id="tab-magnetic">
+      <div class="proto-meta">
+        <div>
+          <span class="proto-tag">Concept 02 • Kinetic Micro-Physics</span>
+          <h2 class="proto-title">Magnetic Cursor Gravity &amp; Reticle Lock</h2>
+        </div>
+        <div class="proto-stats">
+          <span>Impact: <strong>8.5/10</strong></span>
+          <span>Feasibility: <strong>High (React Hook)</strong></span>
+        </div>
+      </div>
+
+      <div class="magnetic-canvas">
+        <p class="magnetic-hint">
+          Move your cursor close to the elements below. Notice how they physically pull toward the reticle with spring elasticity:
+        </p>
+
+        <!-- Primary Magnetic CTA -->
+        <button class="magnetic-btn-primary magnetic-target" data-strength="25">
+          Get in Touch (Magnetic Button)
+        </button>
+
+        <!-- Magnetic Pill Group -->
+        <div class="magnetic-group">
+          <div class="magnetic-chip magnetic-target" data-strength="15">📄 View Full Resume</div>
+          <div class="magnetic-chip magnetic-target" data-strength="15">🐙 GitHub Profile</div>
+          <div class="magnetic-chip magnetic-target" data-strength="15">💼 LinkedIn</div>
+        </div>
+
+        <!-- Magnetic Card Sample -->
+        <div class="magnetic-card-sample magnetic-target" data-strength="10">
+          <div style="font-size: 11px; font-family: 'Geist Mono', monospace; color: var(--accent); font-weight: 700; margin-bottom: 4px;">
+            CASE STUDY #01
+          </div>
+          <div style="font-size: 15px; font-weight: 700; color: var(--fg); margin-bottom: 6px;">
+            Master-Child Material Architecture
+          </div>
+          <div style="font-size: 12px; color: var(--muted-fg); line-height: 1.5;">
+            Hierarchical indexing with DynamoDB Streams &amp; OpenSearch queries. Move cursor over card corners.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         PROTOTYPE 3: System Flow Architecture Canvas
+         ========================================================= -->
+    <section class="prototype-card" id="tab-arch">
+      <div class="proto-meta">
+        <div>
+          <span class="proto-tag">Concept 03 • Technical Authority</span>
+          <h2 class="proto-title">Interactive Distributed Architecture Flow</h2>
+        </div>
+        <div class="proto-stats">
+          <span>Impact: <strong>10/10 (Highest Engineering ROI)</strong></span>
+          <span>Feasibility: <strong>Medium (SVG + CSS)</strong></span>
+        </div>
+      </div>
+
+      <div class="arch-canvas">
+        <div class="arch-header">
+          <div>
+            <div style="font-size: 11px; font-family: 'Geist Mono', monospace; color: var(--accent); font-weight: 700;">
+              LIVE ARCHITECTURE SIMULATION
+            </div>
+            <div style="font-size: 15px; font-weight: 700;">
+              High-Throughput Material Management &amp; Ingestion Pipeline
+            </div>
+          </div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted-fg);">
+            Hover nodes to inspect telemetry
+          </div>
+        </div>
+
+        <!-- Distributed Nodes with Animated Connecting Wire -->
+        <div class="arch-nodes-container">
+          <svg class="arch-wire-svg">
+            <line x1="0" y1="2" x2="100%" y2="2" class="arch-wire-line" />
+          </svg>
+
+          <!-- Node 1: Client Ingest -->
+          <div class="arch-node active-node" data-node="client" data-desc="Client applications emitting high-volume material updates and hierarchical catalog revisions via Auth0-authenticated REST calls.">
+            <div class="arch-node-icon">📱</div>
+            <div class="arch-node-name">Client App</div>
+            <div class="arch-node-metric">Auth0 / RBAC</div>
+          </div>
+
+          <!-- Node 2: FastAPI Gateway -->
+          <div class="arch-node" data-node="fastapi" data-desc="FastAPI asynchronous gateway validating schema attributes via Pydantic models. Dispatches audit trails and writes to DynamoDB.">
+            <div class="arch-node-icon">⚡</div>
+            <div class="arch-node-name">FastAPI Core</div>
+            <div class="arch-node-metric">&lt; 18ms latency</div>
+          </div>
+
+          <!-- Node 3: DynamoDB Streams -->
+          <div class="arch-node" data-node="dynamodb" data-desc="Amazon DynamoDB table with CDC (Change Data Capture) via DynamoDB Streams. Captures state revisions chronologically with monotonic timestamps.">
+            <div class="arch-node-icon">🗄️</div>
+            <div class="arch-node-name">DynamoDB</div>
+            <div class="arch-node-metric">Streams CDC</div>
+          </div>
+
+          <!-- Node 4: Lambda Ingestion Worker -->
+          <div class="arch-node" data-node="lambda" data-desc="AWS Lambda background worker consuming stream shards, flattening hierarchical relations, and offloading heavy index transformations.">
+            <div class="arch-node-icon">λ</div>
+            <div class="arch-node-name">Lambda Sync</div>
+            <div class="arch-node-metric">0% Data Loss</div>
+          </div>
+
+          <!-- Node 5: OpenSearch Cluster -->
+          <div class="arch-node" data-node="opensearch" data-desc="Encapsulated OpenSearch queries supporting multi-field autocomplete, nested material attribute filters, and sub-10ms catalog lookups.">
+            <div class="arch-node-icon">🔍</div>
+            <div class="arch-node-name">OpenSearch</div>
+            <div class="arch-node-metric">Sub-10ms Search</div>
+          </div>
+        </div>
+
+        <!-- Telemetry Inspector Output -->
+        <div class="arch-inspector" id="arch-output">
+          <div>
+            <strong style="color:var(--accent);">Active Component:</strong> <span id="arch-node-title">Client App (Ingestion Source)</span>
+            <div style="color:rgba(255,255,255,0.7); margin-top: 4px;" id="arch-node-desc">
+              Client applications emitting high-volume material updates and hierarchical catalog revisions via Auth0-authenticated REST calls.
+            </div>
+          </div>
+          <div style="text-align: right; font-size: 11px; opacity: 0.8;">
+            Protocol: <strong>gRPC / REST</strong><br>
+            Payload: <strong>JSON / Protobuf</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         PROTOTYPE 4: Mini Developer Terminal
+         ========================================================= -->
+    <section class="prototype-card" id="tab-terminal">
+      <div class="proto-meta">
+        <div>
+          <span class="proto-tag">Concept 04 • Python &amp; Shell Identity</span>
+          <h2 class="proto-title">Embedded CLI Drawer (Interactive Shell)</h2>
+        </div>
+        <div class="proto-stats">
+          <span>Impact: <strong>8.5/10</strong></span>
+          <span>Feasibility: <strong>High (~120 lines TS)</strong></span>
+        </div>
+      </div>
+
+      <div class="terminal-canvas">
+        <div class="term-topbar">
+          <div class="term-dots">
+            <div class="term-dot td-red"></div>
+            <div class="term-dot td-yellow"></div>
+            <div class="term-dot td-green"></div>
+          </div>
+          <div class="term-title">vraj@clerk-workstation: ~ (zsh)</div>
+          <div style="font-size: 10px; color: rgba(255,255,255,0.4);">ESC to minimize</div>
+        </div>
+
+        <div class="term-body" id="term-log">
+          <div class="term-line" style="color: rgba(255,255,255,0.5);">
+            Type <span style="color:var(--accent); font-weight:700;">help</span> to see available commands, or try <span style="color:var(--accent);">skills</span>, <span style="color:var(--accent);">arch</span>, <span style="color:var(--accent);">whoami</span>.
+          </div>
+        </div>
+
+        <div class="term-input-row">
+          <span class="term-prompt">vraj@dev:~$</span>
+          <input type="text" class="term-cmd-input" id="term-input" autocomplete="off" autofocus spellcheck="false" placeholder="type a command..." />
+        </div>
+      </div>
+    </section>
+
+    <!-- Implementation Architecture Specs -->
+    <div class="spec-grid">
+      <div class="spec-card">
+        <div class="spec-title">
+          <span>⚡ 60 FPS Performance</span>
+        </div>
+        <p class="spec-desc">
+          Zero React state re-renders on pointer movement. All coordinate translations use hardware-accelerated <code>transform: translate3d()</code> matching our cursor engine.
+        </p>
+      </div>
+
+      <div class="spec-card">
+        <div class="spec-title">
+          <span>📦 Zero External Dependencies</span>
+        </div>
+        <p class="spec-desc">
+          No bulky animation libraries like Framer Motion or Lucide bloat. 100% vanilla CSS custom properties, native event listeners, and semantic HTML5.
+        </p>
+      </div>
+
+      <div class="spec-card">
+        <div class="spec-title">
+          <span>🛡️ Theme-Aware Contrast</span>
+        </div>
+        <p class="spec-desc">
+          Seamlessly adapts between Copenhagen Deep Cobalt (Light Mode) and Hyper Blaze Orange (Dark Mode) using existing design tokens in <code>globals.css</code>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------------------
+    // 1. Theme Toggle
+    // -------------------------------------------------------------------------
+    const themeBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    themeBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-theme');
+      const isDark = document.body.classList.contains('dark-theme');
+      themeIcon.innerText = isDark ? '☀️ Light' : '🌙 Dark';
+    });
+
+    // -------------------------------------------------------------------------
+    // 2. Custom Target Reticle Cursor Tracking
+    // -------------------------------------------------------------------------
+    const reticle = document.getElementById('custom-reticle');
+    let isCursorActive = false;
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isCursorActive) {
+        isCursorActive = true;
+        reticle.style.opacity = '1';
+      }
+      reticle.style.transform = `translate3d(${e.clientX - 15}px, ${e.clientY - 15}px, 0)`;
+    });
+
+    // Hover effect on interactive elements
+    const hoverables = document.querySelectorAll('button, a, .tab-trigger, .cmd-item, .arch-node, .magnetic-target, input');
+    hoverables.forEach(el => {
+      el.addEventListener('pointerenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('pointerleave', () => document.body.classList.remove('cursor-hover'));
+    });
+
+    window.addEventListener('pointerdown', () => document.body.classList.add('cursor-active'));
+    window.addEventListener('pointerup', () => document.body.classList.remove('cursor-active'));
+
+    // -------------------------------------------------------------------------
+    // 3. Tab Switching
+    // -------------------------------------------------------------------------
+    const tabTriggers = document.querySelectorAll('.tab-trigger');
+    const prototypeCards = document.querySelectorAll('.prototype-card');
+
+    tabTriggers.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabTriggers.forEach(t => t.classList.remove('active'));
+        prototypeCards.forEach(c => c.classList.remove('active'));
+
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-tab');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // 4. Command Palette (⌘K) Prototype
+    // -------------------------------------------------------------------------
+    const paletteOverlay = document.getElementById('palette-overlay');
+    const openCmdBtn = document.getElementById('open-cmd-btn');
+    const canvasCmdTrigger = document.getElementById('canvas-cmd-trigger');
+    const paletteSearch = document.getElementById('palette-search');
+    const paletteItems = document.querySelectorAll('.cmd-item');
+
+    function openPalette() {
+      paletteOverlay.classList.add('open');
+      setTimeout(() => paletteSearch.focus(), 50);
+    }
+
+    function closePalette() {
+      paletteOverlay.classList.remove('open');
+      paletteSearch.value = '';
+      filterCommands('');
+    }
+
+    openCmdBtn.addEventListener('click', openPalette);
+    canvasCmdTrigger.addEventListener('click', openPalette);
+
+    paletteOverlay.addEventListener('click', (e) => {
+      if (e.target === paletteOverlay) closePalette();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (paletteOverlay.classList.contains('open')) closePalette();
+        else openPalette();
+      } else if (e.key === 'Escape') {
+        closePalette();
+      }
+    });
+
+    paletteSearch.addEventListener('input', (e) => {
+      filterCommands(e.target.value.toLowerCase().trim());
+    });
+
+    function filterCommands(query) {
+      paletteItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (!query || text.includes(query)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    paletteItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const action = item.getAttribute('data-action');
+        if (action === 'toggle-theme') {
+          themeBtn.click();
+        } else if (action === 'copy-email') {
+          navigator.clipboard.writeText('vrajclerk04@gmail.com');
+          alert('Copied vrajclerk04@gmail.com to clipboard!');
+        } else {
+          alert(`Executing action: ${item.querySelector('.cmd-item-left span').innerText}`);
+        }
+        closePalette();
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // 5. Magnetic Gravity Physics
+    // -------------------------------------------------------------------------
+    const magneticTargets = document.querySelectorAll('.magnetic-target');
+
+    magneticTargets.forEach(el => {
+      const strength = parseFloat(el.getAttribute('data-strength')) || 20;
+
+      el.addEventListener('pointermove', (e) => {
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const deltaX = (e.clientX - centerX) / (rect.width / 2);
+        const deltaY = (e.clientY - centerY) / (rect.height / 2);
+
+        const moveX = deltaX * strength;
+        const moveY = deltaY * strength;
+
+        el.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+      });
+
+      el.addEventListener('pointerleave', () => {
+        el.style.transform = 'translate3d(0, 0, 0)';
+        el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+        setTimeout(() => { el.style.transition = ''; }, 400);
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // 6. Interactive Architecture Node Inspector
+    // -------------------------------------------------------------------------
+    const archNodes = document.querySelectorAll('.arch-node');
+    const nodeTitle = document.getElementById('arch-node-title');
+    const nodeDesc = document.getElementById('arch-node-desc');
+
+    archNodes.forEach(node => {
+      node.addEventListener('pointerenter', () => {
+        archNodes.forEach(n => n.classList.remove('active-node'));
+        node.classList.add('active-node');
+
+        const name = node.querySelector('.arch-node-name').innerText;
+        const desc = node.getAttribute('data-desc');
+
+        nodeTitle.innerText = `${name} (Active Node)`;
+        nodeDesc.innerText = desc;
+      });
+    });
+
+    // -------------------------------------------------------------------------
+    // 7. Interactive Terminal Emulator
+    // -------------------------------------------------------------------------
+    const termInput = document.getElementById('term-input');
+    const termLog = document.getElementById('term-log');
+
+    const COMMANDS = {
+      help: () => `Available commands:
+  • <span style="color:var(--accent);">skills</span>       - List primary engineering competencies
+  • <span style="color:var(--accent);">arch</span>         - Inspect system design principles
+  • <span style="color:var(--accent);">whoami</span>       - Display engineer profile summary
+  • <span style="color:var(--accent);">projects</span>     - List published case studies
+  • <span style="color:var(--accent);">contact</span>      - Show primary communication channels
+  • <span style="color:var(--accent);">clear</span>        - Clear terminal screen`,
+      whoami: () => `Vraj Clerk • Python & Backend Systems Engineer
+Focus: FastAPI, PostgreSQL, AWS, OpenSearch, Distributed Systems.
+Current Role: Junior Software Developer at Techlusion.`,
+      skills: () => `Languages:  Python, TypeScript, SQL, Modern JavaScript
+Backend:    FastAPI, RESTful APIs, Pydantic, OOP Packages
+Cloud/Dev:  AWS (Lambda, S3, DynamoDB, API Gateway, EC2), Docker
+Databases:  PostgreSQL, OpenSearch, DynamoDB, MySQL`,
+      arch: () => `System Philosophy:
+1. Idempotency by design in high-throughput webhook pipelines.
+2. CDC Streams (DynamoDB Streams) for audit logging & search index decoupling.
+3. Sub-10ms query encapsulation patterns for distributed microservices.`,
+      projects: () => `1. Pickleball Matchmaking & Scoring Platform
+2. Enterprise Material Management Architecture
+3. LiquorScan: Bottle Liquid Level Detection (U-Net & ResNet34)
+4. High-Throughput Event Processing Engine`,
+      contact: () => `Email:    vrajclerk04@gmail.com
+GitHub:   https://github.com/vrajclerk
+LinkedIn: https://linkedin.com/in/vrajclerk`,
+      clear: () => '__CLEAR__'
+    };
+
+    termInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const cmd = termInput.value.trim().toLowerCase();
+        termInput.value = '';
+
+        if (!cmd) return;
+
+        // Log command
+        const cmdRow = document.createElement('div');
+        cmdRow.className = 'term-line';
+        cmdRow.innerHTML = `<span class="term-prompt">vraj@dev:~$</span> <span>${cmd}</span>`;
+        termLog.appendChild(cmdRow);
+
+        // Process output
+        if (cmd === 'clear') {
+          termLog.innerHTML = '';
+          return;
+        }
+
+        const outRow = document.createElement('div');
+        outRow.className = 'term-line';
+        outRow.style.color = 'rgba(255,255,255,0.85)';
+        outRow.style.whiteSpace = 'pre-wrap';
+
+        if (COMMANDS[cmd]) {
+          outRow.innerHTML = COMMANDS[cmd]();
+        } else {
+          outRow.innerHTML = `zsh: command not found: ${cmd}. Type <span style="color:var(--accent);">help</span> for available commands.`;
+        }
+
+        termLog.appendChild(outRow);
+        termLog.scrollTop = termLog.scrollHeight;
+      }
+    });
+  </script>
+</body>
+</html>
