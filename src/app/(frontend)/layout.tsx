@@ -119,12 +119,12 @@ export default async function FrontendLayout({
   const showBlog = homepageSettings.sectionsVisibility?.showPosts !== false;
 
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
+    <html lang="en" className="dark h-full" data-theme="dark" suppressHydrationWarning>
       <head>
-        {/* Inline script to prevent theme flash; light theme is default */}
+        {/* Inline script to prevent theme flash; dark theme is default */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=localStorage.getItem('theme');if(s==='dark'){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.classList.remove('dark');document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();`,
+            __html: `(function(){try{var s=localStorage.getItem('theme');if(s==='light'){document.documentElement.classList.remove('dark');document.documentElement.setAttribute('data-theme','light');}else{document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();`,
           }}
         />
       </head>

@@ -8,14 +8,14 @@ import React, { useState, useEffect } from "react";
  * Requirements:
  * 1. Controlled by NEXT_PUBLIC_ENABLE_THEME_TOGGLE env flag.
  *    If false/unset, returns null (completely hidden).
- * 2. Light theme is default.
+ * 2. Dark theme is default.
  * 3. Persists user choice in localStorage.
  * 4. Toggles .dark class and data-theme attribute on <html> element instantly.
  */
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const isEnabled = process.env.NEXT_PUBLIC_ENABLE_THEME_TOGGLE === "true";
 
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     return null;
   }
 
-  const isDark = mounted ? theme === "dark" : false;
+  const isDark = mounted ? theme === "dark" : true;
 
   const toggleTheme = () => {
     // Check actual DOM state as ground truth to prevent any desync
@@ -84,7 +84,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     <button
       type="button"
       onClick={toggleTheme}
-      aria-label={`Switch to ${isDark ? "light" : "dark"} mode (currently ${mounted ? theme : "light"})`}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode (currently ${mounted ? theme : "dark"})`}
       suppressHydrationWarning
       className={`group relative flex h-9 w-9 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${className}`}
     >
