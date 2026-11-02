@@ -56,13 +56,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [homepageSettings, profile, siteSettings, publishedProjects, publishedPosts] =
+  const [homepageSettings, profile, siteSettings, allPublishedProjects, allPublishedPosts] =
     await Promise.all([
       getHomepageSettings(),
       getProfile(),
       getSiteSettings(),
-      getPublishedProjects({ limit: 3 }),
-      getPublishedPosts({ limit: 2 }),
+      getPublishedProjects(),
+      getPublishedPosts(),
     ]);
 
   const websiteSchema = generateWebsiteSchema({
@@ -84,10 +84,12 @@ export default async function HomePage() {
         (p): p is Project =>
           typeof p === "object" && p !== null && p._status === "published"
       ) as Project[])
-    : publishedProjects;
+    : allPublishedProjects;
 
   const displayProjects =
-    featuredProjects.length > 0 ? featuredProjects.slice(0, 3) : publishedProjects;
+    featuredProjects.length > 0
+      ? featuredProjects.slice(0, 3)
+      : allPublishedProjects.slice(0, 3);
 
   // Featured posts from HomepageSettings relationship or latest published posts
   const featuredPosts: Post[] = Array.isArray(homepageSettings.featuredPosts)
@@ -95,10 +97,12 @@ export default async function HomePage() {
         (p): p is Post =>
           typeof p === "object" && p !== null && p._status === "published"
       ) as Post[])
-    : publishedPosts;
+    : allPublishedPosts;
 
   const displayPosts =
-    featuredPosts.length > 0 ? featuredPosts.slice(0, 2) : publishedPosts;
+    featuredPosts.length > 0
+      ? featuredPosts.slice(0, 2)
+      : allPublishedPosts.slice(0, 2);
 
   const heroHeadline =
     homepageSettings.heroHeadline ||
@@ -164,7 +168,7 @@ export default async function HomePage() {
               href="/projects"
               className="text-sm font-medium text-accent hover:underline flex items-center gap-1"
             >
-              All projects ({publishedProjects.length}) →
+              All projects ({allPublishedProjects.length}) →
             </Link>
           </div>
 
@@ -230,7 +234,7 @@ export default async function HomePage() {
               href="/blog"
               className="text-sm font-medium text-accent hover:underline flex items-center gap-1"
             >
-              All articles ({publishedPosts.length}) →
+              All articles ({allPublishedPosts.length}) →
             </Link>
           </div>
 
