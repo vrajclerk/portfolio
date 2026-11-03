@@ -2,7 +2,6 @@ import React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getProfile, getSiteSettings } from "@/lib/cms";
-import type { Media } from "@/payload-types";
 import { generateBreadcrumbSchema } from "@/utilities/structuredData";
 
 export async function generateMetadata(): Promise<Metadata> {

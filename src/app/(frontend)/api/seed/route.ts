@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
@@ -7,7 +8,6 @@ import path from "path";
 import {
   createLexicalDoc,
   fixtureCategories,
-  fixturePosts,
 } from "@/lib/fixtures";
 
 export async function GET() {

@@ -85,7 +85,7 @@ export function TerminalDrawer() {
     setHistoryIdx(-1);
 
     const logId = String(Date.now());
-    const [command, ...args] = trimmed.split(" ");
+    const [command] = trimmed.split(" ");
     const cmdLower = command.toLowerCase();
 
     // 1. Add user command to log

@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Systems Scroll Reveal Laboratory — Vraj Clerk Portfolio</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Dark Theme (Default) - Matte Carbon & Hyper Blaze Orange */
+      --bg: #090B0E;
+      --bg-subtle: #0E1217;
+      --fg: #FFFFFF;
+      --muted: #161A22;
+      --muted-fg: #9BA3AF;
+      --border: #242B38;
+      --border-subtle: #191F2B;
+      --card: #11151D;
+      --card-alt: #0D1016;
+      --accent: #FF6B00;              /* Blaze Orange */
+      --accent-rgb: 255, 107, 0;
+      --accent-fg: #090B0E;
+      --accent-glow: rgba(255, 107, 0, 0.35);
+      --code-bg: #06080A;
+      --code-fg: #E2E8F0;
+      --shadow-card: 0 16px 40px -12px rgba(0, 0, 0, 0.7);
+      --grid-line: rgba(255, 255, 255, 0.04);
+      --hud-bg: rgba(14, 18, 25, 0.92);
+      --hud-border: rgba(255, 255, 255, 0.12);
+    }
+
+    body.light-theme {
+      /* Light Theme - Nordic Ice & Deep Cobalt */
+      --bg: #F8FAFC;
+      --bg-subtle: #F1F5F9;
+      --fg: #0F172A;
+      --muted: #E2E8F0;
+      --muted-fg: #64748B;
+      --border: #CBD5E1;
+      --border-subtle: #E2E8F0;
+      --card: #FFFFFF;
+      --card-alt: #F8FAFC;
+      --accent: #1D4ED8;              /* Deep Cobalt */
+      --accent-rgb: 29, 78, 216;
+      --accent-fg: #FFFFFF;
+      --accent-glow: rgba(29, 78, 216, 0.22);
+      --code-bg: #0F172A;
+      --code-fg: #F8FAFC;
+      --shadow-card: 0 16px 40px -12px rgba(0, 0, 0, 0.1);
+      --grid-line: rgba(15, 23, 42, 0.05);
+      --hud-bg: rgba(255, 255, 255, 0.95);
+      --hud-border: rgba(15, 23, 42, 0.12);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(var(--accent-rgb), 0.08) 0%, transparent 60%),
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+      background-size: 100% 100%, 48px 48px, 48px 48px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      perspective: 1400px; /* Enable 3D space for spatial reveals */
+    }
+
+    /* -------------------------------------------------------------------------
+     * FIXED TOP CONTROLS & TELEMETRY HUD
+     * ------------------------------------------------------------------------- */
+    .telemetry-hud {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: var(--hud-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--hud-border);
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+
+    .hud-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(var(--accent-rgb), 0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .hud-badge .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(1.3); }
+    }
+
+    .hud-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .hud-modes {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'Geist Mono', monospace;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted-fg);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mode-btn:hover {
+      border-color: var(--accent);
+      color: var(--fg);
+      transform: translateY(-1px);
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
+    }
+
+    .hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Floating Quick Nav Dock */
+    .quick-dock {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9998;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--hud-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--hud-border);
+      padding: 8px;
+      border-radius: 14px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+    }
+
+    .quick-dock-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-family: 'Geist Mono', monospace;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quick-dock-btn:hover {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+    }
+
+    /* -------------------------------------------------------------------------
+     * ADVANCED REVEAL CONCEPTS CSS ENGINES
+     * ------------------------------------------------------------------------- */
+
+    /* Generic wrapper */
+    .reveal-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      will-change: transform, opacity, filter;
+    }
+
+    /* =========================================================================
+       CONCEPT 1: TELEMETRY LASER BEAM & POWER-UP (Signature Systems Engineer)
+       ========================================================================= */
+    body[data-reveal-mode="beam"] .reveal-card {
+      opacity: 0;
+      transform: translate3d(0, 32px, 0);
+      transition: opacity 0.5s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--stagger-index, 0) * 90ms);
+    }
+
+    body[data-reveal-mode="beam"] .reveal-card.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* The Laser Beam traveling along the border */
+    body[data-reveal-mode="beam"] .reveal-card::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 22px;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 270deg, var(--accent) 340deg, #FFFFFF 360deg);
+      opacity: 0;
+      z-index: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    body[data-reveal-mode="beam"] .reveal-card::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 19px;
+      background: var(--card);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    body[data-reveal-mode="beam"] .reveal-card > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    body[data-reveal-mode="beam"] .reveal-card.is-visible::before {
+      opacity: 1;
+      animation: laserSweep 2.2s linear infinite;
+    }
+
+    @keyframes laserSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* =========================================================================
+       CONCEPT 2: SPATIAL 3D HOLOGRAPHIC DOCKING (Apple / Raycast Depth Matrix)
+       ========================================================================= */
+    body[data-reveal-mode="spatial-3d"] .reveal-card {
+      opacity: 0;
+      transform: perspective(1200px) rotateX(24deg) rotateY(-4deg) translate3d(0, 70px, -100px) scale(0.9);
+      filter: blur(8px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--stagger-index, 0) * 110ms);
+    }
+
+    body[data-reveal-mode="spatial-3d"] .reveal-card.is-visible {
+      opacity: 1;
+      transform: perspective(1200px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0) scale(1);
+      filter: blur(0px);
+      box-shadow: var(--shadow-card);
+    }
+
+    /* =========================================================================
+       CONCEPT 3: CYBERNETIC SCRAMBLE & SCANLINE EXPANSION (Terminal Decrypt)
+       ========================================================================= */
+    body[data-reveal-mode="scramble"] .reveal-card {
+      opacity: 0;
+      transform: translate3d(0, 20px, 0);
+      transition: opacity 0.4s ease-out, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--stagger-index, 0) * 80ms);
+      border-left: 3px solid transparent;
+    }
+
+    body[data-reveal-mode="scramble"] .reveal-card.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      border-left-color: var(--accent);
+    }
+
+    /* Terminal Scanline beam sweep across card surface on entry */
+    body[data-reveal-mode="scramble"] .reveal-card .scanline-curtain {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(var(--accent-rgb), 0.15) 0%, transparent 60%);
+      transform: translateY(-100%);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    body[data-reveal-mode="scramble"] .reveal-card.is-visible .scanline-curtain {
+      animation: scanlineDrop 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes scanlineDrop {
+      0% { transform: translateY(-100%); opacity: 1; }
+      100% { transform: translateY(100%); opacity: 0; }
+    }
+
+    /* =========================================================================
+       CONCEPT 4: TELEMETRIC RADAR PING & GAUGE FILL (Hardware Metrics Ignite)
+       ========================================================================= */
+    body[data-reveal-mode="radar"] .reveal-card {
+      opacity: 0;
+      transform: translate3d(0, 28px, 0) scale(0.97);
+      transition: opacity 0.5s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--stagger-index, 0) * 85ms);
+    }
+
+    body[data-reveal-mode="radar"] .reveal-card.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    body[data-reveal-mode="radar"] .reveal-card .radar-glow {
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      opacity: 0;
+      transform: scale(0.4);
+      pointer-events: none;
+      transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body[data-reveal-mode="radar"] .reveal-card.is-visible .radar-glow {
+      opacity: 1;
+      transform: scale(1.6);
+    }
+
+    /* Metric Bar Progress Sweep */
+    .metric-progress-bar {
+      width: 100%;
+      height: 3px;
+      background: var(--border-subtle);
+      border-radius: 999px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .metric-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+    }
+
+    .reveal-card.is-visible .metric-progress-fill {
+      width: var(--target-width, 85%);
+    }
+
+    /* -------------------------------------------------------------------------
+     * SECTION HEADERS & LABELS REVEAL
+     * ------------------------------------------------------------------------- */
+    .reveal-header {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+      transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-header.is-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    /* Concept Header Accents */
+    .header-beam {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), #FFFFFF, transparent);
+      transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    }
+
+    .reveal-header.is-visible .header-beam {
+      width: 100%;
+    }
+
+    /* -------------------------------------------------------------------------
+     * LAYOUT & PORTFOLIO SIMULATION
+     * ------------------------------------------------------------------------- */
+    .preview-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 110px 24px 80px;
+    }
+
+    .hero-box {
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: linear-gradient(145deg, var(--card) 0%, var(--card-alt) 100%);
+      padding: 40px;
+      margin-bottom: 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .hero-tag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(var(--accent-rgb), 0.1);
+      border: 1px solid var(--accent);
+      padding: 4px 10px;
+      border-radius: 999px;
+      width: fit-content;
+    }
+
+    .hero-h1 {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted-fg);
+      max-width: 680px;
+    }
+
+    .lcp-callout {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      width: fit-content;
+    }
+
+    /* Sections */
+    .section-wrap {
+      margin-bottom: 75px;
+    }
+
+    .section-header {
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+      position: relative;
+    }
+
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      font-family: 'Geist Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      margin-top: 4px;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--muted-fg);
+      margin-top: 2px;
+    }
+
+    /* Grid */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 26px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+      gap: 26px;
+    }
+
+    /* Card Details */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Geist Mono', monospace;
+    }
+
+    .badge-blue {
+      background: rgba(59, 130, 246, 0.12);
+      color: #60A5FA;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-emerald {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-purple {
+      background: rgba(168, 85, 247, 0.12);
+      color: #C084FC;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .card-idx {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted-fg);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      color: var(--fg);
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--muted-fg);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .card-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px;
+      background: var(--card-alt);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 20px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-val {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag-pill {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      color: var(--fg);
+    }
+
+    /* Skill Rows */
+    .skill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .skill-telemetry {
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+    }
+
+    /* Explanation Banner */
+    .concept-explainer {
+      background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.12) 0%, rgba(var(--accent-rgb), 0.02) 100%);
+      border: 1px solid rgba(var(--accent-rgb), 0.35);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .explainer-text h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Geist Mono', monospace;
+      margin-bottom: 2px;
+    }
+
+    .explainer-text p {
+      font-size: 13px;
+      color: var(--muted-fg);
+    }
+
+    /* Live Code Generator Box */
+    .code-export-box {
+      margin-top: 60px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--code-bg);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .code-title {
+      font-family: 'Geist Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .code-copy-btn {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      background: var(--card);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .code-copy-btn:hover {
+      background: var(--accent);
+      color: var(--accent-fg);
+    }
+
+    pre code {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12px;
+      color: var(--code-fg);
+      line-height: 1.6;
+      display: block;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body data-reveal-mode="beam">
+
+  <!-- =========================================================================
+       FIXED TELEMETRY & SIGNATURE CONCEPTS CONTROLLER HUD
+       ========================================================================= -->
+  <header class="telemetry-hud">
+    <div class="hud-brand">
+      <div class="hud-badge">
+        <span class="pulse-dot"></span>
+        <span id="active-concept-name">CONCEPT 1: TELEMETRY LASER BEAM</span>
+      </div>
+      <span class="hud-title">Signature Systems Reveal</span>
+    </div>
+
+    <!-- 4 High-End Signature Modes -->
+    <div class="hud-modes">
+      <button class="mode-btn active" data-mode="beam" onclick="setConcept('beam')">
+        ⚡ 1. Laser Beam Sweep
+      </button>
+      <button class="mode-btn" data-mode="spatial-3d" onclick="setConcept('spatial-3d')">
+        🧊 2. Spatial 3D Docking
+      </button>
+      <button class="mode-btn" data-mode="scramble" onclick="setConcept('scramble')">
+        👾 3. Byte Decrypt & Scanline
+      </button>
+      <button class="mode-btn" data-mode="radar" onclick="setConcept('radar')">
+        📡 4. Radar Ping & Metric Gauge
+      </button>
+    </div>
+
+    <!-- Actions -->
+    <div class="hud-actions">
+      <button class="action-btn" onclick="resetAnimations()" title="Re-observe and replay scroll reveals">
+        ↻ Replay Reveal
+      </button>
+      <button class="action-btn" onclick="toggleTheme()" id="theme-btn">
+        ☀️ Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- Quick Floating Navigation Dock -->
+  <aside class="quick-dock" aria-label="Quick Navigation">
+    <button class="quick-dock-btn" onclick="scrollToId('hero')" title="Top / Hero">↑</button>
+    <button class="quick-dock-btn" onclick="scrollToId('sec-projects')" title="Projects">01</button>
+    <button class="quick-dock-btn" onclick="scrollToId('sec-skills')" title="Capabilities">02</button>
+    <button class="quick-dock-btn" onclick="scrollToId('sec-writing')" title="Writing">03</button>
+    <button class="quick-dock-btn" onclick="scrollToId('sec-code')" title="React Code Export">{ }</button>
+  </aside>
+
+  <!-- =========================================================================
+       MAIN PORTFOLIO SIMULATION CONTAINER
+       ========================================================================= -->
+  <main class="preview-container">
+
+    <!-- -----------------------------------------------------------------------
+         HERO SECTION: Zero-Hydration Immediate Paint (LCP Protection)
+         ----------------------------------------------------------------------- -->
+    <section class="hero-box" id="hero">
+      <div class="hero-tag">SYSTEMS ARCHITECT & BACKEND ENGINEER</div>
+      <h1 class="hero-h1">Vraj Clerk</h1>
+      <p class="hero-sub">
+        Building high-throughput microservices, distributed pipelines, and resilient backend systems in Python, FastAPI, and Cloud infrastructure.
+      </p>
+      <div class="lcp-callout">
+        <span>⚡ LCP PRESERVED:</span> Hero section paints immediately at 0ms. Scroll reveals only trigger on elements entering the viewport.
+      </div>
+    </section>
+
+    <!-- Interactive Concept Explainer Banner -->
+    <div class="concept-explainer" id="concept-banner">
+      <div class="explainer-text">
+        <h4 id="banner-title">⚡ CONCEPT 1: TELEMETRY LASER BEAM SWEEP</h4>
+        <p id="banner-desc">
+          As each card enters the viewport, a high-voltage orange laser beam races around the card's perimeter border while the contents lift in smoothly. Evokes high-concurrency fiber networks and telemetry pipelines.
+        </p>
+      </div>
+      <button class="action-btn" onclick="resetAnimations()" style="white-space: nowrap; font-weight: 700; color: var(--accent); border-color: var(--accent);">
+        Replay Animation ↻
+      </button>
+    </div>
+
+    <!-- -----------------------------------------------------------------------
+         SECTION 1: FEATURED ENGINEERING PROJECTS
+         ----------------------------------------------------------------------- -->
+    <section class="section-wrap" id="sec-projects">
+      <div class="section-header reveal-header">
+        <div class="header-beam"></div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <div>
+            <span class="section-eyebrow">
+              <span>●</span>
+              <span>Architecture & Case Studies</span>
+            </span>
+            <h2 class="section-title decrypt-target" data-orig="Featured Engineering Projects">
+              Featured Engineering Projects
+            </h2>
+          </div>
+          <span style="font-family: 'Geist Mono'; font-size: 12px; color: var(--accent);">[SYS_VER: 2026.4]</span>
+        </div>
+        <p class="section-desc">Production-grade distributed pipelines, asynchronous microservices, and high-concurrency tooling.</p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Project Card 1 -->
+        <article class="reveal-card" style="--stagger-index: 0;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div>
+            <div class="card-top">
+              <span class="card-badge badge-blue">Professional Architecture</span>
+              <span class="card-idx">01</span>
+            </div>
+            <h3 class="card-title decrypt-target" data-orig="Real-Time Telemetry Pipeline">
+              Real-Time Telemetry Pipeline
+            </h3>
+            <p class="card-desc">
+              High-throughput asynchronous ingest engine consuming 25,000+ telemetry events/sec with sliding window aggregations.
+            </p>
+          </div>
+          <div>
+            <div class="card-metrics">
+              <div class="metric-row">
+                <span>Ingest Throughput</span>
+                <span class="metric-val">25,000 / sec</span>
+              </div>
+              <div class="metric-progress-bar">
+                <div class="metric-progress-fill" style="--target-width: 92%;"></div>
+              </div>
+              <div class="metric-row" style="margin-top: 4px;">
+                <span>P99 Query Latency</span>
+                <span class="metric-val">12ms</span>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag-pill">Python</span>
+              <span class="tag-pill">FastAPI</span>
+              <span class="tag-pill">TimescaleDB</span>
+              <span class="tag-pill">Redis Streams</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project Card 2 -->
+        <article class="reveal-card" style="--stagger-index: 1;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div>
+            <div class="card-top">
+              <span class="card-badge badge-emerald">Personal R&D</span>
+              <span class="card-idx">02</span>
+            </div>
+            <h3 class="card-title decrypt-target" data-orig="Distributed Task Broker">
+              Distributed Task Broker
+            </h3>
+            <p class="card-desc">
+              Fault-tolerant job queue system with priority tiering, exponential backoff retries, dead-letter storage, and dynamic workers.
+            </p>
+          </div>
+          <div>
+            <div class="card-metrics">
+              <div class="metric-row">
+                <span>Daily Processed Jobs</span>
+                <span class="metric-val">100,000+</span>
+              </div>
+              <div class="metric-progress-bar">
+                <div class="metric-progress-fill" style="--target-width: 88%;"></div>
+              </div>
+              <div class="metric-row" style="margin-top: 4px;">
+                <span>Drop Rate Under Spikes</span>
+                <span class="metric-val">0.001%</span>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag-pill">Python</span>
+              <span class="tag-pill">Celery</span>
+              <span class="tag-pill">RabbitMQ</span>
+              <span class="tag-pill">Docker</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project Card 3 -->
+        <article class="reveal-card" style="--stagger-index: 2;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div>
+            <div class="card-top">
+              <span class="card-badge badge-purple">Enterprise Core</span>
+              <span class="card-idx">03</span>
+            </div>
+            <h3 class="card-title decrypt-target" data-orig="Identity & Gateway Proxy">
+              Identity & Gateway Proxy
+            </h3>
+            <p class="card-desc">
+              Centralized authentication proxy supporting OAuth2, JWT rotation, fine-grained RBAC, and distributed token bucket limiting.
+            </p>
+          </div>
+          <div>
+            <div class="card-metrics">
+              <div class="metric-row">
+                <span>Validation Latency</span>
+                <span class="metric-val">&lt; 3.8ms</span>
+              </div>
+              <div class="metric-progress-bar">
+                <div class="metric-progress-fill" style="--target-width: 96%;"></div>
+              </div>
+              <div class="metric-row" style="margin-top: 4px;">
+                <span>Security Standard</span>
+                <span class="metric-val">TLS 1.3 / OAuth2</span>
+              </div>
+            </div>
+            <div class="card-tags">
+              <span class="tag-pill">FastAPI</span>
+              <span class="tag-pill">PostgreSQL</span>
+              <span class="tag-pill">Redis</span>
+              <span class="tag-pill">AWS ECS</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         SECTION 2: PRACTICAL CAPABILITIES
+         ----------------------------------------------------------------------- -->
+    <section class="section-wrap" id="sec-skills">
+      <div class="section-header reveal-header">
+        <div class="header-beam"></div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <div>
+            <span class="section-eyebrow">
+              <span>●</span>
+              <span>Systems Tooling</span>
+            </span>
+            <h2 class="section-title decrypt-target" data-orig="Core Engineering Capabilities">
+              Core Engineering Capabilities
+            </h2>
+          </div>
+          <span style="font-family: 'Geist Mono'; font-size: 12px; color: var(--accent);">[STACK_SPECS]</span>
+        </div>
+        <p class="section-desc">Classified by architectural domain, real-world deployment frequency, and fault-tolerance focus.</p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Skill 1 -->
+        <div class="reveal-card" style="--stagger-index: 0;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div class="card-top">
+            <h3 class="card-title decrypt-target" data-orig="Backend Systems & APIs" style="margin-bottom: 0;">
+              Backend Systems & APIs
+            </h3>
+            <span class="card-idx">GRP-01</span>
+          </div>
+          <p class="card-desc" style="margin-bottom: 12px;">Async runtimes, thread-safe message queues, and high-concurrency protocols.</p>
+          <div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">Python 3.11+ / Asyncio</span>
+              <span class="skill-telemetry">Primary Engine</span>
+            </div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">FastAPI & Pydantic V2</span>
+              <span class="skill-telemetry">Production Core</span>
+            </div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">Celery & RabbitMQ</span>
+              <span class="skill-telemetry">Async Queues</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill 2 -->
+        <div class="reveal-card" style="--stagger-index: 1;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div class="card-top">
+            <h3 class="card-title decrypt-target" data-orig="Data & Storage Strategy" style="margin-bottom: 0;">
+              Data & Storage Strategy
+            </h3>
+            <span class="card-idx">GRP-02</span>
+          </div>
+          <p class="card-desc" style="margin-bottom: 12px;">Relational models, in-memory caching, and temporal indices.</p>
+          <div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">PostgreSQL & TimescaleDB</span>
+              <span class="skill-telemetry">ACID & Timeseries</span>
+            </div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">Redis Pub/Sub</span>
+              <span class="skill-telemetry">Sub-millisecond</span>
+            </div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">SQLAlchemy & Alembic</span>
+              <span class="skill-telemetry">Migrations</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skill 3 -->
+        <div class="reveal-card" style="--stagger-index: 2;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div class="card-top">
+            <h3 class="card-title decrypt-target" data-orig="Cloud Infrastructure" style="margin-bottom: 0;">
+              Cloud Infrastructure
+            </h3>
+            <span class="card-idx">GRP-03</span>
+          </div>
+          <p class="card-desc" style="margin-bottom: 12px;">Container orchestration, automated testing, and CI/CD pipelines.</p>
+          <div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">Docker & Multi-Stage</span>
+              <span class="skill-telemetry">Containers</span>
+            </div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">AWS ECS, S3, RDS</span>
+              <span class="skill-telemetry">Cloud Native</span>
+            </div>
+            <div class="skill-row">
+              <span style="font-weight: 600;">GitHub Actions CI</span>
+              <span class="skill-telemetry">Automated Gates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         SECTION 3: RECENT WRITING
+         ----------------------------------------------------------------------- -->
+    <section class="section-wrap" id="sec-writing">
+      <div class="section-header reveal-header">
+        <div class="header-beam"></div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <div>
+            <span class="section-eyebrow">
+              <span>●</span>
+              <span>Engineering Insights</span>
+            </span>
+            <h2 class="section-title decrypt-target" data-orig="Recent Engineering Writing">
+              Recent Engineering Writing
+            </h2>
+          </div>
+          <span style="font-family: 'Geist Mono'; font-size: 12px; color: var(--accent);">[ARTICLES]</span>
+        </div>
+        <p class="section-desc">Deep dives into concurrency, memory management, and distributed systems architecture.</p>
+      </div>
+
+      <div class="grid-2">
+        <article class="reveal-card" style="--stagger-index: 0;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div class="card-top">
+            <span class="card-badge badge-blue">Deep Dive</span>
+            <span class="card-idx">MAR 2026</span>
+          </div>
+          <h3 class="card-title decrypt-target" data-orig="Optimizing Asyncio Connection Pools">
+            Optimizing Asyncio Connection Pools
+          </h3>
+          <p class="card-desc">
+            How improper pool sizing and unclosed context managers create silent socket starvation, and how to instrument real-time telemetry gauges to detect leaks before production failure.
+          </p>
+          <div class="card-tags">
+            <span class="tag-pill">Python</span>
+            <span class="tag-pill">Asyncio</span>
+            <span class="tag-pill">FastAPI</span>
+            <span class="tag-pill">Telemetry</span>
+          </div>
+        </article>
+
+        <article class="reveal-card" style="--stagger-index: 1;">
+          <div class="scanline-curtain"></div>
+          <div class="radar-glow"></div>
+          <div class="card-top">
+            <span class="card-badge badge-emerald">Systems Patterns</span>
+            <span class="card-idx">FEB 2026</span>
+          </div>
+          <h3 class="card-title decrypt-target" data-orig="Distributed Microservices Retries">
+            Distributed Microservices Retries
+          </h3>
+          <p class="card-desc">
+            Examining why naive exponential retries cause thunderous herd failures against downstream databases, and implementing decorrelated jitter in distributed task workers.
+          </p>
+          <div class="card-tags">
+            <span class="tag-pill">Distributed Systems</span>
+            <span class="tag-pill">Celery</span>
+            <span class="tag-pill">Reliability</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         LIVE CODE EXPORT BOX
+         ----------------------------------------------------------------------- -->
+    <section class="code-export-box" id="sec-code">
+      <div class="code-header">
+        <span class="code-title">// REACT & CSS CODE FOR SELECTED CONCEPT</span>
+        <button class="code-copy-btn" onclick="copyGeneratedCode()">Copy Code to Clipboard</button>
+      </div>
+      <pre><code id="live-code-snippet">/* Generating implementation code... */</code></pre>
+    </section>
+
+  </main>
+
+  <script>
+    // ---------------------------------------------------------------------------
+    // INTERSECTION OBSERVER & DECRYPT CIPHER ENGINE
+    // ---------------------------------------------------------------------------
+    let observer;
+    const CIPHER_CHARS = "0101#@%&<>~*+=$[]{}|/\\";
+
+    function decryptText(element) {
+      const originalText = element.getAttribute('data-orig') || element.textContent;
+      let iteration = 0;
+      const interval = setInterval(() => {
+        element.textContent = originalText
+          .split("")
+          .map((char, index) => {
+            if (index < iteration) {
+              return originalText[index];
+            }
+            if (char === " ") return " ";
+            return CIPHER_CHARS[Math.floor(Math.random() * CIPHER_CHARS.length)];
+          })
+          .join("");
+
+        if (iteration >= originalText.length) {
+          clearInterval(interval);
+          element.textContent = originalText;
+        }
+        iteration += 1 / 2;
+      }, 25);
+    }
+
+    function initObserver() {
+      if (observer) observer.disconnect();
+
+      const cards = document.querySelectorAll('.reveal-card');
+      const headers = document.querySelectorAll('.reveal-header');
+
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+
+            // If in scramble/cybernetic mode, trigger text decryption on scroll entry
+            const currentMode = document.body.getAttribute('data-reveal-mode');
+            if (currentMode === 'scramble') {
+              const targets = entry.target.querySelectorAll('.decrypt-target');
+              targets.forEach(t => decryptText(t));
+              if (entry.target.classList.contains('decrypt-target')) {
+                decryptText(entry.target);
+              }
+            }
+
+            observer.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.15,
+        rootMargin: "0px 0px -40px 0px"
+      });
+
+      cards.forEach(c => observer.observe(c));
+      headers.forEach(h => observer.observe(h));
+    }
+
+    function resetAnimations() {
+      const all = document.querySelectorAll('.reveal-card, .reveal-header');
+      all.forEach(el => el.classList.remove('is-visible'));
+
+      // Reset metric progress bars
+      document.querySelectorAll('.metric-progress-fill').forEach(f => {
+        f.style.width = '0%';
+      });
+
+      setTimeout(() => {
+        initObserver();
+      }, 50);
+    }
+
+    // ---------------------------------------------------------------------------
+    // CONCEPT SWITCHER & BANNER CONTROLS
+    // ---------------------------------------------------------------------------
+    const CONCEPT_METADATA = {
+      'beam': {
+        name: 'CONCEPT 1: TELEMETRY LASER BEAM',
+        title: '⚡ CONCEPT 1: TELEMETRY LASER BEAM SWEEP',
+        desc: "As each card enters the viewport, a high-voltage orange laser beam sweeps continuously along the card's perimeter border, while the content lifts into place. Evokes high-speed fiber telemetry and real-time backend queues."
+      },
+      'spatial-3d': {
+        name: 'CONCEPT 2: SPATIAL 3D DOCKING',
+        title: '🧊 CONCEPT 2: SPATIAL 3D HOLOGRAPHIC DOCKING',
+        desc: "The card starts with deep 3D perspective rotation (rotateX 24deg, -100px Z-depth) and soft blur, then glides flat into the viewport grid like an aerospace telemetry HUD glass panel docking into position."
+      },
+      'scramble': {
+        name: 'CONCEPT 3: CYBERNETIC SCRAMBLE & SCANLINE',
+        title: '👾 CONCEPT 3: CYBERNETIC BYTE DECRYPT & SCANLINE',
+        desc: "Headings and card titles rapidly decrypt through randomized binary/hex bytes into plain English on scroll entry, accompanied by a CRT terminal scanline wash. Truly screams low-level systems engineering."
+      },
+      'radar': {
+        name: 'CONCEPT 4: RADAR PING & GAUGE FILL',
+        title: '📡 CONCEPT 4: RADAR PING & HARDWARE METRIC GAUGE',
+        desc: "An ambient radial radar ping illuminates the top-right corner of each card upon scroll entry, and the technical metric progress bars smoothly animate from 0% to target capacity."
+      }
+    };
+
+    function setConcept(mode) {
+      document.body.setAttribute('data-reveal-mode', mode);
+
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-mode') === mode);
+      });
+
+      const meta = CONCEPT_METADATA[mode];
+      document.getElementById('active-concept-name').textContent = meta.name;
+      document.getElementById('banner-title').textContent = meta.title;
+      document.getElementById('banner-desc').textContent = meta.desc;
+
+      resetAnimations();
+      updateCodeSnippet(mode);
+    }
+
+    function toggleTheme() {
+      const isDark = !document.body.classList.contains('light-theme');
+      document.body.classList.toggle('light-theme', isDark);
+      document.getElementById('theme-btn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    }
+
+    function scrollToId(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ---------------------------------------------------------------------------
+    // CODE SNIPPET GENERATOR
+    // ---------------------------------------------------------------------------
+    function updateCodeSnippet(mode) {
+      let cssBlock = "";
+      if (mode === 'beam') {
+        cssBlock = `/* Concept 1: Telemetry Laser Beam Border Sweep */
+.reveal-beam-card {
+  position: relative;
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  transition: opacity 0.5s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+.reveal-beam-card.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+.reveal-beam-card::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 22px;
+  background: conic-gradient(from 0deg at 50% 50%, transparent 270deg, var(--accent) 340deg, #FFFFFF 360deg);
+  opacity: 0;
+  animation: laserSweep 2.2s linear infinite;
+}
+.reveal-beam-card.is-visible::before { opacity: 1; }
+@keyframes laserSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+      } else if (mode === 'spatial-3d') {
+        cssBlock = `/* Concept 2: Spatial 3D Holographic Docking */
+.reveal-spatial-card {
+  opacity: 0;
+  transform: perspective(1200px) rotateX(24deg) translate3d(0, 70px, -100px) scale(0.9);
+  filter: blur(8px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-spatial-card.is-visible {
+  opacity: 1;
+  transform: perspective(1200px) rotateX(0deg) translate3d(0, 0, 0) scale(1);
+  filter: blur(0px);
+}`;
+      } else if (mode === 'scramble') {
+        cssBlock = `/* Concept 3: Cybernetic Byte Decrypt & Scanline */
+.reveal-scramble-card {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  border-left: 3px solid transparent;
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+.reveal-scramble-card.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  border-left-color: var(--accent);
+}
+/* Plus lightweight 25-line text scramble hook for titles */`;
+      } else {
+        cssBlock = `/* Concept 4: Telemetric Radar Ping & Gauge Sweep */
+.reveal-radar-card {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0) scale(0.97);
+  transition: opacity 0.5s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-radar-card.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+.metric-progress-fill {
+  width: 0%;
+  transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+}
+.reveal-radar-card.is-visible .metric-progress-fill {
+  width: var(--target-width);
+}`;
+      }
+
+      document.getElementById('live-code-snippet').textContent = cssBlock.trim();
+    }
+
+    function copyGeneratedCode() {
+      const code = document.getElementById('live-code-snippet').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.code-copy-btn');
+        btn.textContent = '✓ Copied to Clipboard!';
+        setTimeout(() => {
+          btn.textContent = 'Copy Code to Clipboard';
+        }, 2200);
+      });
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      initObserver();
+      updateCodeSnippet('beam');
+    });
+  </script>
+</body>
+</html>

@@ -4,13 +4,13 @@ import { CtaCopyButton } from "@/components/CtaCopyButton";
 
 interface CtaSectionProps {
   email?: string;
-  headline?: string;
+  headline?: React.ReactNode;
   subheadline?: string;
 }
 
 export function CtaSection({
   email = "vrajclerk04@gmail.com",
-  headline = "Interested in engineering collaboration or systems architecture?",
+  headline,
   subheadline = "Bringing production experience in Python, FastAPI, AWS, and distributed backend systems. Always interested in discussing technical architectures, engineering challenges, and impactful opportunities.",
 }: CtaSectionProps) {
 
@@ -59,10 +59,14 @@ export function CtaSection({
 
           {/* Headline with Fraunces Serif Italic Accent */}
           <h2 className="text-3xl sm:text-4xl lg:text-[46px] font-extrabold tracking-tight text-foreground leading-[1.12] text-balance">
-            Interested in connecting or{" "}
-            <span className="font-serif italic font-normal text-accent underline decoration-accent/30 underline-offset-8">
-              collaborating?
-            </span>
+            {headline || (
+              <>
+                Interested in connecting or{" "}
+                <span className="font-serif italic font-normal text-accent underline decoration-accent/30 underline-offset-8">
+                  collaborating?
+                </span>
+              </>
+            )}
           </h2>
 
           {/* Subheadline Narrative */}

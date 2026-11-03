@@ -1,6 +1,27 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useSyncExternalStore } from "react";
+
+function subscribeTheme(callback: () => void) {
+  window.addEventListener("theme-change", callback);
+  window.addEventListener("storage", callback);
+  return () => {
+    window.removeEventListener("theme-change", callback);
+    window.removeEventListener("storage", callback);
+  };
+}
+
+function getThemeSnapshot(): "light" | "dark" {
+  if (typeof document === "undefined") return "dark";
+  const isDark =
+    document.documentElement.classList.contains("dark") ||
+    document.documentElement.getAttribute("data-theme") === "dark";
+  return isDark ? "dark" : "light";
+}
+
+function getServerSnapshot(): "light" | "dark" {
+  return "dark";
+}
 
 /**
  * ThemeToggle component.
@@ -11,52 +32,20 @@ import React, { useState, useEffect } from "react";
  * 2. Dark theme is default.
  * 3. Persists user choice in localStorage.
  * 4. Toggles .dark class and data-theme attribute on <html> element instantly.
+ * 5. Uses useSyncExternalStore to eliminate cascading renders and hydration warnings.
  */
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const isEnabled = process.env.NEXT_PUBLIC_ENABLE_THEME_TOGGLE === "true";
 
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-
-    const syncTheme = () => {
-      const isDark =
-        document.documentElement.classList.contains("dark") ||
-        document.documentElement.getAttribute("data-theme") === "dark";
-      setTheme(isDark ? "dark" : "light");
-    };
-
-    // Initial sync with DOM (set by inline script in layout.tsx)
-    syncTheme();
-
-    const handleThemeChange = (e: Event) => {
-      const customEvent = e as CustomEvent<"light" | "dark">;
-      if (customEvent.detail) {
-        setTheme(customEvent.detail);
-      } else {
-        syncTheme();
-      }
-    };
-
-    window.addEventListener("theme-change", handleThemeChange);
-    window.addEventListener("storage", syncTheme);
-
-    return () => {
-      window.removeEventListener("theme-change", handleThemeChange);
-      window.removeEventListener("storage", syncTheme);
-    };
-  }, []);
+  const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getServerSnapshot);
 
   if (!isEnabled) {
     return null;
   }
 
-  const isDark = mounted ? theme === "dark" : true;
+  const isDark = theme === "dark";
 
   const toggleTheme = () => {
-    // Check actual DOM state as ground truth to prevent any desync
     const isCurrentlyDark =
       document.documentElement.classList.contains("dark") ||
       document.documentElement.getAttribute("data-theme") === "dark";
@@ -76,7 +65,6 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       // Ignore localStorage errors
     }
 
-    setTheme(nextTheme);
     window.dispatchEvent(new CustomEvent("theme-change", { detail: nextTheme }));
   };
 
@@ -84,7 +72,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     <button
       type="button"
       onClick={toggleTheme}
-      aria-label={`Switch to ${isDark ? "light" : "dark"} mode (currently ${mounted ? theme : "dark"})`}
+      aria-label={`Switch to ${isDark ? "light" : "dark"} mode (currently ${theme})`}
       suppressHydrationWarning
       className={`group relative flex h-9 w-9 items-center justify-center rounded-full bg-muted/60 text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${className}`}
     >

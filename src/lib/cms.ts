@@ -15,7 +15,7 @@
  */
 
 import { cache } from "react";
-import type { Where } from "payload";
+import type { Payload, Where } from "payload";
 import type {
   Category,
   HomepageSetting,
@@ -81,14 +81,14 @@ function hasDatabaseConfigured(): boolean {
 }
 
 // Singleton payload instance promise to avoid repeated dynamic imports
-let cachedPayloadPromise: Promise<any> | null = null;
+let cachedPayloadPromise: Promise<Payload | null> | null = null;
 
-async function getSafePayloadInstance() {
+async function getSafePayloadInstance(): Promise<Payload | null> {
   if (!hasDatabaseConfigured()) {
     return null;
   }
   if (!cachedPayloadPromise) {
-    cachedPayloadPromise = (async () => {
+    cachedPayloadPromise = (async (): Promise<Payload | null> => {
       try {
         const { default: configPromise } = await import("@payload-config");
         const { getPayload } = await import("payload");

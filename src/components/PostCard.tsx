@@ -32,7 +32,7 @@ export function PostCard({ post, index }: PostCardProps) {
   const displayIndex = index !== undefined ? String(index + 1).padStart(2, "0") : null;
 
   return (
-    <article className="group relative flex flex-col justify-between rounded-3xl border border-border/80 dark:border-white/10 bg-card/90 dark:bg-[#131720]/90 p-6 sm:p-8 shadow-xs backdrop-blur-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/10 hover:border-accent/60 dark:hover:border-accent/40 overflow-hidden">
+    <article className="group relative flex flex-col justify-between h-full w-full rounded-3xl border border-border/80 dark:border-white/10 bg-card/90 dark:bg-[#131720]/90 p-6 sm:p-8 shadow-xs backdrop-blur-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/10 hover:border-accent/60 dark:hover:border-accent/40 overflow-hidden">
       {/* Background Radial Glow */}
       <div
         aria-hidden="true"
@@ -52,7 +52,7 @@ export function PostCard({ post, index }: PostCardProps) {
       />
 
       {/* Top Content Body */}
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col flex-1">
         {/* Editorial Telemetry Bar */}
         <div className="flex items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2.5 flex-wrap">
@@ -106,7 +106,7 @@ export function PostCard({ post, index }: PostCardProps) {
 
         {/* Topic Tag Chips */}
         {tags.length > 0 && (
-          <div className="mt-5 flex flex-wrap gap-1.5">
+          <div className="mt-auto pt-5 flex flex-wrap gap-1.5">
             {tags.slice(0, 4).map((tag, tIdx) => (
               <span
                 key={tag.id || tag.name || tIdx}

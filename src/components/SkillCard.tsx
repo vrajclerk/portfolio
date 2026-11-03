@@ -120,13 +120,13 @@ function getCategoryConfig(category: string): CategoryConfig {
   };
 }
 
-export function SkillCard({ group, index }: SkillCardProps) {
+export function SkillCard({ group }: SkillCardProps) {
   const config = getCategoryConfig(group.category);
   const itemCount = group.items?.length || 0;
 
   return (
     <article
-      className={`group relative flex flex-col justify-between rounded-3xl border border-border/80 dark:border-white/10 bg-card/90 dark:bg-[#131720]/90 p-6 sm:p-7 shadow-xs backdrop-blur-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/5 ${config.borderColor} overflow-hidden`}
+      className={`group relative flex flex-col justify-between h-full w-full rounded-3xl border border-border/80 dark:border-white/10 bg-card/90 dark:bg-[#131720]/90 p-6 sm:p-7 shadow-xs backdrop-blur-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/5 ${config.borderColor} overflow-hidden`}
     >
       {/* Background Radial Ambient Glow on Hover */}
       <div
@@ -146,7 +146,7 @@ export function SkillCard({ group, index }: SkillCardProps) {
         className="pointer-events-none absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent/0 to-transparent transition-all duration-500 group-hover:via-accent"
       />
 
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col flex-1">
         {/* Header Pod: Category Icon + Title + Count Badge */}
         <div className="flex items-start justify-between gap-3 mb-5">
           <div className="flex items-center gap-3">
@@ -204,17 +204,6 @@ export function SkillCard({ group, index }: SkillCardProps) {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Bottom Sub-Footnote */}
-      <div className="relative z-10 mt-6 pt-3.5 border-t border-border/40 dark:border-white/5 flex items-center justify-between text-[11px] font-mono text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Production Tested</span>
-        </span>
-        <span className="text-muted-foreground/50">
-          {index !== undefined ? `0${index + 1}` : "CAPABILITY"}
-        </span>
       </div>
     </article>
   );
