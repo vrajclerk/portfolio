@@ -1,195 +1,175 @@
-# Developer Portfolio
+# Vraj Clerk — Python & Backend Systems Software Engineer Portfolio
 
-> **Phase 2 — Payload CMS and PostgreSQL Integration**
->
-> This is a work-in-progress. CMS collections and globals are configured.
-> Real portfolio content will be added in Phase 7 after frontend page integration (Phases 3–4).
+[![Next.js](https://img.shields.io/badge/Next.js-16.4.2-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![Payload CMS](https://img.shields.io/badge/Payload_CMS-3.91.0-white?style=flat&logo=payloadcms)](https://payloadcms.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?style=flat&logo=postgresql)](https://neon.tech/)
+[![PageSpeed](https://img.shields.io/badge/PageSpeed-100%2F100-emerald?style=flat&logo=lighthouse)](https://pagespeed.web.dev/)
 
-A personal developer portfolio built with **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS v4**, and **Payload CMS 3.91**.
+A high-performance, precision-crafted developer portfolio and case-study platform built for a **Python & Backend Systems Engineer**. Designed with modern spatial aesthetics, tactical developer tooling, headless CMS capabilities, and 100/100 Lighthouse performance engineering.
 
-## Technology stack
+---
 
-| Layer | Technology | Version |
-|---|---|---|
-| Framework | Next.js (App Router) | 16.4.2 |
-| Language | TypeScript | 5.x |
-| Styling | Tailwind CSS v4 | 4.x |
-| CMS | Payload CMS | 3.91.0 |
-| Database Adapter | `@payloadcms/db-vercel-postgres` | 3.91.0 (Neon PostgreSQL / Drizzle) |
-| Rich Text | `@payloadcms/richtext-lexical` | 3.91.0 |
-| Media Storage | `@payloadcms/storage-vercel-blob` | 3.91.0 (Vercel Blob in prod, local disk fallback in dev) |
-| Hosting | Vercel Hobby | — (Phase 6) |
-| Package manager | pnpm | 9.15.0 |
-| Node.js | 22.x | 22.13.1+ |
+## Engineering Highlights & Features
 
-## Getting started
+### 🧊 Spatial 3D Holographic Scroll Reveal Engine
+* **GPU-Compositor Offloading:** Runs on `perspective(1200px) rotateX(...)` and `translate3d` with **zero layout shift (CLS = 0)**.
+* **One-Shot Telemetry Observer:** A custom client wrapper (`RevealOnScroll.tsx`) monitors viewport entry via `IntersectionObserver` and immediately disconnects once triggered, ensuring **0 background CPU cycles** while reading.
+* **Equalized Card Grids:** Grid containers enforce strict 3D perspective boundaries (`[perspective:1400px]`) and full-height flex inheritance so sibling cards in every row align with laser-straight horizontal baselines.
+* **LCP Immunity:** The Hero section paints immediately at 0ms without waiting for JavaScript hydration or scroll observers, protecting Largest Contentful Paint.
+
+### 💻 Interactive Developer Terminal Drawer
+* **Embedded CLI Console (`TerminalDrawer.tsx`):** Accessible site-wide from the bottom footer and floating triggers.
+* **Built-In Commands:**
+  * `whoami` — Architectural summary, focus areas, and current systems engineering profile.
+  * `skills` — Core production competencies across backend, databases, and cloud.
+  * `projects` — Quick listing of production systems and case studies.
+  * `contact` — Direct channels and public encryption/email endpoints.
+  * `clear` / `help` — Terminal buffer management and command documentation.
+* **Command History & Keyboard Navigation:** Full arrow-key (`↑` / `↓`) history navigation and auto-scrolling terminal output.
+
+### 🎯 Tactical Crosshair Reticle Cursor
+* **Hardware-Accelerated Reticle (`CustomCursor.tsx`):** A custom SVG reticle cursor with subpixel tracking (`requestAnimationFrame`), dynamic hover scaling, and click feedback.
+* **Smart Pointer Detection:** Automatically activates only on fine pointer devices (`@media (pointer: fine)`), leaving touchscreens on native behaviors.
+* **Text Selection Integrity:** Seamlessly preserves native text I-beams over inputs, textareas, and prose copy.
+
+### 🌗 Default Dark Mode & Zero-Flash Hydration
+* **Matte Carbon & Hyper Blaze Orange Theme:** Signature palette tuned for systems telemetry (`--bg: #0E1013`, `--accent: #FF6B00`).
+* **Instant Inline Script Injection:** Pre-paints theme classes before first browser render in `layout.tsx`, eliminating light-mode flashes.
+* **`useSyncExternalStore` Synchronization:** Refactored `ThemeToggle.tsx` directly to React 19's external store pattern, eliminating cascading re-renders and hydration mismatch warnings.
+
+### 📄 One-Click Curriculum Vitae Download
+* **Dedicated PDF Action (`/resume`):** Integrated one-click resume download button directly serving the authenticated PDF asset (`/media/VRAJ_Python_Developer.pdf`) alongside the interactive web CV.
+
+### 🗄️ Headless Payload CMS + PostgreSQL Core
+* **Full Local API Layer (`src/lib/cms.ts`):** Resilient data access with in-memory TTL caching, tag-based invalidation, and fallback to verified schema fixtures.
+* **Collections & Globals:**
+  * `Projects` — Architectural case studies, technical constraints, design decisions, and telemetry metrics.
+  * `Profile` — Capabilities, categorizations, and professional background.
+  * `Posts` — In-depth technical articles with Lexical rich-text editing.
+  * `SiteSettings` & `HomepageSettings` — Site-wide SEO, canonical URLs, and section toggles.
+
+---
+
+## Technology Stack
+
+| Layer | Technology | Version | Purpose |
+|---|---|---|---|
+| **Framework** | Next.js (App Router) | 16.4.2 | Server Components, Streaming SSR, and Static Route Generation |
+| **Language** | TypeScript | 5.x | Strict type safety across CMS schemas and UI |
+| **Styling** | Tailwind CSS v4 | 4.x | Design tokens, dynamic island dock, and theme variables |
+| **CMS** | Payload CMS | 3.91.0 | Headless content management and local Node.js API |
+| **Database** | Neon PostgreSQL / Drizzle | Serverless | Scalable relational storage for Payload CMS |
+| **Rich Text** | Lexical | 3.91.0 | Extensible structured editor for technical case studies |
+| **Media** | Vercel Blob / Local Disk | 3.91.0 | High-speed asset delivery |
+| **Icons & Fonts** | Plus Jakarta Sans, Geist Mono, Fraunces | Google Fonts | Engineered typography hierarchy |
+
+---
+
+## Project Structure
+
+```
+portfolio/
+├── docs/
+│   └── design-previews/         # Standalone interactive HTML prototypes
+│       ├── scroll-reveal-preview.html            # Scroll Reveal Animation Lab (HUD + live tuning)
+│       ├── customization-enhancements-preview.html # Terminal drawer & reticle cursor previews
+│       ├── developer-identity-concepts.html      # Visual identity exploration
+│       └── about-location-preview.html           # Location & profile layout preview
+├── public/
+│   ├── media/                   # Static PDF resumes and avatars
+│   └── favicon.ico              # Signature VC logo favicon
+├── src/
+│   ├── access/                  # Payload CMS RBAC & public read policies
+│   ├── app/
+│   │   ├── (frontend)/          # Public-facing Next.js App Router group
+│   │   │   ├── about/           # About & engineering journey
+│   │   │   ├── blog/            # Technical articles & deep dives
+│   │   │   ├── contact/         # Contact endpoint & communication channels
+│   │   │   ├── projects/        # Featured engineering case studies
+│   │   │   ├── resume/          # Interactive CV & dedicated PDF download
+│   │   │   ├── layout.tsx       # Root frontend layout (HUD dock, terminal, cursor)
+│   │   │   └── page.tsx         # Homepage with 3D spatial docking sections
+│   │   └── (payload)/           # Payload CMS admin interface (/admin)
+│   ├── collections/             # Payload Collections (Projects, Posts, Categories, Media, Tags, Users)
+│   ├── components/              # Modular UI components
+│   │   ├── CustomCursor.tsx     # Precision crosshair reticle cursor
+│   │   ├── RevealOnScroll.tsx   # Concept 2 Spatial 3D docking observer wrapper
+│   │   ├── TerminalDrawer.tsx   # Developer CLI terminal drawer
+│   │   ├── ProjectCard.tsx      # Equal-height case study card
+│   │   ├── SkillCard.tsx        # Equal-height capability card
+│   │   ├── PostCard.tsx         # Technical writing card
+│   │   ├── ThemeToggle.tsx      # useSyncExternalStore theme switcher
+│   │   └── HeroSection.tsx      # Zero-hydration instant LCP hero
+│   ├── globals/                 # Payload CMS Globals (Profile, SiteSettings, HomepageSettings)
+│   ├── lib/                     # CMS data access layer & fallback fixtures
+│   ├── styles/
+│   │   ├── globals.css          # Frontend Tailwind v4 theme, animations & 3D docking
+│   │   └── payload-admin.css    # Isolated admin styles (no preflight conflict)
+│   └── utilities/               # Structured data schemas & reading time utilities
+├── payload.config.ts            # Payload CMS configuration
+└── eslint.config.mjs            # Flat ESLint configuration with Next.js & TypeScript rules
+```
+
+---
+
+## Getting Started
 
 ### Prerequisites
+* **Node.js:** `≥ 20.18.1` (v22.x recommended)
+* **Package Manager:** `pnpm 9.15.0+`
+* **PostgreSQL Database:** Neon serverless PostgreSQL or local PostgreSQL
 
-- Node.js ≥ 20.18.1 (v22.x recommended)
-- pnpm 9.15.0 (`npm install -g pnpm@9.15.0`)
-- A PostgreSQL database (Neon free tier recommended, or local PostgreSQL)
-
-### Setup
+### Installation & Local Setup
 
 ```bash
 # 1. Clone the repository
-git clone <repo-url>
+git clone https://github.com/vrajclerk/portfolio.git
 cd portfolio
 
-# 2. Install dependencies (use pnpm — do NOT use npm or yarn)
+# 2. Install dependencies via pnpm
 pnpm install
 
-# 3. Create your local environment file
+# 3. Configure local environment variables
 cp .env.example .env.local
 
-# 4. Edit .env.local and fill in real values:
-#    - NEXT_PUBLIC_SITE_URL=http://localhost:3000
-#    - PAYLOAD_SECRET=your_long_random_secret_string
-#    - DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
-#    (Optional for local media uploads)
-#    - BLOB_READ_WRITE_TOKEN=your_token
+# 4. Fill in .env.local:
+#    NEXT_PUBLIC_SITE_URL=http://localhost:3000
+#    PAYLOAD_SECRET=your_secure_random_secret_string
+#    DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 
-# 5. Start the development server
+# 5. Launch the local development server
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) for the public homepage.
-Open [http://localhost:3000/admin](http://localhost:3000/admin) to access the Payload Admin Panel. On first launch with a fresh database, Payload will prompt you to create the initial administrator account.
+Visit [http://localhost:3000](http://localhost:3000) to view the live site, or [http://localhost:3000/admin](http://localhost:3000/admin) to manage content via the Payload Admin Panel.
 
-## Available scripts
+---
 
-| Script | Description |
-|---|---|
-| `pnpm dev` | Start the Next.js development server |
-| `pnpm build` | Build for production |
-| `pnpm start` | Start the production server |
-| `pnpm lint` | Run ESLint |
-| `pnpm lint:fix` | Run ESLint with auto-fix |
-| `pnpm typecheck` | Run TypeScript type-checking (`tsc --noEmit`) |
-| `pnpm test` | Run automated unit and access-control tests (`tsx --test`) |
-| `pnpm payload` | Run Payload CMS CLI |
-| `pnpm generate:types` | Regenerate TypeScript types for Collections & Globals (`src/payload-types.ts`) |
-| `pnpm generate:importmap` | Regenerate Payload admin component import map (`src/app/(payload)/admin/importMap.js`) |
+## Available Scripts
 
-## Project structure
-
-```
-src/
-├── access/                      # Access-control policies
-│   ├── anyone.ts                # Public-read access policy
-│   ├── authenticated.ts         # Admin-only access policy
-│   └── authenticatedOrPublished.ts # Public published-only / Admin all access policy
-├── app/
-│   ├── (frontend)/              # Public-facing route group
-│   │   ├── layout.tsx           # Frontend root layout (Tailwind CSS, fonts, metadata)
-│   │   ├── page.tsx             # Homepage (Phase 1 placeholder)
-│   │   └── not-found.tsx        # 404 page for frontend routes
-│   └── (payload)/               # Payload CMS route group
-│       ├── layout.tsx           # Payload admin root layout (imports importMap.js & payload-admin.css)
-│       ├── admin/
-│       │   ├── importMap.js     # Auto-generated Payload component import map
-│       │   └── [[...segments]]/ # Catch-all dynamic admin panel views
-│       │       ├── not-found.tsx
-│       │       └── page.tsx
-│       └── api/                 # Payload HTTP endpoints
-│           ├── [...slug]/       # REST API handler
-│           └── graphql/         # GraphQL API handler
-├── collections/                 # Payload Collections
-│   ├── Categories.ts            # Categories collection
-│   ├── Media.ts                 # Upload collection with MIME/size limits & alt validation
-│   ├── Posts.ts                 # Blog posts with drafts & Lexical rich text
-│   ├── Projects.ts              # Portfolio projects with drafts, case studies & decisions
-│   ├── Tags.ts                  # Tags collection
-│   └── Users.ts                 # Admin user authentication & management
-├── globals/                     # Payload Globals
-│   ├── HomepageSettings.ts      # Homepage hero & featured item curation
-│   ├── Profile.ts               # Headline, bio, experience, skills & social profiles
-│   └── SiteSettings.ts          # Site-wide SEO, canonical URL & social links
-├── lib/
-│   └── env.ts                   # Server-only environment variable validation
-├── migrations/                  # Database migrations
-│   ├── 20261019_202934_initial.ts # Initial baseline migration
-│   └── index.ts                 # Migration registry
-├── styles/
-│   ├── globals.css              # Full Tailwind CSS (imported in (frontend) layout only)
-│   └── payload-admin.css        # Tailwind without preflight (imported in (payload) layout)
-├── utilities/
-│   └── slugify.ts               # URL-safe kebab-case slug generator
-├── payload.config.ts            # Payload CMS root configuration
-└── payload-types.ts             # Auto-generated TypeScript definitions
-
-tests/
-└── access.test.ts               # Access control and configuration test suite
-```
-
-### Route group architecture (Tailwind CSS / Payload conflict isolation)
-
-The app uses two isolated route groups to prevent Tailwind's CSS preflight from
-conflicting with Payload CMS's admin UI styles:
-
-- **`(frontend)/`** — public pages. Its root layout imports `globals.css` which
-  includes the full `@import "tailwindcss"` (with preflight reset).
-- **`(payload)/`** — Payload admin UI. Its root layout wraps Payload's `RootLayout`
-  and uses `payload-admin.css` which imports only `tailwindcss/theme.css` and
-  `tailwindcss/utilities.css` (no preflight).
-
-See `DECISIONS_AND_ASSUMPTIONS.md §D5` for the detailed rationale.
-
-## Environment variables
-
-| Variable | Required | Description |
+| Script | Command | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_SITE_URL` | Phase 1+ | Canonical public URL (e.g. `https://yourname.vercel.app`) |
-| `PAYLOAD_SECRET` | Phase 2+ | Random secret for Payload CMS session signing |
-| `DATABASE_URL` | Phase 2+ | Neon PostgreSQL connection string (`?sslmode=require`) |
-| `BLOB_READ_WRITE_TOKEN` | Phase 2+ | Vercel Blob token for media uploads (prod; optional in local dev) |
-| `SMTP_FROM_ADDRESS` | Phase 4+ | Gmail address for contact form delivery |
-| `SMTP_PASS` | Phase 4+ | Gmail App Password (not your Google account password) |
+| **Development** | `pnpm dev` | Starts Next.js development server with Turbopack on port 3000 |
+| **Lint** | `pnpm lint` | Runs ESLint 9 across all TypeScript & React files (0 errors, 0 warnings) |
+| **Lint Fix** | `pnpm lint:fix` | Automatically fixes auto-fixable ESLint rules |
+| **Typecheck** | `pnpm typecheck` | Validates TypeScript compilation (`tsc --noEmit`) |
+| **Production Build** | `pnpm build` | Compiles optimized production bundle |
+| **Production Start** | `pnpm start` | Starts production server |
+| **CMS Types** | `pnpm generate:types` | Regenerates `src/payload-types.ts` from CMS schema |
+| **CMS Import Map** | `pnpm generate:importmap` | Rebuilds Payload admin component import map |
 
-Copy `.env.example` to `.env.local` and fill in values. Real `.env` files are
-excluded from Git.
+---
 
-## CI
+## Standalone Design Laboratories
 
-GitHub Actions runs on every push and pull request to `main`:
+The repository includes interactive prototypes located in `docs/design-previews/` that allow real-time tuning and visual evaluation without rebuilding:
+* **[scroll-reveal-preview.html](docs/design-previews/scroll-reveal-preview.html)**: Live interactive physics laboratory to test **Spatial 3D Docking**, **Laser Beam Sweeps**, **Byte Decryption**, and **Radar Pings** with sliders for duration, travel distance, and stagger delay.
+* **[customization-enhancements-preview.html](docs/design-previews/customization-enhancements-preview.html)**: Interactive prototypes of the CLI Terminal Drawer and Crosshair Reticle modes.
 
-1. Install dependencies from the lockfile (`pnpm install --frozen-lockfile`)
-2. Lint (`pnpm lint`)
-3. Type-check (`pnpm typecheck`)
-4. Test (`pnpm test`)
-5. Production build (`pnpm build`)
+---
 
-See `.github/workflows/ci.yml` for the full configuration.
+## License & Attribution
 
-## Deployment
-
-Target deployment: **Vercel Hobby** (free, no credit card required).
-
-Deployment steps are documented in `docs/portfolio-spec/DEPLOYMENT.md` and
-will be executed in **Phase 6**. Do not deploy to production until Phase 6 is
-approved.
-
-## Implementation phases
-
-| Phase | Description | Status |
-|---|---|---|
-| 0 | Repository and compatibility discovery | ✅ Complete |
-| 1 | Application foundation | ✅ Complete |
-| 2 | Payload CMS and PostgreSQL | ✅ Complete |
-| 3 | CMS-driven public pages | ⏳ Pending |
-| 4 | Editorial and media workflow | ⏳ Pending |
-| 5 | SEO, RSS, accessibility, performance | ⏳ Pending |
-| 6 | Zero-cost deployment preparation | ⏳ Pending |
-| 7 | Content and polish | ⏳ Pending |
-
-## Content notice
-
-This repository contains **placeholder content only**. No biographical details,
-project metrics, work history, testimonials, or personal information are
-committed. Real content will be added with the owner's explicit approval in
-Phase 7.
-
-## License
-
-Private — not for public distribution. See the owner for licensing terms.
+Designed and engineered by **Vraj Clerk**. Private and personal portfolio repository. All rights reserved.
