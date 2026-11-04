@@ -11,6 +11,7 @@ import { Posts } from "@/collections/Posts";
 import { Projects } from "@/collections/Projects";
 import { Tags } from "@/collections/Tags";
 import { Users } from "@/collections/Users";
+import { Inquiries } from "@/collections/Inquiries";
 
 import { HomepageSettings } from "@/globals/HomepageSettings";
 import { Profile } from "@/globals/Profile";
@@ -28,7 +29,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Categories, Tags, Posts, Projects],
+  collections: [Users, Media, Categories, Tags, Posts, Projects, Inquiries],
   globals: [SiteSettings, Profile, HomepageSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "development_fallback_secret_must_be_changed",
