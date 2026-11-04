@@ -22,6 +22,7 @@ export function ContactForm({ recipientEmail }: ContactFormProps) {
     subject: "",
     message: "",
   });
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -42,11 +43,44 @@ export function ContactForm({ recipientEmail }: ContactFormProps) {
     setStatus("submitting");
     setErrorMessage("");
 
-    // Simulate reliable submission delay
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          company: formData.company.trim(),
+          topic: selectedType,
+          subject: formData.subject.trim(),
+          message: formData.message.trim(),
+          website: honeypot,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setStatus("error");
+        setErrorMessage(
+          data.error || "Failed to deliver inquiry. Please try again or email directly."
+        );
+        return;
+      }
+
       setStatus("success");
       setFormData({ name: "", email: "", company: "", subject: "", message: "" });
-    }, 700);
+      setHoneypot("");
+    } catch (err) {
+      console.error("[ContactForm] Error submitting inquiry:", err);
+      setStatus("error");
+      setErrorMessage(
+        "Network error occurred. Please check your connection or email directly to " +
+          recipientEmail
+      );
+    }
   };
 
   return (
@@ -126,6 +160,18 @@ export function ContactForm({ recipientEmail }: ContactFormProps) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Anti-spam honeypot field (hidden from real users) */}
+            <input
+              type="text"
+              name="website"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              style={{ display: "none" }}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+            />
+
             {status === "error" && errorMessage && (
               <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3.5 text-xs text-red-600 dark:text-red-400 animate-fade-in">
                 {errorMessage}
