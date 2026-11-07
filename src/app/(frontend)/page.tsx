@@ -155,7 +155,7 @@ export default async function HomePage() {
        * Featured Projects Section (Optimized with content-visibility)
        * --------------------------------------------------------------------- */}
       {showProjects && (
-        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:1px_500px]">
+        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:auto_500px]">
           <RevealOnScroll variant="header">
             <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-8 border-b border-border pb-4">
               <div className="header-reveal-beam" />
@@ -197,7 +197,7 @@ export default async function HomePage() {
        * Practical Skills & Technology Groups Section
        * --------------------------------------------------------------------- */}
       {showSkills && Array.isArray(profile.skills) && profile.skills.length > 0 && (
-        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
+        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:auto_400px]">
           <RevealOnScroll variant="header">
             <div className="relative mb-8 border-b border-border pb-4">
               <div className="header-reveal-beam" />
@@ -235,7 +235,7 @@ export default async function HomePage() {
        * Latest Articles / Technical Writing Section
        * --------------------------------------------------------------------- */}
       {showPosts && (
-        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:1px_450px]">
+        <section className="mx-auto max-w-6xl w-full px-4 sm:px-6 lg:px-8 [content-visibility:auto] [contain-intrinsic-size:auto_450px]">
           <RevealOnScroll variant="header">
             <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-8 border-b border-border pb-4">
               <div className="header-reveal-beam" />

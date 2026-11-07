@@ -1,8 +1,6 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { EmptyState } from "@/components/EmptyState";
-import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectsFilterGrid } from "@/components/ProjectsFilterGrid";
 import { getPublishedProjects, getSiteSettings } from "@/lib/cms";
 import { generateBreadcrumbSchema } from "@/utilities/structuredData";
 
@@ -33,14 +31,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const filterTabs = [
-  { label: "All Projects", value: "all" },
-  { label: "Professional", value: "professional" },
-  { label: "Personal", value: "personal" },
-  { label: "Open Source", value: "open-source" },
-  { label: "Experiments", value: "experiment" },
-];
-
 async function ProjectsList({
   searchParams,
 }: {
@@ -49,51 +39,10 @@ async function ProjectsList({
   const { type: rawType } = await searchParams;
   const currentType = rawType || "all";
 
-  const projects = await getPublishedProjects({
-    projectType: currentType === "all" ? undefined : currentType,
-  });
+  // Fetch all published projects once so client-side filter can query instantly
+  const projects = await getPublishedProjects();
 
-  return (
-    <>
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 mb-8 border-b border-border pb-4" role="tablist">
-        {filterTabs.map((tab) => {
-          const isActive = currentType === tab.value;
-          return (
-            <Link
-              key={tab.value}
-              href={tab.value === "all" ? "/projects" : `/projects?type=${tab.value}`}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                isActive
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-              }`}
-              role="tab"
-              aria-selected={isActive}
-            >
-              {tab.label}
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Project Grid / Empty State */}
-      {projects.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-          {projects.map((project, idx) => (
-            <ProjectCard key={project.id} project={project} index={idx} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState
-          title={`No ${currentType === "all" ? "" : currentType} projects found`}
-          description="There are currently no published projects in this category."
-          actionHref="/projects"
-          actionLabel="View all projects"
-        />
-      )}
-    </>
-  );
+  return <ProjectsFilterGrid initialProjects={projects} initialType={currentType} />;
 }
 
 export default async function ProjectsPage({

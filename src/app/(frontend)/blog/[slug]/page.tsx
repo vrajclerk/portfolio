@@ -8,9 +8,12 @@ import { Badge } from "@/components/Badge";
 import { ProjectCard } from "@/components/ProjectCard";
 import { PreviewBanner } from "@/components/PreviewBanner";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
+import { ReadingProgressBar } from "@/components/ReadingProgressBar";
+import { TableOfContents } from "@/components/TableOfContents";
 import { getPostBySlug, getPublishedPosts, getSiteSettings } from "@/lib/cms";
 import type { Category, Media, Project, Tag } from "@/payload-types";
 import { calculateReadingTime, formatReadingTime } from "@/utilities/readingTime";
+import { extractHeadingsFromLexical } from "@/utilities/toc";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
@@ -58,13 +61,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `/blog/${slug}`,
       type: "article",
       publishedTime: post.publishedAt || undefined,
-      images: coverImageUrl ? [{ url: coverImageUrl }] : undefined,
+      ...(coverImageUrl ? { images: [{ url: coverImageUrl }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${siteName}`,
       description,
-      images: coverImageUrl ? [coverImageUrl] : undefined,
+      ...(coverImageUrl ? { images: [coverImageUrl] } : {}),
     },
   };
 }
@@ -117,6 +120,7 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
       : null;
 
   const readingTime = calculateReadingTime(post.content);
+  const headings = extractHeadingsFromLexical(post.content);
   const formattedPublishDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -137,98 +141,106 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       {isDraftMode && <PreviewBanner exitUrl={`/blog/${slug}`} />}
-      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* Back Link */}
-      <div className="mb-8">
-        <Link
-          href="/blog"
-          className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <svg
-            className="mr-2 h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-          </svg>
-          Back to all articles
-        </Link>
-      </div>
-
-      {/* Article Header */}
-      <header className="border-b border-border pb-8">
-        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mb-4">
-          {category && <Badge variant="outline">{category.name}</Badge>}
-          <time dateTime={post.publishedAt || undefined}>{formattedPublishDate}</time>
-          <span>•</span>
-          <span>{formatReadingTime(readingTime)}</span>
-        </div>
-
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-          {post.title}
-        </h1>
-
-        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-          {post.excerpt}
-        </p>
-      </header>
-
-      {/* Featured Cover Image */}
-      {coverImage?.url && (
-        <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border/80 bg-muted shadow-md">
-          <Image
-            src={coverImage.url}
-            alt={coverImage.alt || post.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 768px"
-            className="object-cover object-center"
-            priority
-          />
-        </div>
-      )}
-
-      {/* Main Body */}
-      <div className="py-10">
-        <RichTextRenderer data={post.content} />
-      </div>
-
-      {/* Article Footer & Tags */}
-      <footer className="mt-8 pt-8 border-t border-border">
-        {tags.length > 0 && (
-          <div className="mb-8">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-2">
-              Tagged In
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="rounded-md bg-muted px-2.5 py-1 text-xs font-mono text-muted-foreground"
+      <ReadingProgressBar />
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="flex flex-col xl:flex-row xl:gap-14 justify-center items-start">
+          <article className="max-w-3xl w-full">
+            {/* Back Link */}
+            <div className="mb-8">
+              <Link
+                href="/blog"
+                className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <svg
+                  className="mr-2 h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
                 >
-                  #{tag.name}
-                </span>
-              ))}
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Back to all articles
+              </Link>
             </div>
-          </div>
-        )}
 
-        {/* Related Projects */}
-        {relatedProjects.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-border">
-            <h2 className="text-xl font-bold tracking-tight text-foreground mb-6">
-              Related Case Studies
-            </h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {relatedProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+            {/* Article Header */}
+            <header className="border-b border-border pb-8">
+              <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mb-4">
+                {category && <Badge variant="outline">{category.name}</Badge>}
+                <time dateTime={post.publishedAt || undefined}>{formattedPublishDate}</time>
+                <span>•</span>
+                <span>{formatReadingTime(readingTime)}</span>
+              </div>
+
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                {post.title}
+              </h1>
+
+              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                {post.excerpt}
+              </p>
+            </header>
+
+            {/* Featured Cover Image */}
+            {coverImage?.url && (
+              <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border/80 bg-muted shadow-md">
+                <Image
+                  src={coverImage.url}
+                  alt={coverImage.alt || post.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 768px"
+                  className="object-cover object-center"
+                  priority
+                />
+              </div>
+            )}
+
+            {/* Main Body */}
+            <div className="py-10">
+              <RichTextRenderer data={post.content} />
             </div>
-          </div>
-        )}
-      </footer>
-    </article>
+
+            {/* Article Footer & Tags */}
+            <footer className="mt-8 pt-8 border-t border-border">
+              {tags.length > 0 && (
+                <div className="mb-8">
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-2">
+                    Tagged In
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <span
+                        key={tag.id}
+                        className="rounded-md bg-muted px-2.5 py-1 text-xs font-mono text-muted-foreground"
+                      >
+                        #{tag.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Related Projects */}
+              {relatedProjects.length > 0 && (
+                <div className="mt-12 pt-8 border-t border-border">
+                  <h2 className="text-xl font-bold tracking-tight text-foreground mb-6">
+                    Related Case Studies
+                  </h2>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    {relatedProjects.map((project) => (
+                      <ProjectCard key={project.id} project={project} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </footer>
+          </article>
+
+          {/* Sticky Desktop Table of Contents */}
+          <TableOfContents headings={headings} />
+        </div>
+      </div>
     </>
   );
 }
