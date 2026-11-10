@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { getSiteSettings } from "@/lib/cms";
 import { generateBreadcrumbSchema } from "@/utilities/structuredData";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 import { ContactForm } from "./ContactForm";
 import { CopyEmailButton } from "@/components/CopyEmailButton";
 
@@ -36,7 +37,7 @@ export default async function ContactPage() {
   const siteSettings = await getSiteSettings();
   const publicEmail = siteSettings.publicEmail || "vrajclerk04@gmail.com";
   const socialLinks = siteSettings.socialLinks || [];
-  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const siteUrl = getLiveSiteUrl(siteSettings.siteUrl);
 
   const breadcrumbSchema = generateBreadcrumbSchema(
     [

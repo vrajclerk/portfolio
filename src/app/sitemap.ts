@@ -4,10 +4,11 @@ import {
   getPublishedProjects,
   getSiteSettings,
 } from "@/lib/cms";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const settings = await getSiteSettings();
-  const siteUrl = (settings.siteUrl || "http://localhost:3000").replace(/\/$/, "");
+  const siteUrl = getLiveSiteUrl(settings.siteUrl);
 
   const [projects, posts] = await Promise.all([
     getPublishedProjects(),

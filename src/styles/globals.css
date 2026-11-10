@@ -234,12 +234,12 @@ body {
 /* Floating Dynamic Island Dock Animations */
 @keyframes dockEntrance {
   from {
-    opacity: 0;
-    transform: translateY(-24px) scale(0.96);
+    opacity: 0.85;
+    transform: translateY(-8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -278,7 +278,7 @@ body {
 }
 
 .animate-dock-entrance {
-  animation: dockEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: dockEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .animate-dock-float {
@@ -287,6 +287,14 @@ body {
 
 .animate-border-beam {
   animation: borderBeamSweep 6s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@media (max-width: 640px) {
+  .animate-border-beam {
+    animation: none;
+  }
 }
 
 .animate-radar-wave-1 {

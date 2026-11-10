@@ -53,7 +53,6 @@ export default async function Image({
             bottom: 0,
             backgroundImage: "radial-gradient(circle at 20px 20px, rgba(255, 107, 0, 0.12) 2px, transparent 0)",
             backgroundSize: "40px 40px",
-            zIndex: 0,
           }}
         />
 
@@ -63,7 +62,6 @@ export default async function Image({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            zIndex: 1,
           }}
         >
           <div
@@ -111,7 +109,6 @@ export default async function Image({
             display: "flex",
             flexDirection: "column",
             gap: "20px",
-            zIndex: 1,
             maxWidth: "1040px",
           }}
         >
@@ -151,7 +148,6 @@ export default async function Image({
             justifyContent: "space-between",
             borderTop: "1px solid #2D333F",
             paddingTop: "24px",
-            zIndex: 1,
           }}
         >
           <div
@@ -182,7 +178,7 @@ export default async function Image({
                 Vraj Clerk
               </span>
               <span style={{ fontSize: "14px", color: "#9BA3AF", fontFamily: "monospace" }}>
-                Software Developer • Python &amp; Systems Architecture
+                Software Developer • Python & Systems Architecture
               </span>
             </div>
           </div>

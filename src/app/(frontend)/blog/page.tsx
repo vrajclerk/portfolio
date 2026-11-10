@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { BlogFilterGrid } from "@/components/BlogFilterGrid";
 import { getAllCategories, getPublishedPosts, getSiteSettings } from "@/lib/cms";
 import { generateBreadcrumbSchema } from "@/utilities/structuredData";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteSettings = await getSiteSettings();
@@ -60,7 +61,7 @@ export default async function BlogIndexPage({
   searchParams: Promise<{ category?: string; tag?: string }>;
 }) {
   const siteSettings = await getSiteSettings();
-  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const siteUrl = getLiveSiteUrl(siteSettings.siteUrl);
   const breadcrumbSchema = generateBreadcrumbSchema(
     [
       { name: "Home", path: "/" },

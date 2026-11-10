@@ -247,7 +247,7 @@ export function HeroSection({
                     src={avatarUrl || "/media/IMG_20240306_180503_775.webp"}
                     alt="Vraj Clerk"
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 420px"
+                    sizes="(max-width: 640px) 380px, (max-width: 1024px) 420px, 480px"
                     className="object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
                     priority
                     fetchPriority="high"

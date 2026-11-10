@@ -20,6 +20,7 @@ import {
   generatePersonSchema,
   generateWebsiteSchema,
 } from "@/utilities/structuredData";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 // Incremental Static Regeneration (1 hour TTL, invalidated on CMS change)
 export const revalidate = 3600;
@@ -68,7 +69,7 @@ export default async function HomePage() {
 
   const websiteSchema = generateWebsiteSchema({
     siteName: siteSettings.siteName || "Vraj Clerk",
-    siteUrl: siteSettings.siteUrl || "http://localhost:3000",
+    siteUrl: getLiveSiteUrl(siteSettings.siteUrl),
     description: siteSettings.defaultDescription,
   });
 

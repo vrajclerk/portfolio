@@ -12,6 +12,7 @@ import {
   generateBreadcrumbSchema,
   generatePersonSchema,
 } from "@/utilities/structuredData";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 import { fixtureProfile } from "@/lib/fixtures";
 
@@ -53,7 +54,7 @@ export default async function AboutPage() {
     getSiteSettings(),
   ]);
 
-  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const siteUrl = getLiveSiteUrl(siteSettings.siteUrl);
   const personSchema = generatePersonSchema({ profile, siteSettings });
   const breadcrumbSchema = generateBreadcrumbSchema(
     [

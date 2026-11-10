@@ -127,7 +127,7 @@ export function Header({
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-border/80 dark:border-white/10 text-muted-foreground md:hidden hover:text-foreground hover:bg-muted/60 transition-colors focus:outline-hidden"
+              className="flex h-10 w-10 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-border/80 dark:border-white/10 text-muted-foreground md:hidden hover:text-foreground hover:bg-muted/60 transition-colors focus:outline-hidden"
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle navigation menu"
             >

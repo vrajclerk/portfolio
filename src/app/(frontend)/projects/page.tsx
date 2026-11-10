@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ProjectsFilterGrid } from "@/components/ProjectsFilterGrid";
 import { getPublishedProjects, getSiteSettings } from "@/lib/cms";
 import { generateBreadcrumbSchema } from "@/utilities/structuredData";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteSettings = await getSiteSettings();
@@ -51,7 +52,7 @@ export default async function ProjectsPage({
   searchParams: Promise<{ type?: string }>;
 }) {
   const siteSettings = await getSiteSettings();
-  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const siteUrl = getLiveSiteUrl(siteSettings.siteUrl);
   const breadcrumbSchema = generateBreadcrumbSchema(
     [
       { name: "Home", path: "/" },

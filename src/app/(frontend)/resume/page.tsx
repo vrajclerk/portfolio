@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getProfile, getSiteSettings } from "@/lib/cms";
 import { generateBreadcrumbSchema } from "@/utilities/structuredData";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [profile, siteSettings] = await Promise.all([
@@ -53,7 +54,7 @@ export default async function ResumePage() {
   const experience = Array.isArray(profile.experience) ? profile.experience : [];
   const skills = Array.isArray(profile.skills) ? profile.skills : [];
   const publicEmail = siteSettings.publicEmail || "vrajclerk.dev@gmail.com";
-  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const siteUrl = getLiveSiteUrl(siteSettings.siteUrl);
 
   const breadcrumbSchema = generateBreadcrumbSchema(
     [

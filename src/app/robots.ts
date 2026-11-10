@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { getSiteSettings } from "@/lib/cms";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const settings = await getSiteSettings();
-  const siteUrl = (settings.siteUrl || "http://localhost:3000").replace(/\/$/, "");
+  const siteUrl = getLiveSiteUrl(settings.siteUrl);
 
   return {
     rules: {
