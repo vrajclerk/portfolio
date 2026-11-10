@@ -1,8 +1,6 @@
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { EmptyState } from "@/components/EmptyState";
-import { PostCard } from "@/components/PostCard";
+import { BlogFilterGrid } from "@/components/BlogFilterGrid";
 import { getAllCategories, getPublishedPosts, getSiteSettings } from "@/lib/cms";
 import { generateBreadcrumbSchema } from "@/utilities/structuredData";
 
@@ -40,65 +38,19 @@ async function BlogList({
 }) {
   const { category, tag } = await searchParams;
 
+  // Retrieve all published posts and categories once so client-side filter can query instantly
   const [posts, categories] = await Promise.all([
-    getPublishedPosts({ category, tag }),
+    getPublishedPosts(),
     getAllCategories(),
   ]);
 
   return (
-    <>
-      {/* Category Filter Tabs */}
-      {categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8 border-b border-border pb-4" role="tablist">
-          <Link
-            href="/blog"
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition-colors ${
-              !category
-                ? "bg-foreground text-background"
-                : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-            }`}
-            role="tab"
-            aria-selected={!category}
-          >
-            All Articles
-          </Link>
-          {categories.map((cat) => {
-            const isActive = category === cat.slug;
-            return (
-              <Link
-                key={cat.id}
-                href={`/blog?category=${cat.slug}`}
-                className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                  isActive
-                    ? "bg-foreground text-background"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                }`}
-                role="tab"
-                aria-selected={isActive}
-              >
-                {cat.name}
-              </Link>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Article Grid / Empty State */}
-      {posts.length > 0 ? (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 items-stretch">
-          {posts.map((post, idx) => (
-            <PostCard key={post.id} post={post} index={idx} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState
-          title="No published articles found"
-          description="There are currently no articles matching the selected category."
-          actionHref="/blog"
-          actionLabel="View all articles"
-        />
-      )}
-    </>
+    <BlogFilterGrid
+      initialPosts={posts}
+      categories={categories}
+      initialCategory={category}
+      initialTag={tag}
+    />
   );
 }
 

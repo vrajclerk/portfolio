@@ -7,6 +7,7 @@ import { Badge, type BadgeVariant } from "@/components/Badge";
 import { PostCard } from "@/components/PostCard";
 import { PreviewBanner } from "@/components/PreviewBanner";
 import { RichTextRenderer } from "@/components/RichTextRenderer";
+import { SystemArchitectureDiagram } from "@/components/SystemArchitectureDiagram";
 import {
   getProjectBySlug,
   getPublishedProjects,
@@ -232,11 +233,15 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
         {/* Architecture & Approach */}
         {project.architecture && (
-          <section>
-            <h2 className="text-xl font-bold tracking-tight text-foreground mb-4">
-              Architecture & System Design
-            </h2>
-            <RichTextRenderer data={project.architecture} />
+          <section className="space-y-6">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-foreground mb-4">
+                Architecture & System Design
+              </h2>
+              <RichTextRenderer data={project.architecture} />
+            </div>
+
+            <SystemArchitectureDiagram />
           </section>
         )}
 

@@ -76,7 +76,7 @@ export function TerminalDrawer() {
     };
   }, [isOpen]);
 
-  const executeCommand = (rawCmd: string) => {
+  const executeCommand = async (rawCmd: string) => {
     const trimmed = rawCmd.trim();
     if (!trimmed) return;
 
@@ -99,6 +99,71 @@ export function TerminalDrawer() {
     let responseLog: CommandLog;
 
     switch (cmdLower) {
+      case "health":
+      case "telemetry":
+      case "status":
+        try {
+          const res = await fetch("/api/health");
+          const data = await res.json();
+          responseLog = {
+            id: `${logId}-out`,
+            type: "output",
+            content: (
+              <div className="text-xs space-y-1.5 font-mono py-1">
+                <div className="font-bold text-emerald-400 flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>LIVE SYSTEM TELEMETRY [HTTP 200 OK]</span>
+                </div>
+                <div className="text-[11px] grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-muted-foreground pt-1 border-t border-border/60">
+                  <div>Status: <span className="text-foreground font-semibold uppercase">{data.status}</span></div>
+                  <div>Latency: <span className="text-accent font-semibold">{data.latencyMs}ms</span></div>
+                  <div>Uptime: <span className="text-foreground font-semibold">{data.uptimeSeconds}s</span></div>
+                  <div>Database: <span className="text-foreground font-semibold">{data.database.status}</span></div>
+                  <div>Heap Memory: <span className="text-foreground font-semibold">{data.memory.heapUsedMb} MB</span></div>
+                  <div>Runtime: <span className="text-foreground font-semibold">Node {data.runtime.node} ({data.runtime.platform})</span></div>
+                </div>
+              </div>
+            ),
+          };
+        } catch {
+          responseLog = {
+            id: `${logId}-out`,
+            type: "error",
+            content: "Telemetry probe failed: service unreachable.",
+          };
+        }
+        break;
+
+      case "curl":
+        const target = trimmed.split(" ")[1];
+        if (target === "/api/health" || target === "api/health") {
+          try {
+            const res = await fetch("/api/health");
+            const data = await res.json();
+            responseLog = {
+              id: `${logId}-out`,
+              type: "output",
+              content: (
+                <pre className="text-[11px] font-mono text-emerald-300 overflow-x-auto p-2 bg-black/40 rounded-lg">
+                  {JSON.stringify(data, null, 2)}
+                </pre>
+              ),
+            };
+          } catch {
+            responseLog = {
+              id: `${logId}-out`,
+              type: "error",
+              content: "curl: (7) Failed to connect to host",
+            };
+          }
+        } else {
+          responseLog = {
+            id: `${logId}-out`,
+            type: "info",
+            content: "Usage: curl /api/health",
+          };
+        }
+        break;
       case "help":
         responseLog = {
           id: `${logId}-out`,
@@ -110,6 +175,7 @@ export function TerminalDrawer() {
                 <div><span className="text-accent font-bold">whoami</span> - Developer profile &amp; summary</div>
                 <div><span className="text-accent font-bold">skills</span> - Core technologies &amp; architecture</div>
                 <div><span className="text-accent font-bold">projects</span> - View case studies</div>
+                <div><span className="text-accent font-bold">health</span> - Live server telemetry &amp; latency</div>
                 <div><span className="text-accent font-bold">experience</span> - Work history &amp; contributions</div>
                 <div><span className="text-accent font-bold">contact</span> - Email &amp; social profiles</div>
                 <div><span className="text-accent font-bold">theme</span> - Toggle light/dark mode</div>
