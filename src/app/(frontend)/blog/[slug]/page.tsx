@@ -18,6 +18,7 @@ import {
   generateArticleSchema,
   generateBreadcrumbSchema,
 } from "@/utilities/structuredData";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -85,7 +86,7 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const siteUrl = siteSettings.siteUrl || "http://localhost:3000";
+  const siteUrl = getLiveSiteUrl(siteSettings.siteUrl);
   const articleSchema = generateArticleSchema({ post, siteUrl });
   const breadcrumbSchema = generateBreadcrumbSchema(
     [

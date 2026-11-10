@@ -449,6 +449,7 @@ export function TerminalDrawer() {
                 type="button"
                 onClick={() => setLogs([])}
                 className="text-[10px] text-muted-foreground hover:text-accent font-mono transition-colors"
+                aria-label="Clear terminal output"
                 title="Clear screen"
               >
                 clear

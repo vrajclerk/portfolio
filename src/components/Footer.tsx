@@ -172,6 +172,7 @@ export function Footer({
               <button
                 type="button"
                 onClick={handleCopyEmail}
+                aria-label="Copy direct email address to clipboard"
                 className={`group relative inline-flex items-center gap-2.5 rounded-full border bg-card/80 px-3.5 py-2 text-xs font-mono transition-all duration-300 hover:border-accent hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 ${
                   copied
                     ? "border-emerald-500/60 ring-2 ring-emerald-500/20 text-emerald-600 dark:text-emerald-400"

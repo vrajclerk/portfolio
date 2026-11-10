@@ -10,28 +10,28 @@ interface ProjectCardProps {
 const TYPE_CONFIG = {
   professional: {
     label: "Professional",
-    badgeBg: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/30",
+    badgeBg: "bg-blue-500/10 text-blue-800 dark:text-blue-300 border-blue-500/30",
     dotColor: "bg-blue-500",
     pingColor: "bg-blue-400",
     auraBg: "group-hover:bg-blue-500/10 dark:group-hover:bg-blue-500/15",
   },
   personal: {
     label: "Personal R&D",
-    badgeBg: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
+    badgeBg: "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border-emerald-500/30",
     dotColor: "bg-emerald-500",
     pingColor: "bg-emerald-400",
     auraBg: "group-hover:bg-emerald-500/10 dark:group-hover:bg-emerald-500/15",
   },
   "open-source": {
     label: "Open Source",
-    badgeBg: "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30",
+    badgeBg: "bg-purple-500/10 text-purple-800 dark:text-purple-300 border-purple-500/30",
     dotColor: "bg-purple-500",
     pingColor: "bg-purple-400",
     auraBg: "group-hover:bg-purple-500/10 dark:group-hover:bg-purple-500/15",
   },
   experiment: {
     label: "Experiment",
-    badgeBg: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30",
+    badgeBg: "bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/30",
     dotColor: "bg-amber-500",
     pingColor: "bg-amber-400",
     auraBg: "group-hover:bg-amber-500/10 dark:group-hover:bg-amber-500/15",

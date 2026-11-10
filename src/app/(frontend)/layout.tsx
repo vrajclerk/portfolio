@@ -17,6 +17,7 @@ import { Header } from "@/components/Header";
 import { CustomCursor } from "@/components/CustomCursor";
 import { TerminalDrawer } from "@/components/TerminalDrawer";
 import { getHomepageSettings, getSiteSettings } from "@/lib/cms";
+import { getLiveSiteUrl } from "@/utilities/siteUrl";
 import "@/styles/globals.css";
 
 // ---------------------------------------------------------------------------
@@ -48,7 +49,7 @@ const fraunces = Fraunces({
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
   const siteName = settings.siteName || "Developer Portfolio";
-  const siteUrl = settings.siteUrl || "http://localhost:3000";
+  const siteUrl = getLiveSiteUrl(settings.siteUrl);
   const defaultDesc =
     settings.defaultDescription ||
     "Software engineer portfolio specializing in backend systems, TypeScript architectures, and modern web applications.";
