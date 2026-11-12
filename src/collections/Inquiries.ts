@@ -4,6 +4,7 @@ import { authenticated } from "@/access/authenticated";
 
 export const Inquiries: CollectionConfig = {
   slug: "inquiries",
+  lockDocuments: false,
   labels: {
     singular: "Inquiry",
     plural: "Inquiries",

@@ -502,10 +502,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
-      } | null)
-    | ({
-        relationTo: 'inquiries';
-        value: number | Inquiry;
       } | null);
   globalSlug?: string | null;
   user: {

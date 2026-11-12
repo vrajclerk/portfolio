@@ -16,20 +16,22 @@ export function getLiveSiteUrl(configuredUrl?: string | null): string {
     return configuredUrl.replace(/\/+$/, "");
   }
 
-  let url = process.env.NEXT_PUBLIC_SITE_URL;
-
-  if (!url && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    url = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  // 1. Check production / preview Vercel domains first if available
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`.replace(/\/+$/, "");
   }
 
-  if (!url && process.env.VERCEL_URL) {
-    url = `https://${process.env.VERCEL_URL}`;
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`.replace(/\/+$/, "");
   }
 
-  if (!url) {
-    url = "http://localhost:3000";
+  // 2. Explicit configuration (if non-localhost or explicitly provided)
+  const envUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL;
+  if (envUrl && !envUrl.includes("localhost")) {
+    return envUrl.replace(/\/+$/, "");
   }
 
-  return url.replace(/\/+$/, "");
+  // 3. Fallback for local development
+  return envUrl ? envUrl.replace(/\/+$/, "") : "http://localhost:3000";
 }
 
