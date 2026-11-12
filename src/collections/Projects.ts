@@ -15,7 +15,9 @@ export const Projects: CollectionConfig = {
     preview: (doc) => {
       if (doc?.slug && typeof doc.slug === "string") {
         const siteUrl =
-          process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+          process.env.SITE_URL ||
+          process.env.NEXT_PUBLIC_SITE_URL ||
+          "http://localhost:3000";
         const secret =
           process.env.PAYLOAD_SECRET || process.env.PREVIEW_SECRET || "";
         return `${siteUrl}/api/preview?url=${encodeURIComponent(

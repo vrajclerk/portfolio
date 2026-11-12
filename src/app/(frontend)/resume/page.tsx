@@ -55,6 +55,11 @@ export default async function ResumePage() {
   const skills = Array.isArray(profile.skills) ? profile.skills : [];
   const publicEmail = siteSettings.publicEmail || "vrajclerk.dev@gmail.com";
   const siteUrl = getLiveSiteUrl(siteSettings.siteUrl);
+  const isLocalHost = !siteUrl || siteUrl.includes("localhost") || siteUrl.includes("127.0.0.1");
+  const displayWebsite = isLocalHost
+    ? (process.env.NEXT_PUBLIC_PORTFOLIO_DOMAIN || "vrajclerk.dev")
+    : siteUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+  const portfolioHref = isLocalHost ? `https://${displayWebsite}` : siteUrl;
 
   const breadcrumbSchema = generateBreadcrumbSchema(
     [
@@ -136,8 +141,8 @@ export default async function ResumePage() {
               {publicEmail}
             </a>
             <span>•</span>
-            <a href={siteUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-              {siteUrl.replace(/^https?:\/\//, "")}
+            <a href={portfolioHref} target="_blank" rel="noopener noreferrer" className="hover:underline">
+              {displayWebsite}
             </a>
             <span>•</span>
             <a

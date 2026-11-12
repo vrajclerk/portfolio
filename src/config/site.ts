@@ -29,7 +29,7 @@ export const siteConfig = {
    * Populated from the NEXT_PUBLIC_SITE_URL environment variable at runtime.
    * Falls back to localhost for local development.
    */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
 
   /**
    * Navigation links for the primary site header.
