@@ -1,6 +1,7 @@
 import * as migration_20261019_202934_initial from './20261019_202934_initial';
 import * as migration_20261031_233000_add_hidden_fields from './20261031_233000_add_hidden_fields';
 import * as migration_20261105_005500_create_inquiries_table from './20261105_005500_create_inquiries_table';
+import * as migration_20261115_120000_add_buffer_sync_fields from './20261115_120000_add_buffer_sync_fields';
 
 export const migrations = [
   {
@@ -17,6 +18,11 @@ export const migrations = [
     up: migration_20261105_005500_create_inquiries_table.up,
     down: migration_20261105_005500_create_inquiries_table.down,
     name: '20261105_005500_create_inquiries_table'
+  },
+  {
+    up: migration_20261115_120000_add_buffer_sync_fields.up,
+    down: migration_20261115_120000_add_buffer_sync_fields.down,
+    name: '20261115_120000_add_buffer_sync_fields'
   },
 ];
 

@@ -26,6 +26,16 @@ export const Media: CollectionConfig = {
       "application/pdf",
     ],
   },
+  hooks: {
+    afterRead: [
+      ({ doc }) => {
+        if (doc?.filename) {
+          doc.url = `/media/${doc.filename}`;
+        }
+        return doc;
+      },
+    ],
+  },
   fields: [
     {
       name: "alt",

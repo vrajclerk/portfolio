@@ -50,6 +50,12 @@ export const serverEnv = {
   /** Vercel Blob read/write token (optional in local development) */
   blobToken: process.env.BLOB_READ_WRITE_TOKEN,
 
+  /** Buffer API credentials and automation secrets */
+  bufferApiToken: process.env.BUFFER_API_TOKEN,
+  bufferOrgId: process.env.BUFFER_ORGANIZATION_ID,
+  bufferChannelId: process.env.BUFFER_LINKEDIN_CHANNEL_ID,
+  cronSecret: process.env.CRON_SECRET,
+
   /**
    * Node.js runtime environment.
    * Defaults to "development" so the foundation works without a full .env.
