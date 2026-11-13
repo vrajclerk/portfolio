@@ -7,6 +7,7 @@ import {
   convertTextToLexical,
 } from "../src/lib/buffer";
 import { Posts } from "../src/collections/Posts";
+import { Media } from "../src/collections/Media";
 
 describe("Buffer & LinkedIn Ingestion Engine", () => {
   describe("Title Extraction", () => {
@@ -147,7 +148,6 @@ Remember that #TypeScript is great for type safety. #SystemDesign #concurrency_c
 
   describe("Media & Carousel Slides Handling", () => {
     test("Media collection afterRead hook normalizes url to /media/<filename>", () => {
-      const { Media } = require("../src/collections/Media");
       const afterReadHook = Media.hooks?.afterRead?.[0];
       assert.ok(afterReadHook, "Media afterRead hook must be registered");
 
