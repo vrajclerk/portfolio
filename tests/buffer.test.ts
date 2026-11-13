@@ -152,8 +152,9 @@ Remember that #TypeScript is great for type safety. #SystemDesign #concurrency_c
       assert.ok(afterReadHook, "Media afterRead hook must be registered");
 
       const testDoc = { filename: "buffer-test-image.jpg", url: "/api/media/file/buffer-test-image.jpg" };
+      // @ts-expect-error Mock hook invocation without full request context
       const processed = afterReadHook({ doc: testDoc });
-      assert.equal(processed.url, "/media/buffer-test-image.jpg");
+      assert.equal(processed?.url, "/media/buffer-test-image.jpg");
     });
   });
 });
