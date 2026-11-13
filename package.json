@@ -10,6 +10,8 @@
     "lint:fix": "eslint --fix",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/**/*.test.ts",
+    "buffer:discover": "tsx scripts/buffer-discovery.ts",
+    "buffer:sync": "tsx scripts/buffer-sync.ts",
     "payload": "payload",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap"

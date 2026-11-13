@@ -11,7 +11,7 @@ export const Posts: CollectionConfig = {
   slug: "posts",
   admin: {
     useAsTitle: "title",
-    defaultColumns: ["title", "slug", "category", "hidden", "_status", "publishedAt"],
+    defaultColumns: ["title", "slug", "source", "category", "hidden", "_status", "publishedAt"],
     preview: (doc) => {
       if (doc?.slug && typeof doc.slug === "string") {
         const siteUrl =
@@ -140,6 +140,39 @@ export const Posts: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: "When checked, this post is hidden from public blog listings, homepage, RSS, and sitemaps.",
+      },
+    },
+    {
+      name: "source",
+      type: "select",
+      defaultValue: "native",
+      options: [
+        { label: "Native Portfolio Article", value: "native" },
+        { label: "LinkedIn (via Buffer)", value: "linkedin" },
+      ],
+      admin: {
+        position: "sidebar",
+        description: "Origin of this post: native portfolio or imported from LinkedIn via Buffer.",
+      },
+    },
+    {
+      name: "bufferPostId",
+      type: "text",
+      unique: true,
+      index: true,
+      label: "Buffer Post ID",
+      admin: {
+        position: "sidebar",
+        description: "Unique Buffer Post ID for deduplication and automated synchronization.",
+      },
+    },
+    {
+      name: "linkedinUrl",
+      type: "text",
+      label: "LinkedIn Post URL",
+      admin: {
+        position: "sidebar",
+        description: "Original LinkedIn URL for this post.",
       },
     },
     {

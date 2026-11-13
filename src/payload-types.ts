@@ -254,6 +254,18 @@ export interface Post {
    * When checked, this post is hidden from public blog listings, homepage, RSS, and sitemaps.
    */
   hidden?: boolean | null;
+  /**
+   * Origin of this post: native portfolio or imported from LinkedIn via Buffer.
+   */
+  source?: ('native' | 'linkedin') | null;
+  /**
+   * Unique Buffer Post ID for deduplication and automated synchronization.
+   */
+  bufferPostId?: string | null;
+  /**
+   * Original LinkedIn URL for this post.
+   */
+  linkedinUrl?: string | null;
   publishedAt?: string | null;
   seo?: {
     title?: string | null;
@@ -628,6 +640,9 @@ export interface PostsSelect<T extends boolean = true> {
   tags?: T;
   relatedProjects?: T;
   hidden?: T;
+  source?: T;
+  bufferPostId?: T;
+  linkedinUrl?: T;
   publishedAt?: T;
   seo?:
     | T
