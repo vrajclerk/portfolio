@@ -85,11 +85,20 @@ export async function generateMetadata(): Promise<Metadata> {
       title: siteName,
       description: defaultDesc,
       url: siteUrl,
+      images: [
+        {
+          url: `${siteUrl.replace(/\/$/, "")}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: `${siteName} — Software Engineer & Systems Architect`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: siteName,
       description: defaultDesc,
+      images: [`${siteUrl.replace(/\/$/, "")}/opengraph-image`],
     },
     icons: {
       icon: [
